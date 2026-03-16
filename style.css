@@ -1294,7 +1294,7 @@ body {
   .typing-title { font-size: clamp(20px, 6.5vw, 36px); }
   .typing-hero { min-height: 28vh; }
 
-  .about-img img { width: 180px; height: 180px; }
+  .about-img img { width: 200px; height: 200px; }
   .about-text { font-size: 0.95rem; }
 
   /* Reduce project image height to avoid long scrolls */
@@ -1342,7 +1342,7 @@ body {
   .typing-title { font-size: clamp(16px, 8vw, 26px); }
   .home-subtitle { font-size: 0.9rem; line-height: 1.4; }
 
-  .about-img img { width: 130px; height: 130px; }
+  .about-img img { width: 180px; height: 180px; }
   .project-card img { height: 110px; }
 
   .footer .social-icons a { width: 36px; height: 36px; }
