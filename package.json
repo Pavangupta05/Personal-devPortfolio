@@ -1,4 +1,27 @@
 {
+  "name": "pavan-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Full Stack Web Developer Portfolio",
+  "main": "script.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "portfolio",
+    "web-developer",
+    "mern-stack",
+    "react",
+    "nodejs"
+  ],
+  "author": "Pavan Kumar Gupta",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^5.0.0"
+  },
   "dependencies": {
     "@vercel/speed-insights": "^2.0.0"
   }

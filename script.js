@@ -8,27 +8,99 @@ window.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("dark-mode");
   document.body.style.overflow = "auto";
 
-  // ---------------- Hamburger Menu ----------------
-  const burger = document.getElementById("hamburger");
-  const nav = document.getElementById("primary-nav");
+  // ============ PROJECT FILTERING ============
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  const projectCards = document.querySelectorAll(".project-card");
 
-  if (burger && nav) {
-    burger.addEventListener("click", () => {
-      const isOpen = nav.classList.toggle("show");
-      burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      burger.classList.toggle("open", isOpen);
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      // Update active button
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const filter = btn.dataset.filter;
+
+      projectCards.forEach(card => {
+        if (filter === "all") {
+          card.style.display = "flex";
+          card.classList.remove("hidden");
+        } else {
+          const tags = card.dataset.projectTags || "";
+          if (tags.includes(filter)) {
+            card.style.display = "flex";
+            card.classList.remove("hidden");
+          } else {
+            card.style.display = "none";
+            card.classList.add("hidden");
+          }
+        }
+      });
     });
+  });
 
-    // Close menu on link click
-    nav.querySelectorAll("a").forEach(a => 
-      a.addEventListener("click", () => {
-        nav.classList.remove("show");
-        burger.setAttribute("aria-expanded", "false");
-      })
-    );
+  // ============ FORM VALIDATION ============
+  const contactForm = document.getElementById("contactForm");
+  if (contactForm) {
+    const nameInput = document.getElementById("nameInput");
+    const emailInput = document.getElementById("emailInput");
+    const messageInput = document.getElementById("messageInput");
+    const nameError = document.getElementById("nameError");
+    const emailError = document.getElementById("emailError");
+    const messageError = document.getElementById("messageError");
+
+    const validateName = () => {
+      const value = nameInput.value.trim();
+      if (value.length < 2) {
+        nameError.textContent = "Name must be at least 2 characters";
+        nameInput.classList.add("error");
+        return false;
+      }
+      nameError.textContent = "";
+      nameInput.classList.remove("error");
+      return true;
+    };
+
+    const validateEmail = () => {
+      const value = emailInput.value.trim();
+      const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+      if (!emailRegex.test(value)) {
+        emailError.textContent = "Please enter a valid email";
+        emailInput.classList.add("error");
+        return false;
+      }
+      emailError.textContent = "";
+      emailInput.classList.remove("error");
+      return true;
+    };
+
+    const validateMessage = () => {
+      const value = messageInput.value.trim();
+      if (value.length < 10) {
+        messageError.textContent = "Message must be at least 10 characters";
+        messageInput.classList.add("error");
+        return false;
+      }
+      messageError.textContent = "";
+      messageInput.classList.remove("error");
+      return true;
+    };
+
+    nameInput.addEventListener("blur", validateName);
+    emailInput.addEventListener("blur", validateEmail);
+    messageInput.addEventListener("blur", validateMessage);
+
+    contactForm.addEventListener("submit", (e) => {
+      const isNameValid = validateName();
+      const isEmailValid = validateEmail();
+      const isMessageValid = validateMessage();
+
+      if (!isNameValid || !isEmailValid || !isMessageValid) {
+        e.preventDefault();
+      }
+    });
   }
 
-  // ---------------- ScrollReveal (Advanced) ----------------
+  // ============ ScrollReveal for Testimonials ============
   if (typeof ScrollReveal !== "undefined") {
     const sr = ScrollReveal({
       reset: false,
@@ -44,7 +116,7 @@ window.addEventListener("DOMContentLoaded", () => {
     sr.reveal(".about-img", { origin: "left", rotate: { y: 20 }, scale: 0.8 });
     sr.reveal(".about-text", { origin: "right", distance: "40px" });
 
-    sr.reveal(".skill-card, .project-card, .education-card, .experience-card, .certificate-card, .hobby-card", {
+    sr.reveal(".skill-card, .project-card, .education-card, .experience-card, .certificate-card, .hobby-card, .testimonial-card", {
       origin: "bottom",
       interval: 150,
       scale: 0.85,
@@ -53,6 +125,27 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     sr.reveal(".contact-form", { origin: "bottom", scale: 0.9 });
+  }
+
+  // ============ HAMBURGER MENU ============
+  const burger = document.getElementById("hamburger");
+  const nav = document.querySelector(".navbar nav");
+
+  if (burger && nav) {
+    burger.addEventListener("click", () => {
+      const isOpen = nav.classList.toggle("show");
+      burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      burger.classList.toggle("open", isOpen);
+    });
+
+    // Close menu on link click
+    nav.querySelectorAll("a").forEach(a => 
+      a.addEventListener("click", () => {
+        nav.classList.remove("show");
+        burger.setAttribute("aria-expanded", "false");
+        burger.classList.remove("open");
+      })
+    );
   }
 
   // ---------------- Scroll to Top ----------------
@@ -215,42 +308,6 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // ---------------- LERP INTERACTION ENGINE ----------------
-    const allCards = document.querySelectorAll(".skill-card, .project-card, .education-card, .experience-card, .certificate-card, .hobby-card");
-    const magneticElements = document.querySelectorAll(".btn-primary, .btn-hire, .social-icons a, .scrollTopBtn");
-    
-    // Store states
-    const tiltStates = Array.from(allCards).map(() => ({ currX: 0, currY: 0, targX: 0, targY: 0, active: false }));
-    const magStates = Array.from(magneticElements).map(() => ({ currX: 0, currY: 0, targX: 0, targY: 0, active: false }));
-
-    allCards.forEach((card, i) => {
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        tiltStates[i].targX = (centerY - (e.clientY - rect.top)) / 8;
-        tiltStates[i].targY = ((e.clientX - rect.left) - centerX) / 8;
-        tiltStates[i].active = true;
-      });
-      card.addEventListener("mouseleave", () => {
-        tiltStates[i].targX = 0;
-        tiltStates[i].targY = 0;
-        tiltStates[i].active = false;
-      });
-    });
-
-    magneticElements.forEach((el, i) => {
-      el.addEventListener("mousemove", (e) => {
-        const rect = el.getBoundingClientRect();
-        magStates[i].targX = (e.clientX - rect.left - rect.width / 2) * 0.35;
-        magStates[i].targY = (e.clientY - rect.top - rect.height / 2) * 0.35;
-      });
-      el.addEventListener("mouseleave", () => {
-        magStates[i].targX = 0;
-        magStates[i].targY = 0;
-      });
-    });
-
     const bgTexts = document.querySelectorAll(".bg-scroll-text");
 
     function animate() {
@@ -261,28 +318,7 @@ window.addEventListener("DOMContentLoaded", () => {
       particles.forEach(p => { p.update(); p.draw(); });
       drawLines();
 
-      // 3. Smooth Lerp Interactivity (60fps)
-      const lerpFactor = 0.12; 
-
-      allCards.forEach((card, i) => {
-        const s = tiltStates[i];
-        s.currX += (s.targX - s.currX) * lerpFactor;
-        s.currY += (s.targY - s.currY) * lerpFactor;
-        if (Math.abs(s.targX - s.currX) > 0.01 || Math.abs(s.targY - s.currY) > 0.01) {
-          card.style.transform = `perspective(1000px) rotateX(${s.currX}deg) rotateY(${s.currY}deg) ${s.active ? 'translateY(-12px) scale(1.02)' : 'translateY(0) scale(1)'}`;
-        }
-      });
-
-      magneticElements.forEach((el, i) => {
-        const s = magStates[i];
-        s.currX += (s.targX - s.currX) * lerpFactor;
-        s.currY += (s.targY - s.currY) * lerpFactor;
-        if (Math.abs(s.targX - s.currX) > 0.01 || Math.abs(s.targY - s.currY) > 0.01) {
-          el.style.transform = `translate(${s.currX}px, ${s.currY}px)`;
-        }
-      });
-
-      // 4. Parallax Background Text
+      // 3. Parallax Background Text
       bgTexts.forEach((text, index) => {
         const speed = (index + 1) * 0.12;
         const currentTransform = text.style.transform.includes('rotate') ? 'rotate(90deg)' : '';
