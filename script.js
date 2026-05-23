@@ -1,3 +1,8 @@
+// Initialize Vercel Speed Insights
+import('@vercel/speed-insights').then(module => {
+  module.injectSpeedInsights();
+}).catch(err => console.error('Failed to load Speed Insights:', err));
+
 window.addEventListener("DOMContentLoaded", () => {
   // Force dark mode
   document.body.classList.add("dark-mode");
