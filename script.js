@@ -1,7 +1,7 @@
-// Initialize Vercel Speed Insights
-import('@vercel/speed-insights').then(module => {
-  module.injectSpeedInsights();
-}).catch(err => console.error('Failed to load Speed Insights:', err));
+// Initialize Vercel Speed Insights (Commented out because bare module specifiers need a bundler)
+// import('@vercel/speed-insights').then(module => {
+//   module.injectSpeedInsights();
+// }).catch(err => console.error('Failed to load Speed Insights:', err));
 
 window.addEventListener("DOMContentLoaded", () => {
   // Force dark mode
@@ -126,26 +126,50 @@ window.addEventListener("DOMContentLoaded", () => {
 
     sr.reveal(".contact-form", { origin: "bottom", scale: 0.9 });
   }
+  // ============ IOS NAVBAR ACTIVE LINK ============
+  const navContainer = document.querySelector(".ios-nav-container");
+  const navLinks = document.querySelectorAll(".ios-nav-item a");
+  const sections = document.querySelectorAll("section");
 
-  // ============ HAMBURGER MENU ============
-  const burger = document.getElementById("hamburger");
-  const nav = document.querySelector(".navbar nav");
+  if (navContainer && navLinks.length > 0 && sections.length > 0) {
+    const activePill = document.createElement("div");
+    activePill.classList.add("active-pill");
+    navContainer.appendChild(activePill);
 
-  if (burger && nav) {
-    burger.addEventListener("click", () => {
-      const isOpen = nav.classList.toggle("show");
-      burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      burger.classList.toggle("open", isOpen);
+    const updatePill = () => {
+      const activeLink = document.querySelector(".ios-nav-item a.active");
+      if (activeLink) {
+        const linkRect = activeLink.getBoundingClientRect();
+        const containerRect = navContainer.getBoundingClientRect();
+        activePill.style.width = `${linkRect.width}px`;
+        activePill.style.left = `${linkRect.left - containerRect.left}px`;
+      } else {
+        activePill.style.width = `0px`;
+      }
+    };
+
+    window.addEventListener("scroll", () => {
+      let current = "";
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= sectionTop - sectionHeight / 3) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach((link) => {
+        link.classList.remove("active");
+        if (current && link.getAttribute("href") === `#${current}`) {
+          link.classList.add("active");
+        }
+      });
+      updatePill();
     });
 
-    // Close menu on link click
-    nav.querySelectorAll("a").forEach(a => 
-      a.addEventListener("click", () => {
-        nav.classList.remove("show");
-        burger.setAttribute("aria-expanded", "false");
-        burger.classList.remove("open");
-      })
-    );
+    // Initial pill setup
+    setTimeout(updatePill, 100);
+    window.addEventListener("resize", updatePill);
   }
 
   // ---------------- Scroll to Top ----------------
@@ -336,19 +360,294 @@ window.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.querySelector(".contact-form");
     const successModal = document.getElementById("contact-success");
     if (contactForm && successModal) {
-      contactForm.addEventListener("submit", (e) => {
+      contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const btn = contactForm.querySelector("button");
-        const originalText = btn.textContent;
-        btn.textContent = "Sending...";
+        const btnText = btn.querySelector(".btn-text");
+        const spinner = btn.querySelector(".spinner");
+
+        if (btnText && spinner) {
+          btnText.style.display = "none";
+          spinner.style.display = "block";
+        }
         btn.disabled = true;
-        setTimeout(() => {
-          successModal.classList.add("active");
-          contactForm.reset();
-          btn.textContent = originalText;
+
+        const formData = new FormData(contactForm);
+
+        try {
+          const response = await fetch(contactForm.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            successModal.classList.add("active");
+            contactForm.reset();
+          } else {
+            alert("Oops! There was a problem sending your message.");
+          }
+        } catch (error) {
+          console.error("Form submission error:", error);
+          alert("Oops! There was a network problem sending your message.");
+        } finally {
+          if (btnText && spinner) {
+            btnText.style.display = "block";
+            spinner.style.display = "none";
+          }
           btn.disabled = false;
-        }, 1500);
+        }
       });
     }
   }
 });
+
+
+
+
+// ================= WHOLE UI ANIMATIONS (ScrollReveal) =================
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof ScrollReveal !== 'undefined') {
+    const sr = ScrollReveal({
+      origin: 'bottom',
+      distance: '40px',
+      duration: 800,
+      delay: 100,
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+      reset: false // Only animate once
+    });
+
+    // Reveal Titles
+    sr.reveal('.section-title', { origin: 'left', distance: '30px' });
+    
+    // Reveal Cards with staggered intervals
+    sr.reveal('.project-card', { interval: 150 });
+    sr.reveal('.skill-card', { interval: 100, scale: 0.9 });
+    sr.reveal('.experience-card', { interval: 150, origin: 'right' });
+    sr.reveal('.certificate-card', { interval: 150, origin: 'bottom' });
+    sr.reveal('.action-card', { interval: 100, scale: 0.8 });
+    
+    // Custom elements
+    sr.reveal('.about-img', { origin: 'left', distance: '50px' });
+    sr.reveal('.about-text', { origin: 'right', distance: '50px' });
+    sr.reveal('.schedule-card', { delay: 300, scale: 0.95 });
+    sr.reveal('.ios-form', { delay: 400, distance: '20px' });
+  }
+});
+
+// ================= MOBILE MENU LOGIC =================
+window.toggleMobileMenu = function() {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('mobileHamburger');
+  if (menu) {
+    const isActive = menu.classList.toggle('active');
+    if (hamburger) {
+      hamburger.classList.toggle('active', isActive);
+    }
+    if (isActive) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+};
+
+// ================= DESKTOP NAVBAR SLIDER ANIMATION =================
+document.addEventListener("DOMContentLoaded", () => {
+  const desktopNav = document.querySelector('.nav-links-pill');
+  const navSlider = document.getElementById('navSlider');
+  const navLinks = document.querySelectorAll('.nav-links-pill a');
+  const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
+  const sections = document.querySelectorAll('section');
+
+  if (desktopNav && navSlider && navLinks.length > 0) {
+    function updateSlider(activeLink) {
+      if (!activeLink) return;
+      // Calculate relative position based on parent container padding
+      const linkRect = activeLink.getBoundingClientRect();
+      const navRect = desktopNav.getBoundingClientRect();
+      
+      const leftPos = linkRect.left - navRect.left;
+      const width = linkRect.width;
+      
+      navSlider.style.transform = `translateX(${leftPos}px)`;
+      navSlider.style.width = `${width}px`;
+    }
+
+    // Active state tracking on scroll
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= (sectionTop - sectionHeight / 3)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (current && link.getAttribute('href').includes(current)) {
+          link.classList.add('active');
+          updateSlider(link);
+        }
+      });
+
+      mobileLinks.forEach(link => {
+        link.classList.remove('active');
+        if (current && link.getAttribute('href').includes(current)) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Hover effect: Slider follows mouse
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        updateSlider(link);
+      });
+    });
+
+    // Mouse leave: Slider returns to active item
+    desktopNav.addEventListener('mouseleave', () => {
+      const activeLink = document.querySelector('.nav-links-pill a.active');
+      if (activeLink) {
+        updateSlider(activeLink);
+      } else {
+        // Default to first item if at very top
+        updateSlider(navLinks[0]);
+      }
+    });
+
+    // Initial position setup
+    setTimeout(() => {
+      const initialActive = document.querySelector('.nav-links-pill a.active') || navLinks[0];
+      if (initialActive) {
+        initialActive.classList.add('active');
+        updateSlider(initialActive);
+      }
+    }, 100);
+  }
+});
+
+
+// ================= STAGGERED FILTER TRANSITIONS (PROJECTS & SKILLS) =================
+document.addEventListener("DOMContentLoaded", () => {
+  const applyStaggeredFilter = (filterBtnsSelector, cardsSelector, categoryAttribute) => {
+    const filterBtns = document.querySelectorAll(filterBtnsSelector);
+    const cards = document.querySelectorAll(cardsSelector);
+    
+    if (filterBtns.length === 0 || cards.length === 0) return;
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filterValue = btn.getAttribute('data-filter');
+        
+        let visibleCards = [];
+        cards.forEach(card => {
+          if (card.style.display !== 'none' && !card.classList.contains('hide')) {
+            visibleCards.push(card);
+            card.classList.add('animating-out');
+            card.style.animationDelay = '0s';
+          }
+        });
+        
+        setTimeout(() => {
+          visibleCards.forEach(card => {
+            card.classList.remove('animating-out');
+            card.style.display = 'none';
+          });
+          
+          let cardsToShow = [];
+          cards.forEach(card => {
+            const categories = card.getAttribute(categoryAttribute) || '';
+            if (filterValue === 'all' || categories.includes(filterValue)) {
+              cardsToShow.push(card);
+            }
+          });
+          
+          cardsToShow.forEach((card, index) => {
+            card.style.display = 'flex';
+            card.classList.add('animating-in');
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            setTimeout(() => {
+              card.classList.remove('animating-in');
+              card.style.animationDelay = '0s';
+            }, 500 + (index * 50));
+          });
+        }, 300);
+      });
+    });
+  };
+
+  applyStaggeredFilter('.skill-filter-btn', '#skillsGrid .skill-card', 'data-category');
+  applyStaggeredFilter('.project-filters .filter-btn', '.project-card', 'data-project-tags');
+});
+
+// ================= MAGNETIC CTA BUTTONS =================
+document.addEventListener("DOMContentLoaded", () => {
+  const magneticBtns = document.querySelectorAll('.btn-primary, .btn-secondary, .nav-contact-btn');
+  
+  magneticBtns.forEach(btn => {
+    btn.classList.add('magnetic-btn');
+    
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const h = rect.width / 2;
+      const v = rect.height / 2;
+      const x = e.clientX - rect.left - h;
+      const y = e.clientY - rect.top - v;
+      btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = `translate(0px, 0px)`;
+    });
+  });
+});
+
+// ================= PROJECT MODAL DRAWERS =================
+window.openProjectModal = function(title, tagsStr, contentHTML) {
+  let modalOverlay = document.getElementById('project-modal');
+  if (!modalOverlay) {
+    modalOverlay = document.createElement('div');
+    modalOverlay.id = 'project-modal';
+    modalOverlay.className = 'project-modal-overlay';
+    
+    modalOverlay.innerHTML = `
+      <div class="project-modal-content">
+        <div class="project-modal-close" onclick="closeProjectModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </div>
+        <h2 class="modal-project-title" id="modal-title">Project Title</h2>
+        <div class="modal-project-meta" id="modal-meta">
+        </div>
+        <div class="modal-project-body" id="modal-body">
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modalOverlay);
+  }
+  
+  document.getElementById('modal-title').textContent = title;
+  const tags = tagsStr.split(',').map(tag => `<span class="badge">${tag.trim()}</span>`).join('');
+  document.getElementById('modal-meta').innerHTML = tags;
+  document.getElementById('modal-body').innerHTML = contentHTML;
+  
+  modalOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeProjectModal = function() {
+  const modalOverlay = document.getElementById('project-modal');
+  if (modalOverlay) {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+};
