@@ -12,31 +12,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const filterBtns = document.querySelectorAll(".filter-btn");
   const projectCards = document.querySelectorAll(".project-card");
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      // Update active button
-      filterBtns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      const filter = btn.dataset.filter;
-
-      projectCards.forEach(card => {
-        if (filter === "all") {
-          card.style.display = "flex";
-          card.classList.remove("hidden");
-        } else {
-          const tags = card.dataset.projectTags || "";
-          if (tags.includes(filter)) {
-            card.style.display = "flex";
-            card.classList.remove("hidden");
-          } else {
-            card.style.display = "none";
-            card.classList.add("hidden");
-          }
-        }
-      });
-    });
-  });
+  // Removed redundant filter logic here. The staggered filter logic handles this.
 
   // ============ FORM VALIDATION ============
   const contactForm = document.getElementById("contactForm");
@@ -194,7 +170,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // ---------------- Typewriter Effect ----------------
   const typingTarget = document.getElementById("typingText");
   if (typingTarget) {
-    const phrases = ["Hi, I’m Pavan Kumar Gupta", "MERN Stack Developer"];
+    const phrases = [" Pavan Kumar Gupta", "MERN Stack Developer"];
     const typingSpeedMs = 70;
     const erasingSpeedMs = 45;
     const holdOnTypedMs = 900;
@@ -229,7 +205,14 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    setTimeout(typeLoop, 400);
+    function startTypingWhenReady() {
+      if (!document.body.classList.contains('loading')) {
+        setTimeout(typeLoop, 400);
+      } else {
+        setTimeout(startTypingWhenReady, 200);
+      }
+    }
+    startTypingWhenReady();
   }
   // ---------------- Adaptive Footer Year ----------------
   const yearSpan = document.getElementById("current-year");
@@ -357,10 +340,10 @@ window.addEventListener("DOMContentLoaded", () => {
     animate();
 
     // ---------------- Contact Success Handler ----------------
-    const contactForm = document.querySelector(".contact-form");
     const successModal = document.getElementById("contact-success");
     if (contactForm && successModal) {
       contactForm.addEventListener("submit", async (e) => {
+        if (e.defaultPrevented) return;
         e.preventDefault();
         const btn = contactForm.querySelector("button");
         const btnText = btn.querySelector(".btn-text");
@@ -651,3 +634,64 @@ window.closeProjectModal = function() {
     document.body.style.overflow = '';
   }
 };
+
+// ============================================================
+//   LIQUID GLASS INTERACTIVITY SYSTEM
+// ============================================================
+(function() {
+
+  // --- 2. LIQUID RIPPLE ON CLICK ---
+  document.addEventListener('click', (e) => {
+    // don't ripple on inputs
+    if (e.target.closest('input, textarea, select')) return;
+
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+      position: fixed;
+      left: ${e.clientX}px;
+      top: ${e.clientY}px;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(10, 132, 255, 0.35);
+      border: 1.5px solid rgba(255, 255, 255, 0.55);
+      pointer-events: none;
+      z-index: 99997;
+      animation: liquidRipple 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    `;
+    document.body.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+  });
+
+  // Inject ripple keyframe once
+  if (!document.getElementById('lg-ripple-style')) {
+    const style = document.createElement('style');
+    style.id = 'lg-ripple-style';
+    style.textContent = `
+      @keyframes liquidRipple {
+        0%   { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+        100% { transform: translate(-50%,-50%) scale(30); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // --- 3. 3D TILT EFFECT ON CARDS ---
+  const tiltCards = document.querySelectorAll('.skill-card, .project-card, .recruiter-card');
+  tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width  / 2;
+      const cy = rect.top  + rect.height / 2;
+      const dx = (e.clientX - cx) / (rect.width  / 2);
+      const dy = (e.clientY - cy) / (rect.height / 2);
+      card.style.transform = `perspective(600px) rotateX(${-dy * 7}deg) rotateY(${dx * 7}deg) translateY(-8px) scale(1.02)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+})();
+
+

@@ -17,21 +17,57 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="https://unpkg.com/scrollreveal" defer></script>
-  <script src="script.js" defer></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Pavan Kumar Gupta",
+    "url": "https://github.com/Pavangupta05",
+    "jobTitle": "Full Stack Web Developer",
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Jaipur Engineering College And Research Center (JECRC)"
+    },
+    "knowsAbout": ["MERN Stack", "React.js", "Node.js", "MongoDB", "Express.js", "WebSockets"],
+    "sameAs": [
+      "https://github.com/Pavangupta05",
+      "https://www.linkedin.com/in/pavan-kumar-gupta-837089290/"
+    ]
+  }
+  </script>
 </head>
 
 <body>
 
+  <!-- ===== LIQUID GLASS SVG FILTER ===== -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <filter id="liquid-glass-filter" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.012" numOctaves="3" seed="5" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+        <feGaussianBlur in="displaced" stdDeviation="0.6" result="blurred"/>
+        <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
+      </filter>
+      <filter id="lg-soft" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="2" seed="12" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+
   <!-- ===== AMBIENT GLOW BLOBS ===== -->
-  <div style="position: absolute; width: 100%; height: 100vh; overflow: hidden; z-index: -1; top: 0; left: 0; pointer-events: none;">
+  <div style="position: fixed; width: 100%; height: 100%; overflow: hidden; z-index: -1; top: 0; left: 0; pointer-events: none;">
     <div class="ambient-blob blob-1"></div>
     <div class="ambient-blob blob-2"></div>
+    <div class="ambient-blob blob-3"></div>
+    <div class="ambient-blob blob-4"></div>
   </div>
-  <!-- ================================ -->
   <!-- ===== PREMIUM LOADING SCREEN ===== -->
   <div id="loader-overlay">
     <div class="loader-content">
@@ -162,24 +198,31 @@
       <a href="#experience">Experience</a>
       <a href="#certificates">Certificates</a>
       <a href="#projects">Projects</a>
+      <a href="#blog">Blog</a>
       <a href="#education">Education</a>
       <a href="#hobbies">Hobbies</a>
     </div>
     <a href="#contact" class="nav-contact-btn">Contact</a>
   </nav>
 
-  <!-- Mobile Top Dock (Image Match) -->
+  <!-- Modern Mobile Top Dock -->
   <nav class="mobile-top-dock">
-    <div class="mobile-dock-left">
-      <div class="mobile-dock-icon">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display: block;"><path d="M2 21h18v-2H2v2zM20 8h-2V5h2v3zm2-5H4v13c0 2.2 1.8 4 4 4h8c2.2 0 4-1.8 4-4v-3h2c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-      </div>
-      <span class="mobile-dock-title">Portfolio</span>
-    </div>
-    <button class="mobile-dock-hamburger" id="mobileHamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
+    <a href="#home" class="dock-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="#projects" class="dock-item">
+      <i class="fa-solid fa-briefcase"></i>
+      <span>Projects</span>
+    </a>
+    <a href="#skills" class="dock-item">
+      <i class="fa-solid fa-code"></i>
+      <span>Skills</span>
+    </a>
+
+    <button class="dock-item more-btn" id="mobileHamburger" onclick="toggleMobileMenu()">
+      <i class="fa-solid fa-bars-staggered"></i>
+      <span>Menu</span>
     </button>
   </nav>
 
@@ -222,7 +265,7 @@ Currently exploring full-stack development, AI integrations, and always open to 
         </p>
         <div class="about-actions">
           <a class="btn-resume"
-            href="https://drive.google.com/file/d/1ixLA4EQ7rUvCKC1qE8Jj8zLLOmKPJ5EQ/view?usp=drivesdk" target="_blank" rel="noopener noreferrer">
+            href="https://drive.google.com/file/d/1lHUpTwmB_lh70vVUDstkVhUbc4LURoE6/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
             View Resume
           </a>
         </div>
@@ -443,7 +486,6 @@ RESTful APIs. .</p>
     </div>
   </section>
 
-
   <section id="projects" class="projects" style="position: relative;">
     <h2 class="section-title">Projects</h2>
 
@@ -475,7 +517,7 @@ creation, and intelligent study assistance.</p>
              <span class="badge">Rest APIs</span>
           </div>
           <div class="project-actions">
-            <button class="btn btn-secondary" style="border: none; cursor: pointer;" onclick="openProjectModal('StarNote AI-Integrated Smart Study Platform', 'React.js, Node.js, Express.js, Mongo DB, WebSockets, CORS handling, Multer, JWT + Google OAuth, Rest APIs', '<h4>Overview</h4><p>Engineered an AI-powered study platform for intelligent resource management and smart learning assistance.</p><h4>Technical Challenges &amp; Solutions</h4><ul><li><strong>AI Integration:</strong> Leveraged Google Gemini, Groq, and OpenRouter APIs to enable AI chat, note summarization, quiz generation, roadmap creation, and intelligent study assistance.</li><li><strong>Real-time Data:</strong> Implemented WebSockets for immediate UI updates.</li></ul>')">View Case Study</button>
+
             <a class="btn btn-primary" href="https://starnote-ai.vercel.app/" target="_blank" rel="noopener noreferrer"><span
                 class="icon"></span> Live</a>
             <a class="icon-btn github" href="https://github.com/Pavangupta05/Smart-study-Platform-" target="_blank" rel="noopener noreferrer"
@@ -511,7 +553,7 @@ high-speed data retrieval.
           </div>
           <div class="project-actions">
 
-            <button class="btn btn-secondary" style="border: none; cursor: pointer;" onclick="openProjectModal('TalkNow Real-Time Chat Application', 'React.js, Node.js, Express.js, Mongo DB, WebSockets, Nodemailer, JWT + Google OAuth', '<h4>Overview</h4><p>Engineered a full-stack, low-latency chat platform utilizing React.js, Node.js, and Socket.io to seamlessly support 100+ concurrent users.</p><h4>Technical Challenges &amp; Solutions</h4><ul><li><strong>Architecture:</strong> Architected 15+ secure REST APIs for user authentication and chat management while optimizing MongoDB schemas for high-speed data retrieval.</li><li><strong>Real-time Data:</strong> Implemented WebSockets for immediate chat updates.</li></ul>')">View Case Study</button>
+
 
             <a class="btn btn-primary" href="https://chat-app-frontend-kappa-tan.vercel.app" target="_blank" rel="noopener noreferrer">
               <span class="icon"></span> Live
@@ -572,6 +614,34 @@ high-speed data retrieval.
       </div> 
     </div>
 
+  </section>
+
+  <!-- Blog Section -->
+  <section id="blog" class="section">
+    <h2 class="section-title">Articles</h2>
+    <div class="blog-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
+      <div class="blog-card scroll-reveal lg-card" onclick="openProjectModal('Mastering the MERN Stack', 'React,Node.js,MongoDB,Express', '<div class=&quot;case-study-section&quot;><h3>The Problem</h3><p>Building scalable full-stack applications requires seamless integration between frontend and backend architectures.</p></div><div class=&quot;case-study-section&quot;><h3>The Architecture</h3><p>Using <strong>React</strong> for the UI allows for dynamic state management, while <strong>Node.js</strong> and <strong>Express</strong> handle API requests efficiently. <strong>MongoDB</strong> serves as a flexible NoSQL database, rounding out the MERN stack.</p></div><div class=&quot;case-study-section&quot;><h3>Outcome</h3><p>Mastering this stack allows developers to build rapid, full-stack prototypes that scale natively.</p></div>')" style="cursor: pointer;">
+        <div class="blog-image" style="background: linear-gradient(135deg, #0A84FF, #5E5CE6); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
+          <span>MERN</span>
+        </div>
+        <div class="blog-content" style="padding: 25px;">
+          <p class="blog-date" style="color: var(--accent); font-size: 0.85rem; margin-bottom: 10px;">June 2026 • 5 min read</p>
+          <h3 style="margin-bottom: 15px; font-size: 1.4rem;">Mastering the MERN Stack</h3>
+          <p style="color: #ccc; line-height: 1.6; font-size: 0.95rem;">A deep dive into building scalable full-stack applications with React, Node.js, Express, and MongoDB.</p>
+        </div>
+      </div>
+
+      <div class="blog-card scroll-reveal lg-card" onclick="openProjectModal('Learning DSA in C++', 'C++,DSA,Problem Solving', '<div class=&quot;case-study-section&quot;><h3>The Foundation</h3><p>Data Structures and Algorithms are simply about organizing data logically so we can solve problems effectively. You don\'t need to be a genius to learn it—just consistent.</p></div><div class=&quot;case-study-section&quot;><h3>Why C++?</h3><p>We explore arrays, linked lists, and trees using C++. It\'s a great language for this because working with pointers and the standard library (STL) gives you a deeper look at how memory actually works under the hood.</p></div><div class=&quot;case-study-section&quot;><h3>The Takeaway</h3><p>Building a solid grasp of these fundamental concepts helps you write cleaner logic in any language, giving you a clear edge when building projects or tackling technical interviews.</p></div>')" style="cursor: pointer;">
+        <div class="blog-image" style="background: linear-gradient(135deg, #32D74B, #0A84FF); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
+          <span>C++ DSA</span>
+        </div>
+        <div class="blog-content" style="padding: 25px;">
+          <p class="blog-date" style="color: var(--accent); font-size: 0.85rem; margin-bottom: 10px;">May 2026 • 6 min read</p>
+          <h3 style="margin-bottom: 15px; font-size: 1.4rem;">Learning DSA in C++</h3>
+          <p style="color: #ccc; line-height: 1.6; font-size: 0.95rem;">Breaking down common data structures and algorithms in C++ with practical, everyday examples.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="education" class="education">
@@ -653,20 +723,54 @@ high-speed data retrieval.
         <span>+91-8005872338 (Available for Freelance Projects & Internship Opportunities)</span>
       </div>
     </div>
-    <form class="contact-form ios-form" id="contactForm" id="contactForm" action="https://formsubmit.co/pavangupta150605@gmail.com" method="POST">
-      <!-- Disable captcha -->
-      <input type="hidden" name="_captcha" value="false">
+
+    <!-- Calendly Integration for HR/Recruiters -->
+    <div class="recruiter-section scroll-reveal">
+      <div class="recruiter-card">
+        <h3 style="margin-bottom: 12px; color: var(--accent); font-size: 1.4rem;">Get in Touch</h3>
+        <p style="margin-bottom: 24px; color: #d2d7e5; font-size: 1.05rem;">Let's Start the Conversation</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://calendly.com/your-calendly-link" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-calendly">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+            Schedule via Calendly
+          </a>
+          <a href="tel:+918005872338" class="btn btn-secondary btn-call">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+            Call Now
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-divider scroll-reveal">
+      <div class="divider-line"></div>
+      <span>OR SEND A MESSAGE</span>
+      <div class="divider-line"></div>
+    </div>
+    <form class="contact-form ios-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+      <!-- Web3Forms Access Key -->
+      <input type="hidden" name="access_key" value="86f640ca-e776-49de-8471-917bc6cb8fd4">
+      
+      
 
       <div class="form-group">
-        <input type="text" name="name" id="nameInput" placeholder="Your Name" required minlength="2" />
+        <label for="nameInput" class="form-label">Full Name</label>
+        <input type="text" name="name" id="nameInput" placeholder="Enter your full name" required minlength="2" />
         <span class="form-error" id="nameError"></span>
       </div>
       <div class="form-group">
-        <input type="email" name="email" id="emailInput" placeholder="Your Email" required />
+        <label for="emailInput" class="form-label">Email Address</label>
+        <input type="email" name="email" id="emailInput" placeholder="Enter your email" required />
         <span class="form-error" id="emailError"></span>
       </div>
       <div class="form-group">
-        <textarea name="message" id="messageInput" rows="5" placeholder="Your Message" required minlength="10"></textarea>
+        <label for="phoneInput" class="form-label">Phone Number</label>
+        <input type="tel" name="phone" id="phoneInput" placeholder="Enter your phone number" required />
+        <span class="form-error" id="phoneError"></span>
+      </div>
+      <div class="form-group">
+        <label for="messageInput" class="form-label">Message</label>
+        <textarea name="message" id="messageInput" rows="5" placeholder="Share your query or message here..." required minlength="10"></textarea>
         <span class="form-error" id="messageError"></span>
       </div>
       <button type="submit" class="btn btn-primary" id="submitBtn">Send Message</button>
@@ -726,20 +830,43 @@ high-speed data retrieval.
   </div>
 
 
-  <!-- Mobile Drawer Menu -->
+  <!-- Modern Mobile Grid Menu -->
   <div class="mobile-menu-overlay" id="mobileMenu">
-    <ul class="mobile-nav-links">
-      <li><a href="#home" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a></li>
-      <li><a href="#about" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>About</a></li>
-      <li><a href="#skills" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>Skills</a></li>
-      <li><a href="#experience" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>Experience</a></li>
-      <li><a href="#certificates" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M12 2C6.5 2 2 6.5 2 12c0 3.58 1.9 6.7 4.75 8.45L5 22l7-2 7 2-1.75-1.55C20.1 18.7 22 15.58 22 12c0-5.5-4.5-10-10-10zm0 14c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>Certificates</a></li>
-      <li><a href="#projects" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M4 14h6v-4H4v4zm0 5h6v-4H4v4zM4 9h6V5H4v4zm7 5h6v-4h-6v4zm0 5h6v-4h-6v4zM11 5v4h6V5h-6z"/></svg>Projects</a></li>
-      <li><a href="#education" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>Education</a></li>
-      <li><a href="#hobbies" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>Hobbies</a></li>
-      <li><a href="#contact" class="mobile-contact-btn" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" class="nav-svg-icon"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Contact</a></li>
-    </ul>
+    <div class="mobile-grid-menu">
+      <div class="menu-header">
+        <h3>Menu</h3>
+        <button class="close-menu-btn" onclick="toggleMobileMenu()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="menu-grid">
+        <a href="#about" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-user"></i>
+          <span>About</span>
+        </a>
+        <a href="#experience" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Experience</span>
+        </a>
+        <a href="#certificates" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-award"></i>
+          <span>Certificates</span>
+        </a>
+        <a href="#education" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Education</span>
+        </a>
+        <a href="#hobbies" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-gamepad"></i>
+          <span>Hobbies</span>
+        </a>
+        <a href="#contact" onclick="toggleMobileMenu()" class="highlight">
+          <i class="fa-solid fa-envelope"></i>
+          <span>Contact</span>
+        </a>
+      </div>
+    </div>
+  </div>
 
+
+  <script src="script.js" defer></script>
 </body>
-
 </html>
