@@ -8,6 +8,18 @@ window.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("dark-mode");
   document.body.style.overflow = "auto";
 
+  // ============ LIVE JAIPUR TIME (IST) ============
+  function updateJaipurTime() {
+    const el = document.getElementById('jaipur-time');
+    if (!el) return;
+    const now = new Date();
+    const options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true };
+    const timeStr = now.toLocaleTimeString('en-US', options);
+    el.textContent = `IST ${timeStr}`;
+  }
+  updateJaipurTime();
+  setInterval(updateJaipurTime, 1000);
+
   // ============ PROJECT FILTERING ============
   const filterBtns = document.querySelectorAll(".filter-btn");
   const projectCards = document.querySelectorAll(".project-card");
@@ -729,4 +741,29 @@ window.closeProjectModal = function() {
 
 })();
 
-
+// ============ COPY EMAIL (global) ============
+function copyEmail() {
+  const email = 'pavangupta150605@gmail.com';
+  navigator.clipboard.writeText(email).then(() => {
+    const btn = document.getElementById('copy-email-btn');
+    if (!btn) return;
+    btn.innerHTML = '<i class="fa-solid fa-check" style="margin-right: 4px;"></i>Copied!';
+    btn.style.background = 'rgba(0,230,118,0.15)';
+    btn.style.borderColor = 'rgba(0,230,118,0.5)';
+    btn.style.color = '#00e676';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fa-regular fa-copy" style="margin-right: 4px;"></i>Copy';
+      btn.style.background = 'none';
+      btn.style.borderColor = 'rgba(0,230,255,0.3)';
+      btn.style.color = '#00e6ff';
+    }, 2500);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = email;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
