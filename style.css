@@ -4314,7 +4314,7 @@ body.loading {
   -webkit-backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
   padding: 20px 25px;
-  border-radius: 12px;
+  border-radius: 0;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
