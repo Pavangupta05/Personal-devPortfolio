@@ -747,12 +747,12 @@ function copyEmail() {
   navigator.clipboard.writeText(email).then(() => {
     const btn = document.getElementById('copy-email-btn');
     if (!btn) return;
-    btn.innerHTML = '<i class="fa-solid fa-check" style="margin-right: 4px;"></i>Copied!';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
     btn.style.background = 'rgba(0,230,118,0.15)';
     btn.style.borderColor = 'rgba(0,230,118,0.5)';
     btn.style.color = '#00e676';
     setTimeout(() => {
-      btn.innerHTML = '<i class="fa-regular fa-copy" style="margin-right: 4px;"></i>Copy';
+      btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
       btn.style.background = 'none';
       btn.style.borderColor = 'rgba(0,230,255,0.3)';
       btn.style.color = '#00e6ff';
