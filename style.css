@@ -4066,7 +4066,6 @@ body.loading {
 }
 
 /* --- Experience / Education Cards --- */
-.timeline-item,
 .experience-card,
 .edu-card,
 .cert-card,
@@ -4081,7 +4080,6 @@ body.loading {
   transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1) !important;
 }
 
-.timeline-item::after,
 .experience-card::after,
 .edu-card::after,
 .cert-card::after {
@@ -4093,7 +4091,6 @@ body.loading {
   pointer-events: none;
 }
 
-.timeline-item:hover,
 .experience-card:hover,
 .edu-card:hover,
 .cert-card:hover {
@@ -4226,7 +4223,8 @@ body.loading {
   position: relative;
   overflow: hidden;
 }
-/* ================= CTA BANNER ================= */
+
+/* ================= CTA BANNER ================= */
 .cta-banner {
   background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(191, 90, 242, 0.15));
   backdrop-filter: blur(24px) saturate(200%);
