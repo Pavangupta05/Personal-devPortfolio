@@ -4446,3 +4446,47 @@ section#home {
   }
 }
 
+/* --- Mobile Performance Sweet Spot --- */
+@media (max-width: 768px) {
+  /* Reduce blur from 32px/40px to 12px for much faster GPU rendering while keeping glass look */
+  .mobile-top-dock,
+  .project-card,
+  .skill-card,
+  .certificate-card,
+  .blog-card,
+  .glass-panel,
+  .desktop-navbar {
+    backdrop-filter: blur(12px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  }
+}
+
+/* --- Specific Transition Optimization --- */
+/* Replacing generic transition: all with targeted properties where it was causing layout thrashing */
+.skill-card, .project-card, .btn-primary, .btn-secondary, .social-icon-btn, .desktop-navbar a, .nav-contact-btn {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.3s ease, 
+              box-shadow 0.3s ease !important;
+}
+
+/* --- Skill Progress Bars Styles --- */
+.skill-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin-top: 15px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.skill-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0A84FF, #00D4FF);
+  border-radius: 4px;
+  width: 0%; /* Initial state for animation */
+  transition: width 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 0 10px rgba(0,212,255,0.6);
+}

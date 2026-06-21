@@ -36,12 +36,26 @@ window.addEventListener("DOMContentLoaded", () => {
       if (!f.el) return true;
       const v = f.el.value.trim();
       const ok = f.re ? f.re.test(v) : v.length >= f.min;
-      if (f.err) f.err.textContent = ok ? '' : f.msg;
+      
+      if (f.err) {
+        f.err.textContent = ok ? '' : f.msg;
+        f.err.style.color = ok ? '#30D158' : '#FF375F'; // green if ok, else red
+      }
       f.el.classList.toggle('error', !ok);
+      if (ok && v.length > 0) {
+        f.el.style.borderColor = '#30D158'; // success green
+        f.el.style.boxShadow = '0 0 8px rgba(48,209,88,0.3)';
+      } else {
+        f.el.style.borderColor = ''; // reset or error
+        f.el.style.boxShadow = '';
+      }
       return ok;
     }
     Object.keys(fields).forEach(k => {
-      if (fields[k].el) fields[k].el.addEventListener('blur', () => validate(k));
+      if (fields[k].el) {
+        fields[k].el.addEventListener('blur', () => validate(k));
+        fields[k].el.addEventListener('input', () => validate(k)); // Real-time validation
+      }
     });
     contactForm.addEventListener('submit', e => {
       const valid = Object.keys(fields).map(validate).every(Boolean);
@@ -151,7 +165,16 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    function animate() {
+    let lastTime = 0;
+    const fpsInterval = isMobile ? 1000 / 30 : 0;
+
+    function animate(time) {
+      animationId = requestAnimationFrame(animate);
+      if (fpsInterval > 0) {
+        const elapsed = time - lastTime;
+        if (elapsed < fpsInterval) return;
+        lastTime = time - (elapsed % fpsInterval);
+      }
       frameCount++;
       const pY = scrollYOffset * 0.08;
       // Must fill bg each frame because alpha:false skips transparent clear
@@ -160,7 +183,6 @@ window.addEventListener("DOMContentLoaded", () => {
       ctx.fillStyle = "rgba(0,191,255,0.3)";
       particles.forEach(p => { p.update(); p.draw(pY); });
       if (frameCount % 2 === 0) drawLines(pY); // lines every other frame
-      animationId = requestAnimationFrame(animate);
     }
 
     let resizeTimer;
@@ -369,6 +391,24 @@ window.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(r);
     r.addEventListener('animationend', () => r.remove());
   });
+
+  // ── SKILL PROGRESS ANIMATION ────────────────────────────────────────────────
+  const progressBars = document.querySelectorAll('.skill-progress-fill');
+  if (progressBars.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          // Set width slightly later to allow smooth transition
+          setTimeout(() => {
+            el.style.width = el.getAttribute('data-progress') || '0%';
+          }, 200);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.1 });
+    progressBars.forEach(p => observer.observe(p));
+  }
 });
 
 // ── MOBILE MENU ────────────────────────────────────────────────────────────────
