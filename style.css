@@ -211,6 +211,8 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   max-width: 100%;
+  /* Edge-to-edge: expand html to fill behind system bars */
+  height: 100%;
 }
 
 body {
@@ -219,6 +221,45 @@ body {
   color: var(--text-primary);
   overflow-x: hidden;
   max-width: 100%;
+  /* NO padding-top — background must flow behind system status bar */
+}
+
+/* =====================================================
+   SAMSUNG / APPLE WEATHER-STYLE EDGE-TO-EDGE
+   viewport-fit=cover + black-translucent status bar
+   The status bar area shows the app background:
+   NO strip, NO header, NO colored bar.
+   Safe-area only pads CONTENT, not color.
+   ===================================================== */
+@media (max-width: 992px) {
+
+  /* The animated canvas covers the full screen including under the status bar */
+  #bg-canvas {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  /* Ambient blobs: start from physical top edge */
+  body > div:first-of-type {
+    top: 0 !important;
+  }
+
+  /* Hero section: background fills all the way to physical top.
+     Padding-top uses safe-area-inset-top so the text/content
+     clears the status icons, but the background gradient
+     continues seamlessly behind them. */
+  section#home {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 90px);
+    min-height: 100dvh;
+    min-height: 100vh; /* fallback */
+  }
+
+  /* Every other section compensates for the floating nav height */
+  section:not(#home) {
+    scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 80px);
+  }
 }
 
 /* Navbar */
@@ -4022,14 +4063,22 @@ body.loading {
   pointer-events: none;
 }
 
-/* --- Mobile Top Dock: Liquid Glass --- */
+/* --- Mobile Top Dock: Liquid Glass (Definitive) ---
+   Floats below system status bar using safe-area-inset-top.
+   Background is dark glass — HERO is visible behind/around it.
+   No colored strip. No header bar. Pure edge-to-edge. */
 .mobile-top-dock {
-  background: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(36px) saturate(220%) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(220%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+  background: rgba(18, 18, 22, 0.72) !important;
+  backdrop-filter: blur(40px) saturate(200%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 0 0.5px rgba(255,255,255,0.08) !important;
   border-radius: 100px !important;
+  /* Use safe-area for dynamic notch/camera support */
+  top: calc(max(12px, env(safe-area-inset-top, 0px) + 8px)) !important;
 }
 
 /* --- Profile Photo: Liquid Glass Ring --- */
