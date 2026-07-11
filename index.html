@@ -28,12 +28,16 @@
   <link rel="apple-touch-icon" href="/app-icon.png" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
-  <script src="https://unpkg.com/scrollreveal" defer></script>
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet">
+  
+  <!-- GSAP & Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+  
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -91,6 +95,9 @@
 </head>
 
 <body>
+  <!-- Custom Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
 
   <!-- ===== LIQUID GLASS SVG FILTER ===== -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -250,29 +257,48 @@
       <a href="#education">Education</a>
       <a href="#hobbies">Hobbies</a>
     </div>
-    <a href="#contact" class="nav-contact-btn">Contact</a>
+    <div style="display:flex;align-items:center;gap:10px;">
+    <button id="terminalNavBtn" onclick="openTerminal()" title="Open Terminal (Ctrl+J)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 16px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:8px;">⌘ Terminal</button>
+    <button id="cameraScrollBtn" onclick="toggleCameraScroll()" title="Gesture Scroll" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 14px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:4px;">📷 Gesture</button>
   </nav>
 
-  <!-- Modern Mobile Top Dock -->
-  <nav class="mobile-top-dock">
-    <a href="#home" class="dock-item">
-      <i class="fa-solid fa-house"></i>
-      <span>Home</span>
-    </a>
-    <a href="#projects" class="dock-item">
-      <i class="fa-solid fa-briefcase"></i>
-      <span>Projects</span>
-    </a>
-    <a href="#skills" class="dock-item">
-      <i class="fa-solid fa-code"></i>
-      <span>Skills</span>
-    </a>
+  <!-- Modern Mobile Dynamic Nav -->
+  <nav class="mobile-dynamic-nav" id="mobileDynamicNav">
+    <div class="mdn-background" id="mdnBackground"></div>
+    
+    <div class="mdn-left">
+      <button class="mdn-toggle" onclick="toggleMdn()">
+        <i class="fa-solid fa-bars" id="mdnIcon"></i>
+      </button>
+      <span class="mdn-brand" id="mdnBrand">Pavan.</span>
+      
+      <div class="mdn-links" id="mdnLinks">
+        <a href="#skills" onclick="toggleMdn()">Skills.</a>
+        <a href="#experience" onclick="toggleMdn()">Work.</a>
+        <a href="#projects" onclick="toggleMdn()">Projects.</a>
+        <a href="#contact" onclick="toggleMdn()">Contact.</a>
+      </div>
+    </div>
 
-    <button class="dock-item more-btn" id="mobileHamburger" onclick="toggleMobileMenu()">
-      <i class="fa-solid fa-bars-staggered"></i>
-      <span>Menu</span>
-    </button>
+    <div class="mdn-right">
+      <button class="mdn-btn" onclick="openTerminal()"><i class="fa-solid fa-terminal"></i></button>
+      <button class="mdn-btn" onclick="toggleCameraScroll()"><i class="fa-solid fa-camera"></i></button>
+    </div>
   </nav>
+
+  <script>
+    function toggleMdn() {
+      const nav = document.getElementById('mobileDynamicNav');
+      const icon = document.getElementById('mdnIcon');
+      if (nav.classList.contains('expanded')) {
+        nav.classList.remove('expanded');
+        icon.className = 'fa-solid fa-bars';
+      } else {
+        nav.classList.add('expanded');
+        icon.className = 'fa-solid fa-xmark';
+      }
+    }
+  </script>
 
   <!-- Home Section -->
   <section id="home" class="section">
@@ -347,31 +373,31 @@
 
         <div class="skills-container" id="skillsGrid">
           <!-- Frontend -->
-          <div class="skill-card" data-category="frontend">
+          <div class="skill-card scroll-reveal" data-category="frontend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5">
             <h3>HTML 5</h3>
             <p>Semantic tags and accessible structure.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="90%"></div></div>
           </div>
-          <div class="skill-card" data-category="frontend">
+          <div class="skill-card scroll-reveal" data-category="frontend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3">
             <h3>CSS 3</h3>
             <p>Responsive, modern glassmorphism UI.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="85%"></div></div>
           </div>
-          <div class="skill-card" data-category="frontend">
+          <div class="skill-card scroll-reveal" data-category="frontend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
             <h3>JavaScript</h3>
             <p>Dynamic UIs and complex DOM manipulation.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="85%"></div></div>
           </div>
-          <div class="skill-card" data-category="frontend">
+          <div class="skill-card scroll-reveal" data-category="frontend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React">
             <h3>React</h3>
             <p>Fast, scalable component-based architecture.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="80%"></div></div>
           </div>
-          <div class="skill-card" data-category="frontend">
+          <div class="skill-card scroll-reveal" data-category="frontend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" alt="Bootstrap">
             <h3>Bootstrap</h3>
             <p>Rapid UI development with grid systems.</p>
@@ -379,31 +405,31 @@
           </div>
 
           <!-- Backend -->
-          <div class="skill-card" data-category="backend">
+          <div class="skill-card scroll-reveal" data-category="backend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js">
             <h3>Node.js</h3>
             <p>High-performance backend and server logic.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="80%"></div></div>
           </div>
-          <div class="skill-card" data-category="backend">
+          <div class="skill-card scroll-reveal" data-category="backend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express.js" style="background: white; border-radius: 50%; padding: 5px;">
             <h3>Express.js</h3>
             <p>Fast, structured backend API routing.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="75%"></div></div>
           </div>
-          <div class="skill-card" data-category="backend">
+          <div class="skill-card scroll-reveal" data-category="backend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB">
             <h3>MongoDB</h3>
             <p>NoSQL database for flexible data modeling.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="80%"></div></div>
           </div>
-          <div class="skill-card" data-category="backend">
+          <div class="skill-card scroll-reveal" data-category="backend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
             <h3>Python</h3>
             <p>Scripting, automation, and backend processes.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="70%"></div></div>
           </div>
-          <div class="skill-card" data-category="backend">
+          <div class="skill-card scroll-reveal" data-category="backend">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++">
             <h3>C++</h3>
             <p>High-performance computing and algorithms.</p>
@@ -411,19 +437,19 @@
           </div>
 
           <!-- Tools -->
-          <div class="skill-card" data-category="tools">
+          <div class="skill-card scroll-reveal" data-category="tools">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VSCode">
             <h3>VS Code</h3>
             <p>Advanced workflows and environment setups.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="95%"></div></div>
           </div>
-          <div class="skill-card" data-category="tools">
+          <div class="skill-card scroll-reveal" data-category="tools">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma">
             <h3>Figma</h3>
             <p>UI/UX prototyping and wireframing.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="70%"></div></div>
           </div>
-          <div class="skill-card" data-category="tools">
+          <div class="skill-card scroll-reveal" data-category="tools">
             <span class="skill-svg-icon">
               <svg viewBox="0 0 32 32" width="48" height="48"><circle cx="16" cy="16" r="16" fill="#FF6C37"/><path d="M21.3 11.8l-9.5 5.5v-11l9.5 5.5z" fill="#fff"/></svg>
             </span>
@@ -431,7 +457,7 @@
             <p>API endpoint testing and documentation.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="75%"></div></div>
           </div>
-          <div class="skill-card" data-category="tools">
+          <div class="skill-card scroll-reveal" data-category="tools">
             <span class="skill-svg-icon">
               <svg viewBox="0 0 100 100" width="48" height="48"><rect width="100" height="100" rx="20" fill="#1A1A1A"/><text y="68" x="50" text-anchor="middle" font-size="56" fill="#00D4FF">⌘</text></svg>
             </span>
@@ -439,7 +465,7 @@
             <p>AI-assisted rapid programming.</p>
             <div class="skill-progress"><div class="skill-progress-fill" data-progress="85%"></div></div>
           </div>
-          <div class="skill-card" data-category="tools">
+          <div class="skill-card scroll-reveal" data-category="tools">
             <span class="skill-svg-icon">
               <svg viewBox="0 0 100 100" width="48" height="48"><rect width="100" height="100" rx="20" fill="#EA4B71"/><text y="72" x="50" text-anchor="middle" font-size="60" font-weight="bold" fill="white" font-family="monospace">n8n</text></svg>
             </span>
@@ -455,7 +481,7 @@
         <h2 class="section-title" style="text-align: left; margin-bottom: 20px;">Soft Skills</h2>
         <div class="soft-skills-container">
           
-          <div class="soft-skill-item">
+          <div class="soft-skill-item scroll-reveal">
             <div class="soft-skill-icon" style="background: rgba(10,132,255,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#0A84FF"><path d="M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14l4 4V4a2 2 0 0 0-2-2z"/></svg>
             </div>
@@ -465,7 +491,7 @@
             </div>
           </div>
 
-          <div class="soft-skill-item">
+          <div class="soft-skill-item scroll-reveal">
             <div class="soft-skill-icon" style="background: rgba(255,159,10,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#FF9F0A"><path d="M17.5 12a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zM4 7h7v2H4zm0 4h7v2H4zM2 3h20v2H2z"/></svg>
             </div>
@@ -475,7 +501,7 @@
             </div>
           </div>
 
-          <div class="soft-skill-item">
+          <div class="soft-skill-item scroll-reveal">
             <div class="soft-skill-icon" style="background: rgba(48,209,88,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#30D158"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm.5 14H11v-5.5h2V16zm0-7H11V7h2v2z"/><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM11 7h2v2h-2zm0 4h2v6h-2z"/><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm1-9v5h-2v-5h2zm0-3v2h-2V8h2z"/>
               <circle cx="12" cy="12" r="10" fill="none" stroke="#30D158" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="#30D158" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
@@ -486,7 +512,7 @@
             </div>
           </div>
 
-          <div class="soft-skill-item">
+          <div class="soft-skill-item scroll-reveal">
             <div class="soft-skill-icon" style="background: rgba(191,90,242,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#BF5AF2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93V18a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 13H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 19.93z"/></svg>
             </div>
@@ -496,7 +522,7 @@
             </div>
           </div>
 
-          <div class="soft-skill-item">
+          <div class="soft-skill-item scroll-reveal">
             <div class="soft-skill-icon" style="background: rgba(255,55,95,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#FF375F"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
             </div>
@@ -910,43 +936,450 @@ high-speed data retrieval.
   </div>
 
 
-  <!-- Modern Mobile Grid Menu -->
-  <div class="mobile-menu-overlay" id="mobileMenu">
-    <div class="mobile-grid-menu">
-      <div class="menu-header">
-        <h3>Menu</h3>
-        <button class="close-menu-btn" onclick="toggleMobileMenu()"><i class="fa-solid fa-xmark"></i></button>
+  <!-- (Old mobile grid menu removed) -->
+
+  <script type="module" src="./script.js"></script>
+
+  <!-- ===== TERMINAL OVERLAY ===== -->
+  <div class="terminal-overlay" id="terminalOverlay">
+    <div class="terminal-window">
+      <div class="terminal-titlebar">
+        <span class="traffic-dot dot-red" onclick="closeTerminal()" title="Close"></span>
+        <span class="traffic-dot dot-yellow"></span>
+        <span class="traffic-dot dot-green"></span>
+        <span class="terminal-title-text">Terminal — pavan@portfolio:~</span>
       </div>
-      <div class="menu-grid">
-        <a href="#about" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-user"></i>
-          <span>About</span>
-        </a>
-        <a href="#experience" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-chart-line"></i>
-          <span>Experience</span>
-        </a>
-        <a href="#certificates" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-award"></i>
-          <span>Certificates</span>
-        </a>
-        <a href="#education" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-graduation-cap"></i>
-          <span>Education</span>
-        </a>
-        <a href="#hobbies" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-gamepad"></i>
-          <span>Hobbies</span>
-        </a>
-        <a href="#contact" onclick="toggleMobileMenu()" class="highlight">
-          <i class="fa-solid fa-envelope"></i>
-          <span>Contact</span>
-        </a>
+      <div class="terminal-body" id="termBody">
+        <div class="term-line"><span class="term-green">Portfolio OS v1.0 [Pavan Gupta Edition]</span></div>
+        <div class="term-line term-gray">Loading modules... done.</div>
+        <div class="term-line term-gray">Initializing file system... done.</div>
+        <div class="term-line term-gray">All systems operational.</div>
+        <br>
+        <div class="term-line">Type <span class="term-green">"help"</span> to see available commands.</div>
+        <div class="term-line">Type <span class="term-green">"neofetch"</span> to view system info.</div>
+        <br>
+        <div class="term-input-line" id="termInputLine">
+          <span class="term-prompt">pavan@portfolio:~$&nbsp;</span>
+          <input class="term-input" id="termInput" type="text" autocomplete="off" spellcheck="false" />
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Camera Gesture Scroll Overlay -->
+  <div id="cameraOverlay" style="display:none;position:fixed;bottom:24px;left:24px;z-index:99000;flex-direction:column;align-items:center;gap:8px;">
+    <div style="position:relative;width:160px;height:120px;border-radius:16px;overflow:hidden;border:2px solid rgba(0,255,136,0.5);box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+      <video id="cameraFeed" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);"></video>
+      <canvas id="cameraCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+      <div id="gestureStatus" style="position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:0.7rem;font-weight:600;color:#00ff88;text-shadow:0 0 8px rgba(0,255,136,0.8);">Detecting...</div>
+    </div>
+    <button onclick="toggleCameraScroll()" style="background:rgba(255,70,70,0.85);border:none;color:#fff;padding:6px 16px;border-radius:50px;font-size:0.8rem;font-weight:600;cursor:pointer;">✕ Stop</button>
+  </div>
 
-  <script type="module" src="./script.js"></script>
+  <!-- Matrix Easter Egg -->
+  <canvas id="matrixCanvas" style="position:fixed;inset:0;z-index:99990;pointer-events:none;display:none;"></canvas>
+
+  <!-- Ctrl+J Hint Toast -->
+  <div id="termHint" style="position:fixed;bottom:24px;right:24px;background:rgba(30,30,40,0.95);color:#e0e0e0;padding:11px 18px;border-radius:50px;font-size:0.85rem;font-weight:500;z-index:9500;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUpHint 0.5s ease 3s both;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);">
+    ⌘ Try pressing <strong>Ctrl + J</strong>!
+    <button onclick="document.getElementById('termHint').remove()" style="background:none;border:none;font-size:1rem;cursor:pointer;opacity:0.5;color:inherit;">✕</button>
+  </div>
+
+  <script>
+  // ====================================================================
+  // TERMINAL
+  // ====================================================================
+  const termOverlay = document.getElementById('terminalOverlay');
+  const termBody    = document.getElementById('termBody');
+  const termInput   = document.getElementById('termInput');
+
+  window.openTerminal = function() {
+    termOverlay.classList.add('open');
+    setTimeout(() => termInput.focus(), 300);
+  };
+  window.closeTerminal = function() {
+    termOverlay.classList.remove('open');
+  };
+
+  termOverlay.addEventListener('click', e => {
+    if (e.target === termOverlay) closeTerminal();
+  });
+
+  const TERM_COMMANDS = {
+    help: () => `
+<div class="term-green">Available Commands:</div>
+<div>&nbsp; <span class="term-blue">help</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Show this help menu</div>
+<div>&nbsp; <span class="term-blue">neofetch</span>&nbsp;&nbsp;&nbsp; — Display system info</div>
+<div>&nbsp; <span class="term-blue">whoami</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — About Pavan</div>
+<div>&nbsp; <span class="term-blue">skills</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — List tech skills</div>
+<div>&nbsp; <span class="term-blue">projects</span>&nbsp;&nbsp;&nbsp; — List my projects</div>
+<div>&nbsp; <span class="term-blue">contact</span>&nbsp;&nbsp;&nbsp;&nbsp; — Get in touch</div>
+<div>&nbsp; <span class="term-blue">matrix</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — 😈 You sure?</div>
+<div>&nbsp; <span class="term-blue">clear</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Clear terminal</div>
+<div>&nbsp; <span class="term-blue">exit</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Close terminal</div>`,
+
+    neofetch: () => `
+<div style="display:flex;gap:20px;flex-wrap:wrap;">
+<pre class="term-green" style="font-size:0.65rem;line-height:1.3;">
+ ██████╗  █████╗ ██╗   ██╗ █████╗ ███╗   ██╗
+ ██╔══██╗██╔══██╗██║   ██║██╔══██╗████╗  ██║
+ ██████╔╝███████║██║   ██║███████║██╔██╗ ██║
+ ██╔═══╝ ██╔══██║╚██╗ ██╔╝██╔══██║██║╚██╗██║
+ ██║     ██║  ██║ ╚████╔╝ ██║  ██║██║ ╚████║
+ ╚═╝     ╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝</pre>
+<div>
+<div><span class="term-green">pavan</span><span class="term-gray">@</span><span class="term-green">portfolio</span></div>
+<div class="term-gray">-------------------------------</div>
+<div><span class="term-orange">OS:</span>        Portfolio OS v1.0</div>
+<div><span class="term-orange">Host:</span>      pavankumargupta.dev</div>
+<div><span class="term-orange">Role:</span>      Full Stack Developer</div>
+<div><span class="term-orange">College:</span>   JECRC, Jaipur (2023-2027)</div>
+<div><span class="term-orange">Stack:</span>     MERN + AI</div>
+<div><span class="term-orange">Frontend:</span>  React, JS, CSS, Bootstrap</div>
+<div><span class="term-orange">Backend:</span>   Node.js, Express, MongoDB</div>
+<div><span class="term-orange">Tools:</span>     Git, Postman, Figma, n8n</div>
+<div><span class="term-orange">Editor:</span>    VS Code + Cursor AI</div>
+</div></div>`,
+
+    whoami: () => `
+<div><span class="term-green">Pavan Kumar Gupta</span> — Full Stack Developer</div>
+<div>📍 Jaipur, Rajasthan, India</div>
+<div>🎓 B.Tech IT @ JECRC (2023-2027)</div>
+<div>💼 Ex-Intern @ Upflairs Pvt. Ltd.</div>
+<div>🚀 Building AI-powered web apps</div>`,
+
+    skills: () => `
+<div class="term-green">Tech Skills:</div>
+<div>&nbsp; Frontend: <span class="term-blue">React, JavaScript, HTML5, CSS3, Bootstrap</span></div>
+<div>&nbsp; Backend:  <span class="term-blue">Node.js, Express.js, Python, C++</span></div>
+<div>&nbsp; Database: <span class="term-blue">MongoDB</span></div>
+<div>&nbsp; AI Tools: <span class="term-blue">Gemini, Groq, OpenRouter APIs</span></div>
+<div>&nbsp; DevOps:   <span class="term-blue">Git, GitHub, Vercel, Postman</span></div>`,
+
+    projects: () => `
+<div class="term-green">My Projects:</div>
+<div>&nbsp; 1. <span class="term-blue">StarNote AI</span>     — AI-powered Smart Study Platform</div>
+<div>&nbsp;    <span class="term-gray">→ starnote-ai.vercel.app</span></div>
+<div>&nbsp; 2. <span class="term-blue">TalkNow Chat</span>   — Real-Time Chat App (Socket.io)</div>
+<div>&nbsp;    <span class="term-gray">→ chat-app-frontend-kappa-tan.vercel.app</span></div>
+<div>&nbsp; 3. <span class="term-blue">Smart Civic Eye</span> — AI Civic Issue Reporting System</div>
+<div>&nbsp;    <span class="term-gray">→ smart-civic-eye.vercel.app</span></div>`,
+
+    contact: () => `
+<div class="term-green">Get In Touch:</div>
+<div>&nbsp; 📧 Email:    <span class="term-blue">pavangupta150605@gmail.com</span></div>
+<div>&nbsp; 💼 LinkedIn: <span class="term-blue">linkedin.com/in/pavan-kumar-gupta-837089290</span></div>
+<div>&nbsp; 🐱 GitHub:   <span class="term-blue">github.com/Pavangupta05</span></div>
+<div>&nbsp; 📱 Phone:    <span class="term-blue">+91-8005872338</span></div>`,
+
+    matrix: () => { startMatrix(); return '<span class="term-green">Entering the Matrix... press any key to exit.</span>'; },
+
+    clear: () => { clearTerm(); return ''; },
+
+    exit: () => { closeTerminal(); return ''; }
+  };
+
+  function addTermLine(html) {
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    div.innerHTML = html;
+    termBody.insertBefore(div, document.getElementById('termInputLine'));
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+
+  function clearTerm() {
+    termBody.querySelectorAll('.term-line').forEach(l => l.remove());
+  }
+
+  termInput.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const cmd = termInput.value.trim().toLowerCase();
+    termInput.value = '';
+    addTermLine(`<span class="term-prompt">pavan@portfolio:~$&nbsp;</span>${cmd}`);
+    if (!cmd) return;
+    const handler = TERM_COMMANDS[cmd];
+    if (handler) {
+      const result = handler();
+      if (result) addTermLine(result);
+    } else {
+      addTermLine(`<span class="term-red">command not found: ${cmd}</span> — try <span class="term-green">"help"</span>`);
+    }
+  });
+
+  // ─── MATRIX EASTER EGG ───────────────────────────────────────────────────
+  function startMatrix() {
+    const mc = document.getElementById('matrixCanvas');
+    mc.style.display = 'block';
+    mc.width  = window.innerWidth;
+    mc.height = window.innerHeight;
+    const mctx  = mc.getContext('2d');
+    const cols  = Math.floor(mc.width / 16);
+    const drops = Array(cols).fill(1);
+    const tick = setInterval(() => {
+      mctx.fillStyle = 'rgba(0,0,0,0.05)';
+      mctx.fillRect(0, 0, mc.width, mc.height);
+      mctx.fillStyle = '#00ff88';
+      mctx.font = '14px monospace';
+      drops.forEach((y, i) => {
+        mctx.fillText(String.fromCharCode(0x30A0 + Math.random() * 96), i * 16, y * 16);
+        if (y * 16 > mc.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+    }, 40);
+    const stop = () => {
+      clearInterval(tick);
+      mc.style.display = 'none';
+      document.removeEventListener('keydown', stop);
+    };
+    setTimeout(() => document.addEventListener('keydown', stop), 500);
+  }
+
+  // ─── KEYBOARD SHORTCUT ───────────────────────────────────────────────────
+  window.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'j') { e.preventDefault(); openTerminal(); }
+    if (e.key === 'Escape' && termOverlay.classList.contains('open')) closeTerminal();
+  });
+
+  // ─── MAGNETIC SKILL CARDS ────────────────────────────────────────────────
+  function initMagneticCards() {
+    document.querySelectorAll('.skill-card').forEach(card => {
+      // Create spotlight layer
+      const spotlight = document.createElement('div');
+      spotlight.className = 'card-spotlight';
+      spotlight.style.cssText = `
+        position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
+        background:radial-gradient(circle at 50% 50%, rgba(10,132,255,0) 0%, transparent 70%);
+        transition:background 0.1s;opacity:0;
+      `;
+      card.appendChild(spotlight);
+
+      let rect;
+      card.addEventListener('mouseenter', () => {
+        rect = card.getBoundingClientRect();
+        spotlight.style.opacity = '1';
+        card.style.transition = 'transform 0.08s ease, box-shadow 0.3s ease';
+      });
+
+      card.addEventListener('mousemove', e => {
+        if (!rect) return;
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width  / 2;
+        const cy = rect.height / 2;
+        const dx = (x - cx) / cx;
+        const dy = (y - cy) / cy;
+
+        // 3D tilt
+        const tiltX = -dy * 14;
+        const tiltY =  dx * 14;
+
+        // Magnetic drag
+        const magX = dx * 10;
+        const magY = dy * 10;
+
+        card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate(${magX}px,${magY}px) scale(1.04)`;
+        card.style.boxShadow = `0 ${20 + dy*10}px ${50 + Math.abs(dx)*20}px rgba(10,132,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3)`;
+
+        // Moving spotlight
+        spotlight.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(10,132,255,0.18) 0%, transparent 65%)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        rect = null;
+        spotlight.style.opacity = '0';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.23,1,0.32,1), box-shadow 0.5s ease';
+        card.style.transform = '';
+        card.style.boxShadow = '';
+      });
+    });
+  }
+
+  // Run magnetic effect when DOM is loaded (also after filter changes)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMagneticCards);
+  } else {
+    initMagneticCards();
+  }
+
+  // Re-init after filter animations settle
+  document.querySelectorAll('.skill-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTimeout(initMagneticCards, 400));
+  });
+
+  // ─── CAMERA GESTURE SCROLL (MediaPipe Hands) ─────────────────────────────
+  let cameraActive = false;
+  let cameraStream = null;
+  let handsModel   = null;
+  let gestureRAF   = null;
+
+  window.toggleCameraScroll = async function() {
+    if (cameraActive) {
+      stopCamera();
+    } else {
+      startCamera();
+    }
+  };
+
+  async function startCamera() {
+    const overlay = document.getElementById('cameraOverlay');
+    const btn     = document.getElementById('cameraScrollBtn');
+    const video   = document.getElementById('cameraFeed');
+    const status  = document.getElementById('gestureStatus');
+
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 320, height: 240 }, audio: false });
+      video.srcObject = cameraStream;
+      await video.play();
+      cameraActive = true;
+      overlay.style.display = 'flex';
+      btn.style.background   = 'rgba(0,255,136,0.15)';
+      btn.style.borderColor  = 'rgba(0,255,136,0.5)';
+      btn.style.color        = '#00ff88';
+      status.textContent = 'Loading AI...';
+
+      // Load MediaPipe Hands
+      if (!handsModel) {
+        status.textContent = 'Loading AI model...';
+        await loadMediaPipe();
+      }
+      status.textContent = 'Ready — raise hand!';
+      runGestureLoop(video);
+    } catch (err) {
+      alert('Camera permission required for gesture scroll. Please allow camera access.');
+      console.error(err);
+    }
+  }
+
+  function stopCamera() {
+    cameraActive = false;
+    if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+    if (gestureRAF) { cancelAnimationFrame(gestureRAF); gestureRAF = null; }
+    const overlay = document.getElementById('cameraOverlay');
+    const btn     = document.getElementById('cameraScrollBtn');
+    overlay.style.display = 'none';
+    btn.style.background  = 'rgba(255,255,255,0.08)';
+    btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    btn.style.color       = 'var(--text-primary)';
+  }
+
+  async function loadMediaPipe() {
+    return new Promise((resolve, reject) => {
+      // Load MediaPipe Hands via CDN
+      const script1 = document.createElement('script');
+      script1.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js';
+      script1.crossOrigin = 'anonymous';
+      document.head.appendChild(script1);
+
+      const script2 = document.createElement('script');
+      script2.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js';
+      script2.crossOrigin = 'anonymous';
+
+      script1.onload = () => {
+        document.head.appendChild(script2);
+        script2.onload = async () => {
+          try {
+            handsModel = new Hands({
+              locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+            });
+            handsModel.setOptions({
+              maxNumHands: 1,
+              modelComplexity: 0,
+              minDetectionConfidence: 0.6,
+              minTrackingConfidence: 0.5
+            });
+            await handsModel.initialize();
+            resolve();
+          } catch(e) { reject(e); }
+        };
+        script2.onerror = reject;
+      };
+      script1.onerror = reject;
+    });
+  }
+
+  let lastScrollY = null;
+
+  function runGestureLoop(video) {
+    const canvas   = document.getElementById('cameraCanvas');
+    const ctx      = canvas.getContext('2d');
+    const status   = document.getElementById('gestureStatus');
+    let lastGestureY = null;
+    let scrollVelocity = 0;
+    let noHandFrames = 0;
+
+    async function processFrame() {
+      if (!cameraActive) return;
+      if (!handsModel || video.readyState < 2) { gestureRAF = requestAnimationFrame(processFrame); return; }
+
+      try {
+        await handsModel.send({ image: video });
+      } catch(e) {}
+      gestureRAF = requestAnimationFrame(processFrame);
+    }
+
+    handsModel.onResults(results => {
+      // Draw landmark overlay
+      canvas.width  = video.videoWidth  || 160;
+      canvas.height = video.videoHeight || 120;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        noHandFrames = 0;
+        const landmarks = results.multiHandLandmarks[0];
+
+        // Draw hand skeleton
+        ctx.strokeStyle = 'rgba(0,255,136,0.7)';
+        ctx.lineWidth = 2;
+        const connections = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+        connections.forEach(([a,b]) => {
+          const la = landmarks[a], lb = landmarks[b];
+          ctx.beginPath();
+          ctx.moveTo((1-la.x)*canvas.width, la.y*canvas.height);
+          ctx.lineTo((1-lb.x)*canvas.width, lb.y*canvas.height);
+          ctx.stroke();
+        });
+
+        // Draw dots
+        landmarks.forEach(lm => {
+          ctx.beginPath();
+          ctx.arc((1-lm.x)*canvas.width, lm.y*canvas.height, 3, 0, Math.PI*2);
+          ctx.fillStyle = '#00ff88';
+          ctx.fill();
+        });
+
+        // Use index finger tip (landmark 8) for scroll control
+        const indexTip  = landmarks[8];
+        const indexBase = landmarks[5];
+        const currentY  = indexTip.y;
+
+        // Determine if finger is pointing up (scrolling mode)
+        const isPointing = indexTip.y < indexBase.y - 0.05;
+
+        if (isPointing) {
+          if (lastGestureY !== null) {
+            const deltaY = (currentY - lastGestureY) * 2500;
+            scrollVelocity = deltaY;
+            window.scrollBy({ top: deltaY, behavior: 'auto' });
+          }
+          lastGestureY = currentY;
+          status.textContent = '☝️ Scrolling...';
+          status.style.color = '#00ff88';
+        } else {
+          lastGestureY = null;
+          status.textContent = '✋ Hand detected';
+          status.style.color = '#ffbd2e';
+        }
+      } else {
+        noHandFrames++;
+        lastGestureY = null;
+        if (noHandFrames > 10) { status.textContent = 'Raise your hand'; status.style.color = '#888'; }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    });
+
+    processFrame();
+  }
+  </script>
 </body>
 </html>
+

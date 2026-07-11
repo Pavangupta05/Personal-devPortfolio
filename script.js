@@ -23,6 +23,47 @@ window.addEventListener("DOMContentLoaded", () => {
   updateJaipurTime();
   setInterval(updateJaipurTime, 1000);
 
+  // ── CUSTOM CURSOR ───────────────────────────────────────────────────────────
+  const cursor = document.querySelector('.cursor');
+  const cursorFollower = document.querySelector('.cursor-follower');
+  if (cursor && cursorFollower) {
+    let cursorX = window.innerWidth / 2, cursorY = window.innerHeight / 2;
+    let followerX = cursorX, followerY = cursorY;
+    
+    // Hide custom cursor on mobile/touch devices since they don't use cursors
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouch && window.innerWidth <= 768) {
+       cursor.style.display = 'none';
+       cursorFollower.style.display = 'none';
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      cursor.style.transform = `translate(calc(${cursorX}px - 50%), calc(${cursorY}px - 50%))`;
+    }, { passive: true });
+
+    function followLoop() {
+      followerX += (cursorX - followerX) * 0.15;
+      followerY += (cursorY - followerY) * 0.15;
+      cursorFollower.style.transform = `translate(calc(${followerX}px - 50%), calc(${followerY}px - 50%))`;
+      requestAnimationFrame(followLoop);
+    }
+    followLoop();
+    
+    const hoverElements = document.querySelectorAll('a, button, .skill-card, .project-card, .blog-card, .dock-item, .nav-contact-btn');
+    hoverElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.classList.add('active');
+        cursorFollower.classList.add('active');
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.classList.remove('active');
+        cursorFollower.classList.remove('active');
+      });
+    });
+  }
+
   // ── FORM VALIDATION ─────────────────────────────────────────────────────────
   const contactForm = document.getElementById("contactForm");
   if (contactForm) {
