@@ -260,6 +260,7 @@
     <div style="display:flex;align-items:center;gap:10px;">
     <button id="terminalNavBtn" onclick="openTerminal()" title="Open Terminal (Ctrl+J)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 16px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:8px;">⌘ Terminal</button>
     <button id="cameraScrollBtn" onclick="toggleCameraScroll()" title="Gesture Scroll" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 14px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:4px;">📷 Gesture</button>
+  </div>
   </nav>
 
   <!-- Modern Mobile Dynamic Nav -->
@@ -332,7 +333,7 @@
     
     <div class="about-container">
       <div class="about-img">
-        <img src="/ProfilePhoto.png" alt="Pavan's Profile Photo">
+        <img src="/ProfilePhoto.png" alt="Pavan's Profile Photo" class="img-skeleton" onload="this.classList.remove('img-skeleton')">
       </div>
       <div class="about-text">
         <h2>About Me</h2>
@@ -610,7 +611,7 @@
       <!-- Java Certificate -->
       <div class="certificate-card scroll-reveal" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
         <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 25px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-          <img src="/JAVA.jpg" alt="Java Certificate" loading="lazy" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+          <img src="/JAVA.jpg" alt="Java Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         </div>
         <div class="content" style="padding: 22px;">
           <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: #fff;">Java Programming</h3>
@@ -626,7 +627,7 @@
       <!-- Kaizen -->
       <div class="certificate-card scroll-reveal" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
         <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 25px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-          <img src="/Python.jpg" alt="Python Certificate" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+          <img src="/Python.jpg" alt="Python Certificate" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         </div>
         <div class="content" style="padding: 22px;">
           <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: #fff;">Python Programming</h3>
@@ -642,7 +643,7 @@
       <!-- Upflairs -->
       <div class="certificate-card scroll-reveal" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
         <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 25px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-          <img src="/Upflairs.jpg" alt="Full Stack Certificate" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+          <img src="/Upflairs.jpg" alt="Full Stack Certificate" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         </div>
         <div class="content" style="padding: 22px;">
           <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: #fff;">Full Stack Web Developer</h3>
@@ -662,8 +663,8 @@
 
     <div class="project-grid">
       <!-- Project 1 -->
-<div class="project-card scroll-reveal" data-project-tags="javascript">
-        <img src="/StarNote.png" alt="Project 2">
+      <div class="project-card scroll-reveal project-clickable" data-project-tags="javascript">
+        <img src="/StarNote.png" alt="Project 2" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="cursor: pointer;">
         <div class="project-info">
           <h3>StarNote AI-Integrated Smart Study Platform</h3>
           <p>• Engineered an AI-powered study platform for intelligent resource management and smart learning assistance.</p>
@@ -688,8 +689,8 @@ creation, and intelligent study assistance.</p>
       </div>
 
       <!-- Project 2 -->
-      <div class="project-card scroll-reveal" data-project-tags="react nodejs">
-        <img src="/ChatApp.png" alt="Project 1">
+      <div class="project-card scroll-reveal project-clickable" data-project-tags="react nodejs">
+        <img src="/ChatApp.png" alt="Project 1" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="cursor: pointer;">
         <div class="project-info">
           <h3>TalkNow Real-Time Chat Application</h3>
           <p>• Engineered a full-stack, low-latency chat platform utilizing React.js, Node.js, and Socket.io to seamlessly support 100+
@@ -718,8 +719,8 @@ high-speed data retrieval.
       
        <!-- Project 3 -->
 
-      <div class="project-card scroll-reveal" data-project-tags="react nodejs">
-        <img src="./Screenshot 2025-10-05 204623.png" alt="Civic Issue Reporting System Screenshot">
+      <div class="project-card scroll-reveal project-clickable" data-project-tags="react nodejs">
+        <img src="./Screenshot 2025-10-05 204623.png" alt="Civic Issue Reporting System Screenshot" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="cursor: pointer;">
         <div class="project-info">
           <h3> The Civic eye crowdedsourced Issue Reporting System </h3>
           <p>• Developed a full-stack web application enabling citizens to report, track, and resolve civic issues in
@@ -836,13 +837,17 @@ high-speed data retrieval.
         <h3 style="margin-bottom: 12px; color: var(--accent); font-size: 1.4rem;">Get in Touch</h3>
         <p style="margin-bottom: 24px; color: #d2d7e5; font-size: 1.05rem;">Let's Start the Conversation</p>
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <a href="https://calendly.com/your-calendly-link" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-calendly">
+          <a href="https://calendly.com/pavangupta150605/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-calendly">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
             Schedule via Calendly
           </a>
           <a href="tel:+918005872338" class="btn btn-secondary btn-call">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
             Call Now
+          </a>
+          <a href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AN:Gupta;Pavan%0AFN:Pavan Kumar Gupta%0ATITLE:Full Stack Developer%0AEMAIL:pavangupta150605@gmail.com%0ATEL:+918005872338%0AURL:https://github.com/Pavangupta05%0AEND:VCARD" download="Pavan_Kumar_Gupta.vcf" class="btn btn-secondary" style="border-color: rgba(48,209,88,0.3); color: #30D158;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm5 12H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V18z"/></svg>
+            Save Contact
           </a>
         </div>
       </div>
@@ -879,7 +884,10 @@ high-speed data retrieval.
         <textarea name="message" id="messageInput" rows="5" placeholder="Share your query or message here..." required minlength="10"></textarea>
         <span class="form-error" id="messageError"></span>
       </div>
-      <button type="submit" class="btn btn-primary" id="submitBtn">Send Message</button>
+      <button type="submit" class="btn btn-primary" id="submitBtn">
+        <span class="btn-text">Send Message</span>
+        <i class="fa-solid fa-circle-notch fa-spin spinner" style="display: none;"></i>
+      </button>
     </form>
 
   </section>
@@ -937,6 +945,18 @@ high-speed data retrieval.
 
 
   <!-- (Old mobile grid menu removed) -->
+
+  <!-- Project Modal -->
+  <div id="projectModal" class="project-modal-overlay">
+    <div class="project-modal-content">
+      <button class="project-modal-close" onclick="closeProjectModal()">&times;</button>
+      <img id="modalProjectImage" src="" alt="Project Image" style="width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+      <h3 id="modalProjectTitle" class="modal-project-title" style="margin-bottom: 10px; color: var(--accent);"></h3>
+      <div id="modalProjectBody" class="modal-project-body" style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;"></div>
+      <div id="modalProjectBadges" class="badge-list" style="margin-bottom: 20px;"></div>
+      <div id="modalProjectActions" class="project-actions"></div>
+    </div>
+  </div>
 
   <script type="module" src="./script.js"></script>
 
@@ -1014,6 +1034,8 @@ high-speed data retrieval.
 <div>&nbsp; <span class="term-blue">skills</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — List tech skills</div>
 <div>&nbsp; <span class="term-blue">projects</span>&nbsp;&nbsp;&nbsp; — List my projects</div>
 <div>&nbsp; <span class="term-blue">contact</span>&nbsp;&nbsp;&nbsp;&nbsp; — Get in touch</div>
+<div>&nbsp; <span class="term-blue">sudo</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Super user access</div>
+<div>&nbsp; <span class="term-blue">party</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — 🎉 Try it!</div>
 <div>&nbsp; <span class="term-blue">matrix</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — 😈 You sure?</div>
 <div>&nbsp; <span class="term-blue">clear</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Clear terminal</div>
 <div>&nbsp; <span class="term-blue">exit</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Close terminal</div>`,
@@ -1071,6 +1093,15 @@ high-speed data retrieval.
 <div>&nbsp; 💼 LinkedIn: <span class="term-blue">linkedin.com/in/pavan-kumar-gupta-837089290</span></div>
 <div>&nbsp; 🐱 GitHub:   <span class="term-blue">github.com/Pavangupta05</span></div>
 <div>&nbsp; 📱 Phone:    <span class="term-blue">+91-8005872338</span></div>`,
+
+    sudo: () => '<span class="term-red">nice try, hacker. This incident will be reported to Santa. 🎅</span>',
+
+    party: () => { 
+      document.body.style.transition = 'filter 0.5s ease';
+      document.body.style.filter = 'hue-rotate(90deg) contrast(150%)'; 
+      setTimeout(() => document.body.style.filter = '', 3000); 
+      return '<span class="term-green">🎉 Party mode activated for 3 seconds!</span>'; 
+    },
 
     matrix: () => { startMatrix(); return '<span class="term-green">Entering the Matrix... press any key to exit.</span>'; },
 
@@ -1370,16 +1401,15 @@ high-speed data retrieval.
           status.style.color = '#ffbd2e';
         }
       } else {
+
         noHandFrames++;
         lastGestureY = null;
         if (noHandFrames > 10) { status.textContent = 'Raise your hand'; status.style.color = '#888'; }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     });
-
     processFrame();
   }
   </script>
 </body>
 </html>
-

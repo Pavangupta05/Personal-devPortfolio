@@ -12,6 +12,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("dark-mode");
   document.body.style.overflow = "auto";
 
+
   // ── LIVE IST CLOCK ──────────────────────────────────────────────────────────
   function updateJaipurTime() {
     const el = document.getElementById('jaipur-time');
@@ -463,31 +464,38 @@ window.toggleMobileMenu = function() {
 };
 
 // ── PROJECT MODAL ──────────────────────────────────────────────────────────────
-window.openProjectModal = function(title, tagsStr, contentHTML) {
-  let overlay = document.getElementById('project-modal');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'project-modal';
-    overlay.className = 'project-modal-overlay';
-    overlay.innerHTML = `
-      <div class="project-modal-content">
-        <div class="project-modal-close" onclick="closeProjectModal()"><i class="fa-solid fa-xmark"></i></div>
-        <h2 class="modal-project-title" id="modal-title"></h2>
-        <div class="modal-project-meta" id="modal-meta"></div>
-        <div class="modal-project-body" id="modal-body"></div>
-      </div>`;
-    document.body.appendChild(overlay);
-  }
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-meta').innerHTML = tagsStr.split(',').map(t => `<span class="badge">${t.trim()}</span>`).join('');
-  document.getElementById('modal-body').innerHTML = contentHTML;
-  overlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
-};
+window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.project-clickable img').forEach(img => {
+    img.addEventListener('click', (e) => {
+      const card = e.target.closest('.project-card');
+      if(!card) return;
+      const title = card.querySelector('h3').innerText;
+      const bodyText = Array.from(card.querySelectorAll('p')).map(p => p.outerHTML).join('');
+      const tags = card.querySelector('.badge-list').innerHTML;
+      const actions = card.querySelector('.project-actions').innerHTML;
+      const imgSrc = img.getAttribute('src');
+
+      document.getElementById('modalProjectTitle').innerText = title;
+      document.getElementById('modalProjectBody').innerHTML = bodyText;
+      document.getElementById('modalProjectBadges').innerHTML = tags;
+      document.getElementById('modalProjectActions').innerHTML = actions;
+      document.getElementById('modalProjectImage').setAttribute('src', imgSrc);
+
+      const modal = document.getElementById('projectModal');
+      if(modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+});
 
 window.closeProjectModal = function() {
-  const o = document.getElementById('project-modal');
-  if (o) { o.classList.remove('active'); document.body.style.overflow = ''; }
+  const modal = document.getElementById('projectModal');
+  if (modal) { 
+    modal.classList.remove('active'); 
+    document.body.style.overflow = 'auto'; 
+  }
 };
 
 // ── COPY EMAIL ─────────────────────────────────────────────────────────────────

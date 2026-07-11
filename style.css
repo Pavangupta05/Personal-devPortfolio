@@ -107,7 +107,7 @@ html.lenis, html.lenis body {
   left: 0;
   width: 0%;
   height: 3px;
-  background: var(--bg-primary-from);
+  background: var(--accent);
   z-index: 10001; 
   box-shadow: 0 0 10px rgba(0, 191, 255, 0.8);
   transition: width 0.1s ease-out;
@@ -152,6 +152,38 @@ html.lenis, html.lenis body {
   --lg-shadow-hover: 0 16px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.3);
   --lg-blur: blur(32px) saturate(220%);
   --lg-transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+
+
+/* Skeleton Loading Animation */
+@keyframes skeleton-pulse {
+  0% { background-color: rgba(255, 255, 255, 0.1); }
+  50% { background-color: rgba(255, 255, 255, 0.2); }
+  100% { background-color: rgba(255, 255, 255, 0.1); }
+}
+
+.img-skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  opacity: 0.7;
+}
+
+/* Form Validation Classes */
+.form-group input.valid,
+.form-group textarea.valid {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+.form-group input.invalid,
+.form-group textarea.invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
+}
+.btn-loading {
+  opacity: 0.8;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 
 /* =========================================
