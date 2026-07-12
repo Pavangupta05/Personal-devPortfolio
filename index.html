@@ -33,6 +33,17 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet">
   
+  <!-- Three.js & Post-Processing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
   <!-- GSAP & Lenis -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -260,6 +271,7 @@
     <div style="display:flex;align-items:center;gap:10px;">
     <button id="terminalNavBtn" onclick="openTerminal()" title="Open Terminal (Ctrl+J)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 16px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:8px;">⌘ Terminal</button>
     <button id="cameraScrollBtn" onclick="toggleCameraScroll()" title="Gesture Scroll" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 14px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:4px;">📷 Gesture</button>
+    <button id="osToggleBtn" class="os-toggle-btn" title="Portfolio OS Mode">🖥️ OS</button>
   </div>
   </nav>
 
@@ -744,6 +756,21 @@ high-speed data retrieval.
 
   </section>
 
+  <!-- 3D Tech Stack Galaxy Section -->
+  <section id="galaxy" class="section galaxy-section">
+    <h2 class="section-title">Tech Stack Galaxy</h2>
+    <p class="galaxy-subtitle">Drag to rotate &nbsp;·&nbsp; Click nodes to explore &nbsp;·&nbsp; Watch your MERN constellation orbit</p>
+    <div class="galaxy-wrapper">
+      <canvas id="galaxyCanvas"></canvas>
+      <div class="galaxy-tooltip" id="galaxy-tooltip">
+        <div class="galaxy-tooltip-name"></div>
+        <div class="galaxy-tooltip-cat"></div>
+        <div class="galaxy-tooltip-projects"></div>
+      </div>
+    </div>
+    <p class="galaxy-hint"><span>🖱️ Drag to rotate &nbsp;·&nbsp; Click a node to see which projects use it</span></p>
+  </section>
+
   <!-- Blog Section -->
   <section id="blog" class="section">
     <h2 class="section-title">Articles</h2>
@@ -773,6 +800,88 @@ high-speed data retrieval.
   </section>
 
 
+
+  <!-- Live Dev Dashboard Section -->
+  <section id="dashboard" class="section">
+    <h2 class="section-title">System Dashboard</h2>
+    <p style="text-align:center;color:rgba(255,255,255,0.45);font-size:0.88rem;margin-bottom:30px;">Live simulated metrics for Pavan's deployed projects — try the Stress Test! ⚡</p>
+    <div class="dashboard-grid">
+      <div class="metric-card scroll-reveal">
+        <div class="metric-header">
+          <div class="metric-icon" style="background:rgba(10,132,255,0.12);">🔌</div>
+          <div><div class="metric-title">Active Sockets</div><div class="metric-project">TalkNow Chat</div></div>
+        </div>
+        <div class="metric-value-row">
+          <div class="metric-value" id="metric-sockets">0</div>
+          <div class="metric-unit">users</div>
+          <div class="metric-delta up">↑ Live</div>
+        </div>
+        <div class="mini-chart"><canvas id="spark-sockets"></canvas></div>
+      </div>
+      <div class="metric-card scroll-reveal">
+        <div class="metric-header">
+          <div class="metric-icon" style="background:rgba(50,215,75,0.12);">🍃</div>
+          <div><div class="metric-title">DB Queries/min</div><div class="metric-project">StarNote AI</div></div>
+        </div>
+        <div class="metric-value-row">
+          <div class="metric-value" id="metric-queries">0</div>
+          <div class="metric-unit">q/m</div>
+          <div class="metric-delta up">↑ Normal</div>
+        </div>
+        <div class="mini-chart"><canvas id="spark-queries"></canvas></div>
+      </div>
+      <div class="metric-card scroll-reveal">
+        <div class="metric-header">
+          <div class="metric-icon" style="background:rgba(191,90,242,0.12);">🤖</div>
+          <div><div class="metric-title">AI Tokens Used</div><div class="metric-project">Gemini · StarNote</div></div>
+        </div>
+        <div class="metric-value-row">
+          <div class="metric-value" id="metric-tokens">0</div>
+          <div class="metric-unit">tokens</div>
+          <div class="metric-delta up">↑ Active</div>
+        </div>
+        <div class="mini-chart"><canvas id="spark-tokens"></canvas></div>
+      </div>
+      <div class="metric-card scroll-reveal">
+        <div class="metric-header">
+          <div class="metric-icon" style="background:rgba(255,159,10,0.12);">⚡</div>
+          <div><div class="metric-title">Uptime</div><div class="metric-project">All Services</div></div>
+        </div>
+        <div class="metric-value-row">
+          <div class="metric-value" id="metric-uptime">99.9%</div>
+          <div class="metric-delta up">↑ Healthy</div>
+        </div>
+        <div class="mini-chart"><canvas id="spark-uptime"></canvas></div>
+      </div>
+    </div>
+    <div class="dash-main-chart scroll-reveal">
+      <div class="dash-chart-header">
+        <h4>Request Volume — Last 30s</h4>
+        <div class="dash-legend">
+          <div class="dash-legend-item"><div class="dash-legend-dot" style="background:#0A84FF"></div>StarNote AI</div>
+          <div class="dash-legend-item"><div class="dash-legend-dot" style="background:#32D74B"></div>TalkNow</div>
+        </div>
+      </div>
+      <canvas id="mainDashChart"></canvas>
+    </div>
+    <div class="dashboard-projects">
+      <div class="dash-project-card scroll-reveal">
+        <div class="dash-project-header">
+          <div class="dash-project-name">🌟 StarNote AI</div>
+          <span class="dash-status-badge online">Online</span>
+        </div>
+        <div class="log-feed" id="log-starnote"></div>
+        <button class="stress-btn" id="stress-test-btn">⚡ Stress Test <span style="font-size:0.75rem;opacity:0.6">(Simulate Load Spike)</span></button>
+      </div>
+      <div class="dash-project-card scroll-reveal">
+        <div class="dash-project-header">
+          <div class="dash-project-name">💬 TalkNow</div>
+          <span class="dash-status-badge online">Online</span>
+        </div>
+        <div class="log-feed" id="log-talknow"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- Hobbies Section -->
   <section id="hobbies" class="section">
@@ -1411,5 +1520,278 @@ high-speed data retrieval.
     processFrame();
   }
   </script>
+
+  <!-- ===== AI CHAT WIDGET ===== -->
+  <button class="ai-chat-btn" id="ai-chat-btn" aria-label="Open AI Assistant">
+    <svg class="icon-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    <svg class="icon-close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </button>
+  <div class="ai-chat-panel" id="ai-chat-panel" role="dialog" aria-label="AI Assistant">
+    <div class="ai-chat-header">
+      <div class="ai-chat-avatar">🤖</div>
+      <div class="ai-chat-info"><h4>Pavan's AI Assistant</h4><p>Online — Ready to help</p></div>
+    </div>
+    <div class="ai-chat-messages" id="ai-chat-messages"></div>
+    <div class="ai-chat-suggestions">
+      <div class="ai-suggestion-chip">Show projects</div>
+      <div class="ai-suggestion-chip">What skills?</div>
+      <div class="ai-suggestion-chip">Contact info</div>
+      <div class="ai-suggestion-chip">Download resume</div>
+    </div>
+    <div class="ai-chat-input-row">
+      <input type="text" id="ai-chat-input" placeholder="Ask about Pavan..." autocomplete="off">
+      <button class="ai-chat-send" id="ai-chat-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== PORTFOLIO OS DESKTOP MODE ===== -->
+  <div id="desktop-os">
+    <!-- OS Boot Screen -->
+    <div class="os-boot-screen" id="os-boot-screen">
+      <div class="os-boot-logo">P</div>
+      <div class="os-boot-progress"><div class="os-boot-progress-bar" id="os-boot-bar"></div></div>
+    </div>
+    
+    <!-- OS Context Menu -->
+    <div class="os-context-menu" id="os-context-menu">
+      <div class="os-context-item">New Folder</div>
+      <div class="os-context-item">Get Info</div>
+      <div class="os-context-sep"></div>
+      <div class="os-context-item" onclick="changeWallpaper()">Change Wallpaper</div>
+      <div class="os-context-sep"></div>
+      <div class="os-context-item" onclick="closeOS()">Exit OS Mode</div>
+    </div>
+
+    <div class="os-wallpaper" id="os-wallpaper"></div>
+    <div class="os-menubar">
+      <div class="os-menubar-left">
+        <span>🍎</span>
+        <span class="os-menu-item">Portfolio</span>
+        <span class="os-menu-item">File</span>
+        <span class="os-menu-item">View</span>
+        <span class="os-menu-item">Projects</span>
+      </div>
+      <div class="os-menubar-right"><span class="os-clock-display" id="os-clock">12:00 PM</span></div>
+    </div>
+    <button class="os-exit-btn" id="os-exit-btn">✕ Exit OS Mode</button>
+    <div class="os-desktop-area">
+      <div class="os-icon" ondblclick="osOpenWindow('win-projects')">
+        <div class="os-icon-img" style="background:linear-gradient(135deg,#0A84FF,#5E5CE6)">📂</div>
+        <span class="os-icon-label">Projects</span>
+      </div>
+      <div class="os-icon" ondblclick="osOpenWindow('win-about')">
+        <div class="os-icon-img" style="background:linear-gradient(135deg,#32D74B,#0A84FF)">👤</div>
+        <span class="os-icon-label">About Me</span>
+      </div>
+      <div class="os-icon" ondblclick="osOpenWindow('win-skills')">
+        <div class="os-icon-img" style="background:linear-gradient(135deg,#FF9F0A,#FF375F)">🛠️</div>
+        <span class="os-icon-label">Skills</span>
+      </div>
+      <div class="os-icon" ondblclick="osOpenWindow('win-certs')">
+        <div class="os-icon-img" style="background:linear-gradient(135deg,#BF5AF2,#FF375F)">🏆</div>
+        <span class="os-icon-label">Certs</span>
+      </div>
+    </div>
+    <!-- OS Windows -->
+    <div class="os-window" id="win-projects" style="display:none;width:620px;">
+      <div class="os-titlebar">
+        <div class="os-traffic-dot red" onclick="osCloseWindow('win-projects')"></div>
+        <div class="os-traffic-dot yellow" onclick="osMinimize('win-projects')"></div>
+        <div class="os-traffic-dot green" onclick="osMaximize('win-projects')"></div>
+        <span class="os-title-text">Projects — Pavan's Portfolio</span>
+      </div>
+      <div class="os-window-body">
+        <div class="os-proj-grid">
+          <a href="https://starnote-ai.vercel.app/" target="_blank" rel="noopener" class="os-proj-item">
+            <h5>🌟 StarNote AI</h5>
+            <p>AI-powered smart study platform with Gemini, note summarization, quiz generation &amp; roadmaps.</p>
+          </a>
+          <a href="https://chat-app-frontend-kappa-tan.vercel.app" target="_blank" rel="noopener" class="os-proj-item">
+            <h5>💬 TalkNow</h5>
+            <p>Real-time chat with Socket.io, JWT auth, Google OAuth — 100+ concurrent users.</p>
+          </a>
+          <a href="https://smart-civic-eye.vercel.app/" target="_blank" rel="noopener" class="os-proj-item">
+            <h5>🏙️ Smart Civic Eye</h5>
+            <p>Crowdsourced civic issue reporting with AI analysis, live location &amp; admin dashboard.</p>
+          </a>
+          <div class="os-proj-item" style="background:rgba(10,132,255,0.05);border-style:dashed;cursor:default;display:flex;align-items:center;justify-content:center;">
+            <p style="color:rgba(255,255,255,0.3);text-align:center;">🚀 More coming soon...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="os-window" id="win-about" style="display:none;width:460px;">
+      <div class="os-titlebar">
+        <div class="os-traffic-dot red" onclick="osCloseWindow('win-about')"></div>
+        <div class="os-traffic-dot yellow" onclick="osMinimize('win-about')"></div>
+        <div class="os-traffic-dot green" onclick="osMaximize('win-about')"></div>
+        <span class="os-title-text">About Pavan</span>
+      </div>
+      <div class="os-window-body">
+        <div style="display:flex;flex-direction:column;gap:16px;color:rgba(255,255,255,0.8);font-size:0.9rem;line-height:1.6">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0A84FF,#5E5CE6);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0">👨‍💻</div>
+            <div><div style="font-size:1.1rem;font-weight:700;color:#fff">Pavan Kumar Gupta</div><div style="color:var(--accent);font-size:0.85rem">Full Stack MERN Developer</div></div>
+          </div>
+          <p>Passionate developer from <strong>Jaipur, India</strong> pursuing B.Tech IT at JECRC (2023–2027). Specializes in AI-powered full-stack web apps.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">LOCATION</div><div style="font-size:0.85rem">📍 Jaipur, Rajasthan</div></div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">STATUS</div><div style="font-size:0.85rem;color:#32D74B">● Open to Work</div></div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">EMAIL</div><div style="font-size:0.82rem">📧 pavangupta150605@gmail.com</div></div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">PHONE</div><div style="font-size:0.85rem">📱 +91-8005872338</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="os-window" id="win-skills" style="display:none;width:420px;">
+      <div class="os-titlebar">
+        <div class="os-traffic-dot red" onclick="osCloseWindow('win-skills')"></div>
+        <div class="os-traffic-dot yellow" onclick="osMinimize('win-skills')"></div>
+        <div class="os-traffic-dot green" onclick="osMaximize('win-skills')"></div>
+        <span class="os-title-text">Skills.exe</span>
+      </div>
+      <div class="os-window-body">
+        <div class="os-skill-list">
+          <div class="os-skill-row"><div class="os-skill-name">React</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="80%" style="width:0"></div></div><div class="os-skill-pct">80%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">Node.js</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="80%" style="width:0"></div></div><div class="os-skill-pct">80%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">MongoDB</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="80%" style="width:0"></div></div><div class="os-skill-pct">80%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">JavaScript</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="85%" style="width:0"></div></div><div class="os-skill-pct">85%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">HTML5</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="90%" style="width:0"></div></div><div class="os-skill-pct">90%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">CSS3</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="85%" style="width:0"></div></div><div class="os-skill-pct">85%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">Express.js</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="75%" style="width:0"></div></div><div class="os-skill-pct">75%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">Python</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="70%" style="width:0"></div></div><div class="os-skill-pct">70%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">VS Code</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="95%" style="width:0"></div></div><div class="os-skill-pct">95%</div></div>
+          <div class="os-skill-row"><div class="os-skill-name">Figma</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="70%" style="width:0"></div></div><div class="os-skill-pct">70%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="os-window" id="win-certs" style="display:none;width:420px;">
+      <div class="os-titlebar">
+        <div class="os-traffic-dot red" onclick="osCloseWindow('win-certs')"></div>
+        <div class="os-traffic-dot yellow" onclick="osMinimize('win-certs')"></div>
+        <div class="os-traffic-dot green" onclick="osMaximize('win-certs')"></div>
+        <span class="os-title-text">Certificates 🏆</span>
+      </div>
+      <div class="os-window-body">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center">
+            <div style="width:42px;height:42px;background:linear-gradient(135deg,#FF6B35,#F7C59F);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">☕</div>
+            <div><div style="color:#fff;font-weight:600;font-size:0.9rem">Java Programming</div><div style="color:rgba(255,255,255,0.5);font-size:0.78rem">Infosys Springboard</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center">
+            <div style="width:42px;height:42px;background:linear-gradient(135deg,#3776AB,#FFD343);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🐍</div>
+            <div><div style="color:#fff;font-weight:600;font-size:0.9rem">Python Programming</div><div style="color:rgba(255,255,255,0.5);font-size:0.78rem">Kaizen Innovations</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center">
+            <div style="width:42px;height:42px;background:linear-gradient(135deg,#0A84FF,#5E5CE6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🌐</div>
+            <div><div style="color:#fff;font-weight:600;font-size:0.9rem">Full Stack Web Dev</div><div style="color:rgba(255,255,255,0.5);font-size:0.78rem">Upflairs Pvt. Ltd.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- OS Dock -->
+    <div class="os-dock">
+      <div class="os-dock-inner">
+        <div class="os-dock-item" onclick="osOpenWindow('win-projects')" style="background:linear-gradient(135deg,#0A84FF,#5E5CE6)">📂<div class="dock-tooltip">Projects</div></div>
+        <div class="os-dock-item" onclick="osOpenWindow('win-about')" style="background:linear-gradient(135deg,#32D74B,#0A84FF)">👤<div class="dock-tooltip">About</div></div>
+        <div class="os-dock-item" onclick="osOpenWindow('win-skills')" style="background:linear-gradient(135deg,#FF9F0A,#FF375F)">🛠️<div class="dock-tooltip">Skills</div></div>
+        <div class="os-dock-item" onclick="osOpenWindow('win-certs')" style="background:linear-gradient(135deg,#BF5AF2,#FF375F)">🏆<div class="dock-tooltip">Certs</div></div>
+        <div class="os-dock-sep"></div>
+        <div class="os-dock-item" onclick="openTerminal()" style="background:linear-gradient(135deg,#1C1C1E,#3A3A3C)">⌨️<div class="dock-tooltip">Terminal</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TERMINAL QUEST EXTENSION (Feature 4) ===== -->
+  <script>
+  ;(function() {
+    var questState = { active: false, step: 'start', score: 0, validOptions: [] };
+    var STEPS = {
+      start: {
+        text: '<div style="border:1px solid rgba(50,215,75,0.3);border-radius:8px;padding:12px;background:rgba(50,215,75,0.04);margin:4px 0"><span class="term-green">╔══════════════════════════════════════╗</span><br><span class="term-green">║ 🕹️ TERMINAL QUEST: Server Crisis      ║</span><br><span class="term-green">╚══════════════════════════════════════╝</span><div style="color:#e2e2e2;margin-top:8px">🚨 ALERT: StarNote AI is DOWN. Users can\'t access their notes.</div><div style="color:#ccc;margin-top:6px">You\'re SSH\'d in. The process crashes every 30s. What do you do?</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">check logs</span> — inspect server logs</div><div><span class="term-blue">→</span> Type <span class="term-orange">run tests</span> — run test suite</div><div><span class="term-blue">→</span> Type <span class="term-orange">restart</span> — restart the server</div></div><div style="color:#555;margin-top:4px">HP: <span style="color:#32D74B">████████████</span> 100% | Score: 0</div>',
+        options: ['check logs','run tests','restart'], score: 0
+      },
+      'check logs': {
+        text: '<span class="term-green">$ tail -n 50 /var/log/app.log</span><div style="color:#FF375F;margin-top:4px">TypeError: Cannot read properties of undefined (reading \'userId\')<br>&nbsp; at /app/routes/notes.js:47:22</div><div style="color:#ccc;margin-top:8px">Logs show a null-reference crash. userId is undefined in auth chain. Good find!</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">fix null check</span> — add a null guard</div><div><span class="term-blue">→</span> Type <span class="term-orange">check middleware</span> — inspect auth pipeline</div><div><span class="term-blue">→</span> Type <span class="term-orange">restart</span> — restart (won\'t fix root cause)</div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +10 ⭐</div>',
+        options: ['fix null check','check middleware','restart'], score: 10
+      },
+      'run tests': {
+        text: '<span class="term-green">$ npm test</span><div style="color:#FF9F0A;margin-top:4px">⚠ Test run takes 45s — time is ticking!</div><div style="color:#FF375F">FAIL: auth.middleware.test.js — verifyToken fails</div><div style="color:#ccc;margin-top:6px">JWT verification failing. Token payload might have changed format.</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">check env</span> — look at env variables</div><div><span class="term-blue">→</span> Type <span class="term-orange">fix null check</span> — go to null reference issue</div><div style="color:#FF9F0A;margin-top:4px">HP: <span style="color:#FF9F0A">████████░░░░</span> 70% | Score: +5</div>',
+        options: ['check env','fix null check'], score: 5
+      },
+      'restart': {
+        text: '<span class="term-green">$ pm2 restart all</span><div style="color:#FF375F;margin-top:4px">🔴 Crashed again in 11 seconds. 503 errors! Restart without a fix is useless.</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">check logs</span> — look at logs properly</div><div><span class="term-blue">→</span> Type <span class="term-orange">run tests</span> — run test suite</div><div style="color:#FF375F;margin-top:4px">HP: <span style="color:#FF375F">████░░░░░░░░</span> 35% | Score: -5 ❌</div>',
+        options: ['check logs','run tests'], score: -5
+      },
+      'check middleware': {
+        text: '<span class="term-green">$ cat /app/middleware/auth.js</span><div style="color:#ccc;margin-top:4px">Found it! Middleware attaches <span class="term-orange">decoded.id</span> but route uses <span class="term-orange">req.user.userId</span>. Token payload format changed!</div><div style="color:#0A84FF">// old: { id: "abc" } → new: { userId: "abc" }</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">patch middleware</span> — fix to handle both formats</div><div><span class="term-blue">→</span> Type <span class="term-orange">fix null check</span> — add safety null checks</div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +25 ⭐ Detective!</div>',
+        options: ['patch middleware','fix null check'], score: 25
+      },
+      'fix null check': {
+        text: '<span class="term-green">$ nano /app/routes/notes.js +47</span><div style="color:#0A84FF;margin-top:4px">if (!req.user?.userId) return res.status(401).json({error:\'Unauthorized\'});</div><div style="color:#32D74B;margin-top:8px">✓ Null guard added. App now fails gracefully instead of crashing.</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">test first</span> — validate before deploying</div><div><span class="term-blue">→</span> Type <span class="term-orange">deploy fix</span> — push to production</div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +30 ⭐</div>',
+        options: ['test first','deploy fix'], score: 30
+      },
+      'check env': {
+        text: '<span class="term-green">$ printenv | grep JWT</span><div style="color:#ccc;margin-top:4px">JWT_SECRET="mySecretKey "</div><div style="color:#FF9F0A;margin-top:4px">⚠ TRAILING SPACE in JWT_SECRET! All token verifications are failing!</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">fix env</span> — correct the env variable</div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +20 ⭐ Sharp eye!</div>',
+        options: ['fix env'], score: 20
+      },
+      'patch middleware': {
+        text: '<span class="term-green">$ nano /app/middleware/auth.js</span><div style="color:#0A84FF;margin-top:4px">const userId = decoded.userId || decoded.id; // handle both formats</div><div style="color:#32D74B;margin-top:8px">✓ Middleware patched. Handles old and new token formats.</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">test first</span> — validate locally</div><div><span class="term-blue">→</span> Type <span class="term-orange">deploy fix</span> — push directly</div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +20 ⭐</div>',
+        options: ['test first','deploy fix'], score: 20
+      },
+      'fix env': {
+        text: '<span class="term-green">$ sed -i \'s/JWT_SECRET="mySecretKey "/JWT_SECRET="mySecretKey"/\' .env</span><div style="color:#32D74B;margin-top:4px">✓ Trailing space removed from JWT_SECRET.</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">test first</span> or <span class="term-orange">deploy fix</span></div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +10</div>',
+        options: ['test first','deploy fix'], score: 10
+      },
+      'test first': {
+        text: '<span class="term-green">$ npm test</span><div style="color:#32D74B;margin-top:4px">✓ 50 tests passing. No regressions. Fix is battle-tested! 💪</div><div style="margin-top:8px"><span class="term-blue">→</span> Type <span class="term-orange">deploy fix</span> — push to production with confidence!</div><div style="color:#32D74B;margin-top:4px">HP: ████████████ 100% | Score: +15 ⭐ Best Practice!</div>',
+        options: ['deploy fix'], score: 15
+      },
+      'deploy fix': {
+        text: '<span class="term-green">$ vercel --prod</span><div style="color:#32D74B;margin-top:4px">✓ Build complete (2.1s)<br>✓ Serverless functions deployed<br>✓ Health check: 200 OK<br>✓ Avg response: 28ms<br>✓ 847 users reconnected</div><br><span class="term-green" style="font-size:1.1em">🎉 SERVER RESTORED! QUEST COMPLETE!</span>',
+        options: [], score: 20, final: true
+      }
+    };
+    function startQuest() {
+      questState.active = true; questState.step = 'start'; questState.score = 0;
+      return renderStep('start');
+    }
+    function renderStep(key) {
+      var step = STEPS[key];
+      if (!step) return '<span class="term-red">Quest error. Type quest to restart.</span>';
+      questState.step = key;
+      questState.score += (step.score || 0);
+      questState.validOptions = step.options || [];
+      var html = step.text;
+      if (step.final) {
+        questState.active = false;
+        var total = questState.score;
+        var rating = total >= 95 ? '⭐⭐⭐ LEGENDARY' : total >= 65 ? '⭐⭐ SENIOR DEV' : total >= 35 ? '⭐ JUNIOR DEV' : '🔧 LEARNING';
+        html += '<div style="border:1px solid rgba(50,215,75,0.3);border-radius:8px;padding:12px;margin-top:10px;background:rgba(50,215,75,0.04)"><div class="term-green">═══ FINAL SCORE: ' + total + ' pts ═══</div><div style="margin-top:4px">Rating: <strong style="color:#FFD700">' + rating + '</strong></div><div style="color:#aaa;margin-top:4px">Type <span class="term-green">quest</span> to play again</div></div>';
+      }
+      return html;
+    }
+    function handleQuestCmd(cmd) {
+      if (!questState.active) return '<span style="color:#FF9F0A">No active quest. Type <span class="term-green">quest</span> to start! 🎮</span>';
+      var curr = STEPS[questState.step];
+      if (!curr || curr.options.indexOf(cmd) === -1) return '<span class="term-red">Invalid choice.</span> Valid: ' + (curr ? curr.options.join(', ') : 'none');
+      return renderStep(cmd);
+    }
+    function tryExtend() {
+      if (typeof TERM_COMMANDS === 'undefined') { setTimeout(tryExtend, 100); return; }
+      TERM_COMMANDS['quest'] = function() { return startQuest(); };
+      TERM_COMMANDS['play']  = function() { return startQuest(); };
+      ['check logs','run tests','restart','fix null check','check middleware','check env','patch middleware','fix env','test first','deploy fix'].forEach(function(cmd) {
+        TERM_COMMANDS[cmd] = function() { return handleQuestCmd(cmd); };
+      });
+      var origHelp = TERM_COMMANDS.help;
+      TERM_COMMANDS.help = function() { return origHelp() + '<div>&nbsp; <span class="term-blue">quest</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — 🕹️  Play Terminal Quest</div>'; };
+    }
+    setTimeout(tryExtend, 0);
+  })();
+  </script>
+
 </body>
 </html>
