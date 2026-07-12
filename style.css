@@ -154,6 +154,50 @@ html.lenis, html.lenis body {
   --lg-transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
+/* Cyberpunk Theme */
+[data-theme="cyberpunk"] {
+  --bg-primary-from: #0b0114;
+  --bg-primary-to: #1c0529;
+  --text-primary: #e0f7fa;
+  --text-secondary: #b2ebf2;
+  --accent: #f50057;     
+  --accent-2: #00e5ff;   
+  --accent-3: #b388ff;   
+  --card-bg: rgba(0, 229, 255, 0.05);
+  --card-border: rgba(245, 0, 87, 0.2);
+  --glass-bg: rgba(0, 229, 255, 0.05);
+  --glass-border: 1px solid rgba(245, 0, 87, 0.3);
+  --lg-bg: rgba(0, 229, 255, 0.06);
+  --lg-bg-hover: rgba(0, 229, 255, 0.12);
+  --lg-border: rgba(245, 0, 87, 0.3);
+  --lg-border-bright: rgba(245, 0, 87, 0.6);
+  --lg-highlight: rgba(0, 229, 255, 0.25);
+  --lg-shadow: 0 8px 32px rgba(245,0,87,0.3), inset 0 1px 0 rgba(0,229,255,0.2);
+  --lg-shadow-hover: 0 16px 48px rgba(0,229,255,0.4), inset 0 1px 0 rgba(245,0,87,0.4);
+}
+
+/* Retro Terminal Theme */
+[data-theme="retro"] {
+  --bg-primary-from: #050505;
+  --bg-primary-to: #0a0a0a;
+  --text-primary: #33ff00;
+  --text-secondary: #00cc00;
+  --accent: #33ff00;
+  --accent-2: #33ff00;
+  --accent-3: #00aa00;
+  --card-bg: rgba(51, 255, 0, 0.03);
+  --card-border: rgba(51, 255, 0, 0.2);
+  --glass-bg: rgba(51, 255, 0, 0.03);
+  --glass-border: 1px solid rgba(51, 255, 0, 0.3);
+  --lg-bg: rgba(51, 255, 0, 0.03);
+  --lg-bg-hover: rgba(51, 255, 0, 0.08);
+  --lg-border: rgba(51, 255, 0, 0.2);
+  --lg-border-bright: rgba(51, 255, 0, 0.4);
+  --lg-highlight: rgba(51, 255, 0, 0.15);
+  --lg-shadow: 0 4px 15px rgba(51,255,0,0.1), inset 0 1px 0 rgba(51,255,0,0.1);
+  --lg-shadow-hover: 0 8px 25px rgba(51,255,0,0.2), inset 0 1px 0 rgba(51,255,0,0.2);
+}
+
 
 
 /* Skeleton Loading Animation */
@@ -5292,3 +5336,15 @@ section#home {
   .galaxy-subtitle { display: none; }
 }
 @media (max-width: 480px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+/* ─── STAGGERED SCROLL REVEAL ───────────────────────────────────────────── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: opacity, transform;
+}
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}

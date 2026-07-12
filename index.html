@@ -1142,12 +1142,25 @@ high-speed data retrieval.
 <div>&nbsp; <span class="term-blue">whoami</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — About Pavan</div>
 <div>&nbsp; <span class="term-blue">skills</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — List tech skills</div>
 <div>&nbsp; <span class="term-blue">projects</span>&nbsp;&nbsp;&nbsp; — List my projects</div>
+<div>&nbsp; <span class="term-blue">theme</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Switch themes (usage: theme [default|cyberpunk|retro])</div>
 <div>&nbsp; <span class="term-blue">contact</span>&nbsp;&nbsp;&nbsp;&nbsp; — Get in touch</div>
 <div>&nbsp; <span class="term-blue">sudo</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Super user access</div>
 <div>&nbsp; <span class="term-blue">party</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — 🎉 Try it!</div>
 <div>&nbsp; <span class="term-blue">matrix</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — 😈 You sure?</div>
 <div>&nbsp; <span class="term-blue">clear</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Clear terminal</div>
 <div>&nbsp; <span class="term-blue">exit</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; — Close terminal</div>`,
+
+    theme: (args) => {
+      const t = args && args[0] ? args[0] : '';
+      if(t === 'cyberpunk' || t === 'retro') {
+        document.body.setAttribute('data-theme', t);
+        return `<span class="term-green">Theme switched to ${t} successfully.</span>`;
+      } else if(t === 'default' || t === 'mac' || t === 'dark') {
+        document.body.removeAttribute('data-theme');
+        return '<span class="term-green">Theme reverted to default glassmorphism.</span>';
+      }
+      return '<span class="term-red">Invalid theme.</span> Available themes: <span class="term-orange">default, cyberpunk, retro</span>';
+    },
 
     neofetch: () => `
 <div style="display:flex;gap:20px;flex-wrap:wrap;">
@@ -1233,13 +1246,18 @@ high-speed data retrieval.
 
   termInput.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
-    const cmd = termInput.value.trim().toLowerCase();
+    const inputStr = termInput.value.trim().toLowerCase();
     termInput.value = '';
-    addTermLine(`<span class="term-prompt">pavan@portfolio:~$&nbsp;</span>${cmd}`);
-    if (!cmd) return;
+    addTermLine(`<span class="term-prompt">pavan@portfolio:~$&nbsp;</span>${inputStr}`);
+    if (!inputStr) return;
+    
+    const parts = inputStr.split(' ');
+    const cmd = parts[0];
+    const args = parts.slice(1);
+    
     const handler = TERM_COMMANDS[cmd];
     if (handler) {
-      const result = handler();
+      const result = handler(args);
       if (result) addTermLine(result);
     } else {
       addTermLine(`<span class="term-red">command not found: ${cmd}</span> — try <span class="term-green">"help"</span>`);
@@ -1560,6 +1578,10 @@ high-speed data retrieval.
       <div class="os-context-item">Get Info</div>
       <div class="os-context-sep"></div>
       <div class="os-context-item" onclick="changeWallpaper()">Change Wallpaper</div>
+      <div class="os-context-sep"></div>
+      <div class="os-context-item" style="color:var(--accent)" onclick="document.body.removeAttribute('data-theme')">Theme: Default Glass</div>
+      <div class="os-context-item" style="color:var(--accent)" onclick="document.body.setAttribute('data-theme', 'cyberpunk')">Theme: Cyberpunk</div>
+      <div class="os-context-item" style="color:var(--accent)" onclick="document.body.setAttribute('data-theme', 'retro')">Theme: Retro Terminal</div>
       <div class="os-context-sep"></div>
       <div class="os-context-item" onclick="closeOS()">Exit OS Mode</div>
     </div>

@@ -1391,6 +1391,35 @@ function initGalaxy() {
     initDesktopOS();
     initDashboard();
     initGalaxy();
+    
+    // Staggered Scroll Reveal
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    let revealQueue = [];
+    let revealTimeout = null;
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          revealQueue.push(entry.target);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+
+      if (revealQueue.length > 0 && !revealTimeout) {
+        revealTimeout = setTimeout(() => {
+          revealQueue.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+          revealQueue.forEach((el, index) => {
+            setTimeout(() => {
+              el.classList.add('revealed');
+            }, index * 120);
+          });
+          revealQueue = [];
+          revealTimeout = null;
+        }, 30);
+      }
+    }, { threshold: 0.1 });
+
+    revealElements.forEach(el => revealObserver.observe(el));
   }
   if (document.readyState !== 'loading') run();
   else document.addEventListener('DOMContentLoaded', run, { once: true });
