@@ -1,12 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-//  PERFORMANCE-OPTIMISED SCRIPT
-//  Key changes vs. original:
-//  • Single merged, passive, rAF-throttled scroll handler
-//  • Cached getBoundingClientRect (not recalculated on every mousemove)
-//  • drawLines() skipped on mobile entirely
-//  • One ScrollReveal init block (duplicate removed)
-//  • All event listeners marked passive where possible
-// ─────────────────────────────────────────────────────────────────────────────
 
 window.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("dark-mode");
@@ -109,160 +100,458 @@ window.addEventListener("DOMContentLoaded", () => {
   const yearSpan = document.getElementById("current-year");
   if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-  // ── PARTICLE CANVAS ─────────────────────────────────────────────────────────
-  const canvas = document.getElementById("bg-canvas");
-  if (canvas) {
+  // ── REALISTIC 3D SOLAR SYSTEM BACKGROUND ─────────────────────────────────
+  (function initSolarSystem() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas || !window.THREE) return;
+
     const isMobile = window.innerWidth < 768;
-    // alpha:false = skip alpha-compositing pass → faster rendering
-    const ctx = canvas.getContext("2d", { alpha: false });
-    const particleCount = isMobile ? 20 : 50;
-    const connectionDistance = 120;
-    const connDistSq = connectionDistance * connectionDistance;
-    const mouseRadius = 120;
-    const mouseRadSq  = mouseRadius * mouseRadius;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
 
-    let particles = [];
-    let mouse = { x: null, y: null };
-    let scrollYOffset = 0;
-    let animationId = null;
-    let frameCount = 0;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 6000);
 
-    // Throttled mouse (~30 fps cap)
-    let mouseTick = false;
-    window.addEventListener("mousemove", e => {
-      if (mouseTick) return;
-      mouseTick = true;
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      setTimeout(() => { mouseTick = false; }, 32);
-    }, { passive: true });
-    window.addEventListener("mouseout", () => { mouse.x = null; mouse.y = null; }, { passive: true });
+    // ── NEBULA BACKGROUND ────────────────────────────────────────────────────
+    function makeProceduralTexture(w, h, drawFn) {
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const ctx = c.getContext('2d'); drawFn(ctx, w, h);
+      return new THREE.CanvasTexture(c);
+    }
 
-    // Pause when tab hidden
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) { if (animationId) cancelAnimationFrame(animationId); }
-      else animate();
+    const nebulaTex = makeProceduralTexture(512, 256, (ctx, w, h) => {
+      ctx.fillStyle = '#000008'; ctx.fillRect(0, 0, w, h);
+      const clouds = [
+        {x:0.2,y:0.3,r:120,c:'rgba(30,10,60,0.55)'},{x:0.7,y:0.6,r:150,c:'rgba(10,20,60,0.5)'},
+        {x:0.5,y:0.2,r:100,c:'rgba(60,10,30,0.35)'},{x:0.85,y:0.3,r:90,c:'rgba(10,40,60,0.45)'},
+        {x:0.1,y:0.7,r:110,c:'rgba(20,10,50,0.4)'}
+      ];
+      clouds.forEach(cl => {
+        const g = ctx.createRadialGradient(cl.x*w, cl.y*h, 0, cl.x*w, cl.y*h, cl.r);
+        g.addColorStop(0, cl.c); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      });
     });
+    const skyGeo = new THREE.SphereGeometry(4000, 32, 32);
+    const skyMat = new THREE.MeshBasicMaterial({ map: nebulaTex, side: THREE.BackSide });
+    scene.add(new THREE.Mesh(skyGeo, skyMat));
 
-    class Particle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x    = Math.random() * canvas.width;
-        this.y    = Math.random() * canvas.height;
-        this.vx   = (Math.random() - 0.5) * 0.3;
-        this.vy   = (Math.random() - 0.5) * 0.3;
-        this.size = Math.random() * 1.5 + 0.8;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        const pY = scrollYOffset * 0.08;
-        const cy = this.y + pY;
-        if (cy < 0) this.y += canvas.height;
-        if (cy > canvas.height) this.y -= canvas.height;
-        if (mouse.x != null) {
-          const dx = mouse.x - this.x;
-          const dy = mouse.y - cy;
-          const dSq = dx * dx + dy * dy;
-          if (dSq < mouseRadSq) {
-            const d = Math.sqrt(dSq);
-            const f = (mouseRadius - d) / mouseRadius;
-            this.x -= (dx / d) * f * 1.2;
-            this.y -= (dy / d) * f * 1.2;
-          }
-        }
-      }
-      draw(pY) {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y + pY, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
+    // ── STAR FIELD ───────────────────────────────────────────────────────────
+    const starCount = isMobile ? 2000 : 5000;
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(starCount * 3);
+    const starSizes = new Float32Array(starCount);
+    const starColors = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const r = 600 + Math.random() * 2000;
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      starPos[i*3]   = r * Math.sin(ph) * Math.cos(th);
+      starPos[i*3+1] = r * Math.sin(ph) * Math.sin(th);
+      starPos[i*3+2] = r * Math.cos(ph);
+      starSizes[i] = Math.random() * 1.8 + 0.4;
+      const c = Math.random();
+      if      (c < 0.3)  { starColors[i*3]=1;   starColors[i*3+1]=1;   starColors[i*3+2]=1;   }
+      else if (c < 0.55) { starColors[i*3]=0.75; starColors[i*3+1]=0.85;starColors[i*3+2]=1;   }
+      else if (c < 0.75) { starColors[i*3]=1;    starColors[i*3+1]=0.97;starColors[i*3+2]=0.75;}
+      else               { starColors[i*3]=1;    starColors[i*3+1]=0.7; starColors[i*3+2]=0.7; }
     }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    starGeo.setAttribute('color',    new THREE.BufferAttribute(starColors, 3));
+    starGeo.setAttribute('size',     new THREE.BufferAttribute(starSizes, 1));
+    scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 1.2, vertexColors: true, transparent: true, opacity: 0.95, sizeAttenuation: true })));
 
-    function init() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-      particles = Array.from({ length: particleCount }, () => new Particle());
-    }
+    // ── LIGHTING ─────────────────────────────────────────────────────────────
+    scene.add(new THREE.PointLight(0xFFF5E4, isMobile ? 3 : 4.5, 2000, 1.1));
+    scene.add(new THREE.AmbientLight(0x090918, 0.3));
 
-    // O(n²) line drawing — skipped entirely on mobile
-    function drawLines(pY) {
-      if (isMobile) return;
-      ctx.lineWidth = 0.6;
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx  = particles[i].x - particles[j].x;
-          const dy  = particles[i].y - particles[j].y;
-          const dSq = dx * dx + dy * dy;
-          if (dSq < connDistSq) {
-            const opacity = (1 - Math.sqrt(dSq) / connectionDistance) * 0.12;
-            ctx.strokeStyle = `rgba(0,191,255,${opacity})`;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y + pY);
-            ctx.lineTo(particles[j].x, particles[j].y + pY);
-            ctx.stroke();
-          }
-        }
+    // ── SUN ──────────────────────────────────────────────────────────────────
+    const sunTex = makeProceduralTexture(512, 512, (ctx, w, h) => {
+      const cx = w/2, cy = h/2, r = w/2;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0,   '#ffffff'); g.addColorStop(0.05, '#fffde0');
+      g.addColorStop(0.2, '#ffe060'); g.addColorStop(0.5,  '#ff8800');
+      g.addColorStop(0.8, '#ff3800'); g.addColorStop(1.0,  '#7a1200');
+      ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+      for (let i = 0; i < 800; i++) {
+        const rx = cx+(Math.random()-0.5)*w*0.9, ry = cy+(Math.random()-0.5)*h*0.9;
+        if (Math.hypot(rx-cx, ry-cy) > r*0.9) continue;
+        const gs = Math.random()*10+2;
+        const gd = ctx.createRadialGradient(rx,ry,0,rx,ry,gs);
+        gd.addColorStop(0,'rgba(255,255,150,0.22)'); gd.addColorStop(1,'rgba(255,100,0,0)');
+        ctx.fillStyle = gd; ctx.beginPath(); ctx.arc(rx,ry,gs,0,Math.PI*2); ctx.fill();
       }
-    }
+    });
+    const sun = new THREE.Mesh(
+      new THREE.SphereGeometry(22, isMobile ? 24 : 48, isMobile ? 24 : 48),
+      new THREE.MeshStandardMaterial({ map: sunTex, emissive: new THREE.Color(0xff5500), emissiveIntensity: 2.2, emissiveMap: sunTex, roughness: 1 })
+    );
+    scene.add(sun);
 
-    let lastTime = 0;
-    const fpsInterval = isMobile ? 1000 / 30 : 0;
-
-    function animate(time) {
-      animationId = requestAnimationFrame(animate);
-      if (fpsInterval > 0) {
-        const elapsed = time - lastTime;
-        if (elapsed < fpsInterval) return;
-        lastTime = time - (elapsed % fpsInterval);
-      }
-      frameCount++;
-      const pY = scrollYOffset * 0.08;
-      // Must fill bg each frame because alpha:false skips transparent clear
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(0,191,255,0.3)";
-      particles.forEach(p => { p.update(); p.draw(pY); });
-      if (frameCount % 2 === 0) drawLines(pY); // lines every other frame
-    }
-
-    let resizeTimer;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(init, 200);
-    }, { passive: true });
-    init();
-    animate();
-
-    // Contact form async submit
-    const successModal = document.getElementById("contact-success");
-    if (contactForm && successModal) {
-      contactForm.addEventListener("submit", async e => {
-        if (e.defaultPrevented) return;
-        e.preventDefault();
-        const btn    = contactForm.querySelector("button");
-        const btnTxt = btn && btn.querySelector(".btn-text");
-        const spin   = btn && btn.querySelector(".spinner");
-        if (btnTxt) btnTxt.style.display = "none";
-        if (spin)   spin.style.display   = "block";
-        if (btn)    btn.disabled = true;
-        try {
-          const res = await fetch(contactForm.action, {
-            method: "POST", body: new FormData(contactForm),
-            headers: { Accept: "application/json" }
-          });
-          if (res.ok) { successModal.classList.add("active"); contactForm.reset(); }
-          else alert("Oops! There was a problem sending your message.");
-        } catch { alert("Oops! A network error occurred."); }
-        finally {
-          if (btnTxt) btnTxt.style.display = "block";
-          if (spin)   spin.style.display   = "none";
-          if (btn)    btn.disabled = false;
-        }
+    // Multi-layer corona glow
+    function makeGlow(color1, color2, alpha1) {
+      return makeProceduralTexture(256, 256, (ctx, w, h) => {
+        const g = ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+        g.addColorStop(0, color1); g.addColorStop(0.3, color2); g.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
       });
     }
+    [[`rgba(255,230,80,${0.95})`, 'rgba(255,100,0,0.3)', 85],
+     [`rgba(255,160,40,${0.5})`, 'rgba(255,60,0,0.08)', 140],
+     [`rgba(200,80,20,${0.25})`, 'rgba(150,30,0,0.0)', 220]
+    ].forEach(([c1,c2,scale]) => {
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: makeGlow(c1,c2), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+      spr.scale.setScalar(scale);
+      scene.add(spr);
+    });
+
+    // ── PLANET DEFINITIONS ────────────────────────────────────────────────────
+    const PLANET_DEFS = [
+      { name:'Mercury', radius:5.0,  dist:40,  speed:0.047, tilt:0.03,
+        glowColor:'rgba(180,160,130,0.4)', glowSize:30,
+        drawFn:(ctx,w,h)=>{
+          const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+          g.addColorStop(0,'#d8c8b8');g.addColorStop(0.6,'#9a8878');g.addColorStop(1,'#4a3830');
+          ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+          for(let i=0;i<200;i++){const x=Math.random()*w,y=Math.random()*h,r=Math.random()*3+0.5;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=`rgba(50,40,30,${Math.random()*0.35})`;ctx.fill();}
+      }},
+      { name:'Venus',   radius:11.0,  dist:65,  speed:0.035, tilt:0.05,
+        glowColor:'rgba(240,210,100,0.45)', glowSize:70,
+        drawFn:(ctx,w,h)=>{
+          const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+          g.addColorStop(0,'#f8eec0');g.addColorStop(0.4,'#eac878');g.addColorStop(0.8,'#c89040');g.addColorStop(1,'#9a6820');
+          ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+          for(let i=0;i<20;i++){const y=Math.random()*h;ctx.fillStyle=`rgba(248,232,160,${Math.random()*0.2})`;ctx.fillRect(0,y,w,Math.random()*14+4);}
+      }},
+      { name:'Earth',   radius:11.5,  dist:92,  speed:0.029, tilt:0.41,
+        glowColor:'rgba(60,120,255,0.4)', glowSize:75,
+        drawFn:(ctx,w,h)=>{
+          ctx.fillStyle='#1a70b0';ctx.fillRect(0,0,w,h);
+          [[0.48,0.28,0.13,0.19,'#3a9040'],[0.32,0.44,0.09,0.15,'#4aaa48'],
+           [0.66,0.48,0.11,0.13,'#5a9038'],[0.18,0.33,0.07,0.10,'#6aaa48'],
+           [0.78,0.62,0.08,0.10,'#d0c060'],[0.50,0.74,0.05,0.07,'#d8d090']
+          ].forEach(([x,y,rx,ry,c])=>{ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(x*w,y*h,rx*w,ry*h,Math.random()*3,0,Math.PI*2);ctx.fill();});
+          for(let i=0;i<35;i++){const x=Math.random()*w,y=Math.random()*h;const cg=ctx.createRadialGradient(x,y,0,x,y,Math.random()*28+8);cg.addColorStop(0,'rgba(255,255,255,0.65)');cg.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=cg;ctx.fillRect(x-35,y-18,70,36);}
+          ctx.fillStyle='rgba(255,255,255,0.88)';ctx.beginPath();ctx.ellipse(w/2,4,w*0.42,13,0,0,Math.PI*2);ctx.fill();
+          ctx.beginPath();ctx.ellipse(w/2,h-4,w*0.30,11,0,0,Math.PI*2);ctx.fill();
+      }},
+      { name:'Mars',    radius:8.5,  dist:128, speed:0.024, tilt:0.44,
+        glowColor:'rgba(220,80,30,0.38)', glowSize:53,
+        drawFn:(ctx,w,h)=>{
+          const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+          g.addColorStop(0,'#f06835');g.addColorStop(0.5,'#c84820');g.addColorStop(1,'#8a2800');
+          ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+          ctx.strokeStyle='rgba(110,35,5,0.7)';ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(w*0.18,h*0.44);ctx.lineTo(w*0.77,h*0.56);ctx.stroke();
+          for(let i=0;i<70;i++){ctx.fillStyle=`rgba(210,130,65,${Math.random()*0.22})`;ctx.beginPath();ctx.arc(Math.random()*w,Math.random()*h,Math.random()*13+2,0,Math.PI*2);ctx.fill();}
+          ctx.fillStyle='rgba(255,242,232,0.92)';ctx.beginPath();ctx.ellipse(w/2,3,w*0.20,9,0,0,Math.PI*2);ctx.fill();
+      }},
+      { name:'Jupiter', radius:28,   dist:175, speed:0.013, tilt:0.05,
+        glowColor:'rgba(200,160,100,0.3)', glowSize:175,
+        drawFn:(ctx,w,h)=>{
+          ctx.fillStyle='#c8a870';ctx.fillRect(0,0,w,h);
+          [{y:0.08,ht:0.06,c:'#ead098',a:0.95},{y:0.16,ht:0.05,c:'#905a38',a:0.88},
+           {y:0.23,ht:0.08,c:'#d8aa72',a:0.90},{y:0.33,ht:0.06,c:'#a86840',a:0.95},
+           {y:0.41,ht:0.09,c:'#e8c890',a:0.95},{y:0.52,ht:0.05,c:'#906038',a:0.90},
+           {y:0.59,ht:0.08,c:'#caa060',a:0.90},{y:0.69,ht:0.06,c:'#804830',a:0.85},
+           {y:0.77,ht:0.09,c:'#dab068',a:0.90},{y:0.88,ht:0.07,c:'#a87048',a:0.90}
+          ].forEach(b=>{ctx.globalAlpha=b.a;ctx.fillStyle=b.c;ctx.fillRect(0,b.y*h,w,b.ht*h);});
+          ctx.globalAlpha=1;
+          const rx=w*0.60,ry=h*0.58;
+          const gs=ctx.createRadialGradient(rx,ry,0,rx,ry,w*0.12);
+          gs.addColorStop(0,'rgba(190,60,25,0.98)');gs.addColorStop(0.55,'rgba(165,48,18,0.75)');gs.addColorStop(1,'rgba(140,38,10,0)');
+          ctx.fillStyle=gs;ctx.beginPath();ctx.ellipse(rx,ry,w*0.12,h*0.08,0,0,Math.PI*2);ctx.fill();
+      }},
+      { name:'Saturn',  radius:24.2,   dist:230, speed:0.0096,tilt:0.47,
+        glowColor:'rgba(220,190,120,0.32)', glowSize:242,
+        drawFn:(ctx,w,h)=>{
+          ctx.fillStyle='#d8b878';ctx.fillRect(0,0,w,h);
+          [{y:0.10,ht:0.05,c:'#ead090',a:0.88},{y:0.17,ht:0.04,c:'#c09050',a:0.82},
+           {y:0.23,ht:0.08,c:'#e0ca8a',a:0.92},{y:0.33,ht:0.05,c:'#a87838',a:0.85},
+           {y:0.40,ht:0.09,c:'#ead09a',a:0.92},{y:0.51,ht:0.06,c:'#c0a058',a:0.88},
+           {y:0.59,ht:0.08,c:'#dcc888',a:0.90},{y:0.69,ht:0.05,c:'#987048',a:0.82}
+          ].forEach(b=>{ctx.globalAlpha=b.a;ctx.fillStyle=b.c;ctx.fillRect(0,b.y*h,w,b.ht*h);});
+          ctx.globalAlpha=1;
+      }},
+      { name:'Uranus',  radius:16.5,  dist:290, speed:0.0068,tilt:1.71,
+        glowColor:'rgba(100,220,220,0.32)', glowSize:105.6,
+        drawFn:(ctx,w,h)=>{
+          const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+          g.addColorStop(0,'#d0f8f8');g.addColorStop(0.4,'#78e0e0');g.addColorStop(1,'#38a8c8');
+          ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+          for(let i=0;i<8;i++){ctx.fillStyle=`rgba(200,248,248,${0.12+i*0.02})`;ctx.fillRect(0,i*h/8,w,h/10);}
+      }},
+      { name:'Neptune', radius:15.4,  dist:360, speed:0.0054,tilt:0.49,
+        glowColor:'rgba(40,80,255,0.38)', glowSize:96.8,
+        drawFn:(ctx,w,h)=>{
+          const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+          g.addColorStop(0,'#5898f8');g.addColorStop(0.4,'#3068e0');g.addColorStop(1,'#0e1eb0');
+          ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+          ctx.fillStyle='rgba(8,18,110,0.65)';ctx.beginPath();ctx.ellipse(w*0.38,h*0.43,w*0.13,h*0.085,0.28,0,Math.PI*2);ctx.fill();
+          ctx.strokeStyle='rgba(180,215,255,0.45)';ctx.lineWidth=2;
+          for(let i=0;i<9;i++){ctx.beginPath();ctx.moveTo(0,h*(0.08+i*0.1));ctx.lineTo(w,h*(0.10+i*0.1));ctx.stroke();}
+      }},
+    ];
+
+    const planets = [];
+    const orbitGroup = new THREE.Group();
+    scene.add(orbitGroup);
+
+    // Calculate start angle for each planet so it perfectly intercepts the spiral camera
+    const startAngles = PLANET_DEFS.map(def => {
+      // Find the scroll progress (sp) at which the camera radius equals the planet distance
+      // We stop the camera at radius 50 (safely outside the sun)
+      const dist = Math.max(def.dist, 50.1); 
+      const eased = (480 - dist) / (480 - 50);
+      const sp = eased < 0.5 ? Math.sqrt(eased / 2) : 1 - Math.sqrt(2 * (1 - eased)) / 2;
+      const angle = sp * Math.PI * 2.5; // Camera does 1.25 full rotations (2.5 PI)
+      return angle - Math.PI / 2; // Offset so it aligns with the camera's vector
+    });
+
+    PLANET_DEFS.forEach((def, idx) => {
+      // Orbit ring (subtle)
+      const pts = [];
+      for (let a = 0; a <= Math.PI*2; a += 0.05)
+        pts.push(new THREE.Vector3(Math.cos(a)*def.dist, 0, Math.sin(a)*def.dist));
+      const orbitGeo = new THREE.BufferGeometry().setFromPoints(pts);
+      const orbitMat = new THREE.LineBasicMaterial({ color: 0x2244668, transparent: true, opacity: 0.18 });
+      orbitGroup.add(new THREE.Line(orbitGeo, orbitMat));
+
+      // Planet mesh
+      const pTex = makeProceduralTexture(isMobile ? 128 : 256, isMobile ? 128 : 256, def.drawFn);
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(def.radius, isMobile ? 20 : 36, isMobile ? 20 : 36),
+        new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.75, metalness: 0.04 })
+      );
+      mesh.rotation.z = def.tilt;
+
+      // Atmospheric glow sprite
+      const glowTex = makeProceduralTexture(128, 128, (ctx, w, h) => {
+        const g = ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);
+        g.addColorStop(0, def.glowColor); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+      });
+      const glowSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+      glowSpr.scale.setScalar(def.glowSize * 2.2);
+      mesh.add(glowSpr);
+
+      const pivot = new THREE.Object3D();
+      pivot.rotation.y = startAngles[idx];
+      pivot.add(mesh);
+      mesh.position.set(def.dist, 0, 0);
+      orbitGroup.add(pivot);
+
+      // Saturn rings
+      if (def.name === 'Saturn') {
+        const ringTex = makeProceduralTexture(512, 32, (ctx, w, h) => {
+          const g = ctx.createLinearGradient(0,0,w,0);
+          g.addColorStop(0,   'rgba(210,180,110,0)');
+          g.addColorStop(0.08,'rgba(200,168,100,0.7)');
+          g.addColorStop(0.2, 'rgba(228,200,140,1.0)');
+          g.addColorStop(0.4, 'rgba(195,162,95,0.85)');
+          g.addColorStop(0.55,'rgba(220,192,132,1.0)');
+          g.addColorStop(0.7, 'rgba(200,175,108,0.75)');
+          g.addColorStop(0.88,'rgba(205,178,112,0.5)');
+          g.addColorStop(1,   'rgba(205,178,112,0)');
+          ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+          // Ring gaps
+          ctx.globalAlpha=0.5; ctx.fillStyle='rgba(0,0,0,0.6)';
+          ctx.fillRect(w*0.44,0,w*0.02,h); ctx.globalAlpha=1;
+        });
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(def.radius*1.4, def.radius*2.6, 80),
+          new THREE.MeshBasicMaterial({ map: ringTex, side: THREE.DoubleSide, transparent: true, opacity: 0.9, depthWrite: false })
+        );
+        ring.rotation.x = Math.PI * 0.43;
+        mesh.add(ring);
+      }
+
+      // Earth moon
+      if (def.name === 'Earth') {
+        const moonTex = makeProceduralTexture(64, 64, (ctx,w,h)=>{
+          ctx.fillStyle='#c0b8b0';ctx.fillRect(0,0,w,h);
+          for(let i=0;i<40;i++){ctx.fillStyle=`rgba(70,60,50,${Math.random()*0.45})`;ctx.beginPath();ctx.arc(Math.random()*w,Math.random()*h,Math.random()*4+0.5,0,Math.PI*2);ctx.fill();}
+        });
+        const moon = new THREE.Mesh(
+          new THREE.SphereGeometry(1.3, 12, 12),
+          new THREE.MeshStandardMaterial({ map: moonTex, roughness: 0.95 })
+        );
+        const moonPivot = new THREE.Object3D();
+        moonPivot.add(moon); moon.position.set(8.5, 0, 0);
+        mesh.add(moonPivot);
+        planets.push({ pivot: moonPivot, speed: 0.12, mesh: moon, isMoon: true });
+      }
+
+      planets.push({ pivot, speed: def.speed, mesh, name: def.name, dist: def.dist });
+    });
+
+    // Asteroid belt (Mars-Jupiter)
+    if (!isMobile) {
+      const abGeo = new THREE.BufferGeometry();
+      const abPos = new Float32Array(800 * 3);
+      for (let i = 0; i < 800; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = 148 + Math.random() * 20;
+        abPos[i*3]   = Math.cos(a) * r;
+        abPos[i*3+1] = (Math.random() - 0.5) * 3;
+        abPos[i*3+2] = Math.sin(a) * r;
+      }
+      abGeo.setAttribute('position', new THREE.BufferAttribute(abPos, 3));
+      orbitGroup.add(new THREE.Points(abGeo, new THREE.PointsMaterial({ size: 0.55, color: 0x887766, transparent: true, opacity: 0.6 })));
+    }
+
+    // ── MOUSE PARALLAX ────────────────────────────────────────────────────────
+    let mouseX = 0, mouseY = 0, tMX = 0, tMY = 0;
+    window.addEventListener('mousemove', e => {
+      tMX = (e.clientX / window.innerWidth  - 0.5) * 2;
+      tMY = (e.clientY / window.innerHeight - 0.5) * 2;
+    }, { passive: true });
+
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    // ── PLANET APPROACH MAP ───────────────────────────────────────────────────
+    // Camera starts at z=580 looking at sun (z=0). As it flies toward the sun,
+    // it crosses each planet's orbit radius — that planet zooms toward viewer.
+    // Planets (Z+ axis, facing camera): Neptune(360) → Saturn(230) → Jupiter(175)
+    // → Mars(128) → Earth(92) → Venus(65) → Mercury(40) → Sun approach.
+    // At each crossing, the planet orbit briefly slows so it stays in frame.
+    const planetMeshesOrdered = planets.filter(p => !p.isMoon);  // [Mercury..Neptune]
+    const orbitDists = PLANET_DEFS.map(d => d.dist); // [40,65,92,128,175,230,290,360]
+
+    // ── ANIMATE ──────────────────────────────────────────────────────────────
+    let lastT = 0, solId = null;
+    const FPS = isMobile ? 1000/30 : 1000/60;
+
+    // Smoothed camera Z (lerped each frame for cinematic feel)
+    let cx = 0, cy = 80, cz = 580;
+    let lx = 0, ly = 0, lz = 0; // smoothed look-at target
+
+    function render(time) {
+      solId = requestAnimationFrame(render);
+      if (time - lastT < FPS) return;
+      const dt = Math.min((time - lastT) / 1000, 0.05);
+      lastT = time;
+
+      // Scroll progress — direct read, no lag
+      const maxS = document.documentElement.scrollHeight - window.innerHeight || 1;
+      const sp   = Math.min(Math.max(window.scrollY / maxS, 0), 1);
+
+      // Mouse
+      mouseX += (tMX - mouseX) * 0.07;
+      mouseY += (tMY - mouseY) * 0.07;
+
+      // ── CAMERA: Spiral towards the sun ──────────────────────────────────────
+      // Sun stays centered at (0,0,0) — camera looks at it the whole time.
+      const eased = sp < 0.5 ? 2*sp*sp : -1+(4-2*sp)*sp; // smooth ease
+      
+      const radius = lerp(480, 50, eased); // Stop at 50, safely outside the Sun (radius 22)
+      const angle = sp * Math.PI * 2.5; // spiral 1.25 full rotations as we fly in
+      
+      const tCX = Math.sin(angle) * radius;
+      const tCZ = Math.cos(angle) * radius;
+      const tCY = lerp(80,   8, eased); // dip down to orbit level
+
+      if (typeof window.lastSp !== 'undefined' && Math.abs(sp - window.lastSp) > 0.05) {
+        cx = tCX; cy = tCY; cz = tCZ;
+      }
+      window.lastSp = sp;
+
+      const lf = isMobile ? 0.09 : 0.072;
+      cx += (tCX - cx) * lf;
+      cy += (tCY - cy) * lf;
+      cz += (tCZ - cz) * lf;
+
+      // ── CAMERA PAN ──────────────────────────────────────────────────────────
+      // At the footer (sp > 0.85), turn the camera smoothly away from the Sun
+      // looking tangentially into deep space so the Sun completely exits the screen.
+      const panAmount = Math.max(0, (sp - 0.85) / 0.15); // 0 to 1
+      const easePan = panAmount * panAmount * (3 - 2 * panAmount); // smoothstep
+      
+      // Tangent to orbit: if pos is (sin, cos), tangent is (cos, -sin)
+      const tangentX = cx + Math.cos(angle) * 1500;
+      const tangentZ = cz - Math.sin(angle) * 1500;
+      
+      const targetLX = lerp(0, tangentX, easePan);
+      const targetLY = lerp(0, cy, easePan);
+      const targetLZ = lerp(0, tangentZ, easePan);
+      
+      lx += (targetLX - lx) * lf;
+      ly += (targetLY - ly) * lf;
+      lz += (targetLZ - lz) * lf;
+
+      // Mouse parallax — tilt slightly
+      const px = isMobile ? 2 : 8;
+      camera.position.set(cx + mouseX * px, cy - mouseY * px * 0.3, cz);
+      camera.lookAt(lx, ly, lz);
+
+      // Orbit ring stays flat
+      orbitGroup.rotation.x = 0.06;
+
+      // ── PLANETS: orbit + slow down as camera approaches each one ─────────
+      planetMeshesOrdered.forEach((p, i) => {
+        const dist = orbitDists[i];
+        // How close is the camera Z to this planet's orbit distance?
+        const approach = Math.max(0, 1 - Math.abs(cz - dist) / (dist * 0.7));
+        // Slow orbit when camera is near — planet lingers in frame
+        const speedMult = lerp(1.0, 0.05, approach * approach);
+        p.pivot.rotation.y += p.speed * dt * speedMult;
+        p.mesh.rotation.y   += p.speed * 2.5 * dt;
+      });
+
+      // Moon orbits at normal speed
+      planets.filter(p => p.isMoon).forEach(p => {
+        p.pivot.rotation.y += p.speed * dt;
+      });
+
+      // Sun rotates very slowly, planets keep medium speed
+      sun.rotation.y += 0.0006 * dt * 60;
+      renderer.render(scene, camera);
+    }
+
+
+    render(0);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) cancelAnimationFrame(solId); else render(0);
+    });
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    }, { passive: true });
+  })();
+
+
+
+  // Contact form async submit
+  const successModal = document.getElementById("contact-success");
+  if (contactForm && successModal) {
+    contactForm.addEventListener("submit", async e => {
+      if (e.defaultPrevented) return;
+      e.preventDefault();
+      const btn    = contactForm.querySelector("button");
+      const btnTxt = btn && btn.querySelector(".btn-text");
+      const spin   = btn && btn.querySelector(".spinner");
+      if (btnTxt) btnTxt.style.display = "none";
+      if (spin)   spin.style.display   = "block";
+      if (btn)    btn.disabled = true;
+      try {
+        const res = await fetch(contactForm.action, {
+          method: "POST", body: new FormData(contactForm),
+          headers: { Accept: "application/json" }
+        });
+        if (res.ok) { successModal.classList.add("active"); contactForm.reset(); }
+        else alert("Oops! There was a problem sending your message.");
+      } catch { alert("Oops! A network error occurred."); }
+      finally {
+        if (btnTxt) btnTxt.style.display = "block";
+        if (spin)   spin.style.display   = "none";
+        if (btn)    btn.disabled = false;
+      }
+    });
   }
+
 
   // ── SCROLL REVEAL (single init) ─────────────────────────────────────────────
   if (typeof ScrollReveal !== 'undefined') {
@@ -429,7 +718,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.addEventListener('click', e => {
     if (e.target.closest('input,textarea,select')) return;
     const r = document.createElement('div');
-    r.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;border-radius:50%;transform:translate(-50%,-50%) scale(0);background:rgba(10,132,255,.35);border:1.5px solid rgba(255,255,255,.55);pointer-events:none;z-index:99997;animation:liquidRipple 0.7s cubic-bezier(.23,1,.32,1) forwards`;
+    r.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;border-radius:50%;transform:translate(-50%,-50%) scale(0);background:rgba(10, 132, 255,.35);border:1.5px solid rgba(255,255,255,.55);pointer-events:none;z-index:99997;animation:liquidRipple 0.7s cubic-bezier(.23,1,.32,1) forwards`;
     document.body.appendChild(r);
     r.addEventListener('animationend', () => r.remove());
   });
@@ -832,164 +1121,7 @@ function initDesktopOS() {
   }
 }
 
-// ── FEATURE 3: LIVE DEV DASHBOARD ─────────────────────────────────────────
-function initDashboard() {
-  const section = document.getElementById('dashboard');
-  if (!section) return;
 
-  const sparks = {
-    sockets: { id: 'spark-sockets', data: [], color: '#0A84FF', max: 110 },
-    queries: { id: 'spark-queries', data: [], color: '#32D74B', max: 200 },
-    tokens:  { id: 'spark-tokens',  data: [], color: '#BF5AF2', max: 1000 },
-    uptime:  { id: 'spark-uptime',  data: [], color: '#FF9F0A', max: 100  },
-  };
-
-  Object.values(sparks).forEach(s => {
-    for (let i = 0; i < 30; i++) s.data.push(s.max * (0.25 + Math.random() * 0.45));
-  });
-
-  const mainData = {
-    starnote: Array.from({length:30}, () => 20 + Math.random() * 45),
-    talknow:  Array.from({length:30}, () => 10 + Math.random() * 30),
-  };
-
-  function drawSparkline(cfg) {
-    const canvas = document.getElementById(cfg.id);
-    if (!canvas) return;
-    const rect = canvas.parentElement.getBoundingClientRect();
-    if (!rect.width) return;
-    canvas.width = rect.width; canvas.height = 48;
-    const ctx = canvas.getContext('2d');
-    const { data, color, max } = cfg;
-    const W = rect.width, H = 48;
-    const stepX = W / (data.length - 1);
-    const pts = data.map((v, i) => ({ x: i * stepX, y: H - Math.max(2, (v / max) * (H - 4)) }));
-    const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, color + '45'); grad.addColorStop(1, color + '00');
-    ctx.beginPath(); ctx.moveTo(pts[0].x, H);
-    pts.forEach(p => ctx.lineTo(p.x, p.y));
-    ctx.lineTo(pts[pts.length-1].x, H); ctx.closePath();
-    ctx.fillStyle = grad; ctx.fill();
-    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-    pts.forEach(p => ctx.lineTo(p.x, p.y));
-    ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
-  }
-
-  function drawMainChart() {
-    const canvas = document.getElementById('mainDashChart');
-    if (!canvas) return;
-    const W = (canvas.parentElement.clientWidth - 44) || 600;
-    canvas.width = W; canvas.height = 150;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, W, 150);
-    const drawLine = (data, color) => {
-      const max = 100, stepX = W / (data.length - 1);
-      const pts = data.map((v, i) => ({ x: i * stepX, y: 150 - (v / max) * 130 - 10 }));
-      const grad = ctx.createLinearGradient(0, 0, 0, 150);
-      grad.addColorStop(0, color + '30'); grad.addColorStop(1, color + '00');
-      ctx.beginPath(); ctx.moveTo(pts[0].x, 150);
-      pts.forEach(p => ctx.lineTo(p.x, p.y));
-      ctx.lineTo(pts[pts.length-1].x, 150); ctx.closePath();
-      ctx.fillStyle = grad; ctx.fill();
-      ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) {
-        const cpx = (pts[i-1].x + pts[i].x) / 2;
-        ctx.bezierCurveTo(cpx, pts[i-1].y, cpx, pts[i].y, pts[i].x, pts[i].y);
-      }
-      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
-    };
-    drawLine(mainData.starnote, '#0A84FF');
-    drawLine(mainData.talknow, '#32D74B');
-  }
-
-  const LOG_NORMAL = ['GET /api/notes 200 11ms','POST /api/auth/login 200 7ms','WebSocket connection established','MongoDB query: users.find() 3ms','AI response cached successfully','GET /api/chat 200 5ms','Socket.io heartbeat OK','Gemini API: 320 tokens used','JWT verified successfully'];
-  const LOG_STRESS = ['⚠ CPU spike: 91%','⚠ Memory pressure: 1.7GB/2GB','ERROR: Connection pool exhausted!','🔴 Response time: 2200ms','Socket.io: 840 concurrent users','⚠ Rate limit approaching','MongoDB: slow query 820ms','🔴 ERROR: AI API timeout'];
-
-  let stressMode = false, dashInterval = null, tickCount = 0;
-
-  function getTime() {
-    return new Date().toLocaleTimeString('en-US', { hour12: false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  }
-
-  function pushLog(feedId, level, msg) {
-    const feed = document.getElementById(feedId);
-    if (!feed) return;
-    const entry = document.createElement('div');
-    entry.className = 'log-entry';
-    entry.innerHTML = `<span class="log-time">${getTime()}</span><span class="log-level ${level}">[${level.toUpperCase()}]</span><span class="log-msg">${msg}</span>`;
-    feed.appendChild(entry);
-    while (feed.children.length > 22) feed.removeChild(feed.firstChild);
-    feed.scrollTop = feed.scrollHeight;
-  }
-
-  function dashTick() {
-    tickCount++;
-    const stress = stressMode;
-    const rand = (lo, hi) => lo + Math.random() * (hi - lo);
-    sparks.sockets.data.push(stress ? rand(55,110) : rand(8,55));   sparks.sockets.data.shift();
-    sparks.queries.data.push(stress ? rand(120,200) : rand(20,90)); sparks.queries.data.shift();
-    sparks.tokens.data.push(stress ? rand(600,980) : rand(80,500)); sparks.tokens.data.shift();
-    sparks.uptime.data.push(stress ? rand(91,97) : rand(99.7,100)); sparks.uptime.data.shift();
-    mainData.starnote.push(stress ? rand(65,95) : rand(15,55)); mainData.starnote.shift();
-    mainData.talknow.push(stress ? rand(50,85) : rand(10,40));  mainData.talknow.shift();
-
-    const last = key => Math.round(sparks[key].data[sparks[key].data.length-1]);
-    const sEl = document.getElementById('metric-sockets'), qEl = document.getElementById('metric-queries');
-    const tEl = document.getElementById('metric-tokens'),  uEl = document.getElementById('metric-uptime');
-    if (sEl) sEl.textContent = last('sockets');
-    if (qEl) qEl.textContent = last('queries');
-    if (tEl) tEl.textContent = last('tokens');
-    if (uEl) uEl.textContent = stress ? '97.1%' : '99.9%';
-
-    Object.values(sparks).forEach(s => drawSparkline(s));
-    if (tickCount % 2 === 0) drawMainChart();
-
-    if (tickCount % 3 === 0) {
-      const pool = stress ? LOG_STRESS : LOG_NORMAL;
-      const lvl  = stress ? (Math.random()>0.4 ? 'warn' : 'err') : (Math.random()>0.25 ? 'ok' : 'info');
-      pushLog('log-starnote', lvl, pool[Math.floor(Math.random()*pool.length)]);
-    }
-    if (tickCount % 4 === 0) {
-      const pool = stress ? LOG_STRESS : LOG_NORMAL;
-      pushLog('log-talknow', stress ? (Math.random()>0.5?'warn':'err') : 'ok', pool[Math.floor(Math.random()*pool.length)]);
-    }
-  }
-
-  const observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      if (!dashInterval) {
-        pushLog('log-starnote','ok','Server started on port 5000');
-        pushLog('log-starnote','info','Connected to MongoDB Atlas');
-        pushLog('log-starnote','ok','Gemini API client initialized');
-        pushLog('log-talknow','ok','Socket.io server started');
-        pushLog('log-talknow','info','JWT middleware attached');
-        pushLog('log-talknow','ok','Google OAuth configured');
-        dashInterval = setInterval(dashTick, 500);
-      }
-    } else {
-      if (dashInterval) { clearInterval(dashInterval); dashInterval = null; }
-    }
-  }, { threshold: 0.15 });
-
-  observer.observe(section);
-
-  const stressBtn = document.getElementById('stress-test-btn');
-  if (stressBtn) {
-    stressBtn.addEventListener('click', () => {
-      if (stressMode) return;
-      stressMode = true; stressBtn.disabled = true;
-      stressBtn.textContent = '⚡ Stress Test Active... (8s)';
-      pushLog('log-starnote','warn','🚨 STRESS TEST INITIATED — load spike!');
-      pushLog('log-talknow','warn','🚨 STRESS TEST INITIATED — load spike!');
-      setTimeout(() => {
-        stressMode = false; stressBtn.disabled = false;
-        stressBtn.innerHTML = '⚡ Stress Test <span style="font-size:0.75rem;opacity:0.6">(Simulate Load Spike)</span>';
-        pushLog('log-starnote','ok','✓ Stress test ended. System recovering.');
-        pushLog('log-talknow','ok','✓ Stress test ended. System recovering.');
-      }, 8000);
-    });
-  }
-}
 
 // ── FEATURE 5: 3D TECH STACK GALAXY ───────────────────────────────────────
 // ── FEATURE 5: 3D TECH STACK GALAXY (Three.js) ────────────────────────────
@@ -1389,7 +1521,7 @@ function initGalaxy() {
   function run() {
     initAIChat();
     initDesktopOS();
-    initDashboard();
+
     initGalaxy();
     
     // Staggered Scroll Reveal
@@ -1424,3 +1556,4 @@ function initGalaxy() {
   if (document.readyState !== 'loading') run();
   else document.addEventListener('DOMContentLoaded', run, { once: true });
 })();
+

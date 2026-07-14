@@ -136,8 +136,14 @@
   </div>
   <!-- ===== PREMIUM LOADING SCREEN ===== -->
   <div id="loader-overlay">
+    <canvas id="loader-canvas"></canvas>
     <div class="loader-content">
-      <div class="loader-logo">PG</div>
+      <div class="loader-ring-wrapper">
+        <div class="loader-ring"></div>
+        <div class="loader-ring loader-ring-2"></div>
+        <div class="loader-ring loader-ring-3"></div>
+        <div class="loader-logo">PG</div>
+      </div>
       <div class="loader-title">Pavan Kumar Gupta</div>
       <div class="loader-subtitle">Full Stack Developer</div>
       <div class="loader-bar-track">
@@ -266,7 +272,6 @@
       <a href="#projects">Projects</a>
       <a href="#blog">Blog</a>
       <a href="#education">Education</a>
-      <a href="#hobbies">Hobbies</a>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
     <button id="terminalNavBtn" onclick="openTerminal()" title="Open Terminal (Ctrl+J)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);padding:8px 16px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;margin-left:8px;">⌘ Terminal</button>
@@ -495,7 +500,7 @@
         <div class="soft-skills-container">
           
           <div class="soft-skill-item scroll-reveal">
-            <div class="soft-skill-icon" style="background: rgba(10,132,255,0.12);">
+            <div class="soft-skill-icon" style="background: rgba(10, 132, 255,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#0A84FF"><path d="M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14l4 4V4a2 2 0 0 0-2-2z"/></svg>
             </div>
             <div class="soft-skill-info">
@@ -526,7 +531,7 @@
           </div>
 
           <div class="soft-skill-item scroll-reveal">
-            <div class="soft-skill-icon" style="background: rgba(191,90,242,0.12);">
+            <div class="soft-skill-icon" style="background: rgba(191, 90, 242,0.12);">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#BF5AF2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93V18a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 13H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 19.93z"/></svg>
             </div>
             <div class="soft-skill-info">
@@ -771,144 +776,9 @@ high-speed data retrieval.
     <p class="galaxy-hint"><span>🖱️ Drag to rotate &nbsp;·&nbsp; Click a node to see which projects use it</span></p>
   </section>
 
-  <!-- Blog Section -->
-  <section id="blog" class="section">
-    <h2 class="section-title">Articles</h2>
-    <div class="blog-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
-      <div class="blog-card scroll-reveal lg-card" onclick="openProjectModal('Mastering the MERN Stack', 'React,Node.js,MongoDB,Express', '<div class=&quot;case-study-section&quot;><h3>The Problem</h3><p>Building scalable full-stack applications requires seamless integration between frontend and backend architectures.</p></div><div class=&quot;case-study-section&quot;><h3>The Architecture</h3><p>Using <strong>React</strong> for the UI allows for dynamic state management, while <strong>Node.js</strong> and <strong>Express</strong> handle API requests efficiently. <strong>MongoDB</strong> serves as a flexible NoSQL database, rounding out the MERN stack.</p></div><div class=&quot;case-study-section&quot;><h3>Outcome</h3><p>Mastering this stack allows developers to build rapid, full-stack prototypes that scale natively.</p></div>')" style="cursor: pointer;">
-        <div class="blog-image" style="background: linear-gradient(135deg, #0A84FF, #5E5CE6); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
-          <span>MERN</span>
-        </div>
-        <div class="blog-content" style="padding: 25px;">
-          <p class="blog-date" style="color: var(--accent); font-size: 0.85rem; margin-bottom: 10px;">June 2026 • 5 min read</p>
-          <h3 style="margin-bottom: 15px; font-size: 1.4rem;">Mastering the MERN Stack</h3>
-          <p style="color: #ccc; line-height: 1.6; font-size: 0.95rem;">A deep dive into building scalable full-stack applications with React, Node.js, Express, and MongoDB.</p>
-        </div>
-      </div>
-
-      <div class="blog-card scroll-reveal lg-card" onclick="openProjectModal('Learning DSA in C++', 'C++,DSA,Problem Solving', '<div class=&quot;case-study-section&quot;><h3>The Foundation</h3><p>Data Structures and Algorithms are simply about organizing data logically so we can solve problems effectively. You don\'t need to be a genius to learn it—just consistent.</p></div><div class=&quot;case-study-section&quot;><h3>Why C++?</h3><p>We explore arrays, linked lists, and trees using C++. It\'s a great language for this because working with pointers and the standard library (STL) gives you a deeper look at how memory actually works under the hood.</p></div><div class=&quot;case-study-section&quot;><h3>The Takeaway</h3><p>Building a solid grasp of these fundamental concepts helps you write cleaner logic in any language, giving you a clear edge when building projects or tackling technical interviews.</p></div>')" style="cursor: pointer;">
-        <div class="blog-image" style="background: linear-gradient(135deg, #32D74B, #0A84FF); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
-          <span>C++ DSA</span>
-        </div>
-        <div class="blog-content" style="padding: 25px;">
-          <p class="blog-date" style="color: var(--accent); font-size: 0.85rem; margin-bottom: 10px;">May 2026 • 6 min read</p>
-          <h3 style="margin-bottom: 15px; font-size: 1.4rem;">Learning DSA in C++</h3>
-          <p style="color: #ccc; line-height: 1.6; font-size: 0.95rem;">Breaking down common data structures and algorithms in C++ with practical, everyday examples.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
 
 
-  <!-- Live Dev Dashboard Section -->
-  <section id="dashboard" class="section">
-    <h2 class="section-title">System Dashboard</h2>
-    <p style="text-align:center;color:rgba(255,255,255,0.45);font-size:0.88rem;margin-bottom:30px;">Live simulated metrics for Pavan's deployed projects — try the Stress Test! ⚡</p>
-    <div class="dashboard-grid">
-      <div class="metric-card scroll-reveal">
-        <div class="metric-header">
-          <div class="metric-icon" style="background:rgba(10,132,255,0.12);">🔌</div>
-          <div><div class="metric-title">Active Sockets</div><div class="metric-project">TalkNow Chat</div></div>
-        </div>
-        <div class="metric-value-row">
-          <div class="metric-value" id="metric-sockets">0</div>
-          <div class="metric-unit">users</div>
-          <div class="metric-delta up">↑ Live</div>
-        </div>
-        <div class="mini-chart"><canvas id="spark-sockets"></canvas></div>
-      </div>
-      <div class="metric-card scroll-reveal">
-        <div class="metric-header">
-          <div class="metric-icon" style="background:rgba(50,215,75,0.12);">🍃</div>
-          <div><div class="metric-title">DB Queries/min</div><div class="metric-project">StarNote AI</div></div>
-        </div>
-        <div class="metric-value-row">
-          <div class="metric-value" id="metric-queries">0</div>
-          <div class="metric-unit">q/m</div>
-          <div class="metric-delta up">↑ Normal</div>
-        </div>
-        <div class="mini-chart"><canvas id="spark-queries"></canvas></div>
-      </div>
-      <div class="metric-card scroll-reveal">
-        <div class="metric-header">
-          <div class="metric-icon" style="background:rgba(191,90,242,0.12);">🤖</div>
-          <div><div class="metric-title">AI Tokens Used</div><div class="metric-project">Gemini · StarNote</div></div>
-        </div>
-        <div class="metric-value-row">
-          <div class="metric-value" id="metric-tokens">0</div>
-          <div class="metric-unit">tokens</div>
-          <div class="metric-delta up">↑ Active</div>
-        </div>
-        <div class="mini-chart"><canvas id="spark-tokens"></canvas></div>
-      </div>
-      <div class="metric-card scroll-reveal">
-        <div class="metric-header">
-          <div class="metric-icon" style="background:rgba(255,159,10,0.12);">⚡</div>
-          <div><div class="metric-title">Uptime</div><div class="metric-project">All Services</div></div>
-        </div>
-        <div class="metric-value-row">
-          <div class="metric-value" id="metric-uptime">99.9%</div>
-          <div class="metric-delta up">↑ Healthy</div>
-        </div>
-        <div class="mini-chart"><canvas id="spark-uptime"></canvas></div>
-      </div>
-    </div>
-    <div class="dash-main-chart scroll-reveal">
-      <div class="dash-chart-header">
-        <h4>Request Volume — Last 30s</h4>
-        <div class="dash-legend">
-          <div class="dash-legend-item"><div class="dash-legend-dot" style="background:#0A84FF"></div>StarNote AI</div>
-          <div class="dash-legend-item"><div class="dash-legend-dot" style="background:#32D74B"></div>TalkNow</div>
-        </div>
-      </div>
-      <canvas id="mainDashChart"></canvas>
-    </div>
-    <div class="dashboard-projects">
-      <div class="dash-project-card scroll-reveal">
-        <div class="dash-project-header">
-          <div class="dash-project-name">🌟 StarNote AI</div>
-          <span class="dash-status-badge online">Online</span>
-        </div>
-        <div class="log-feed" id="log-starnote"></div>
-        <button class="stress-btn" id="stress-test-btn">⚡ Stress Test <span style="font-size:0.75rem;opacity:0.6">(Simulate Load Spike)</span></button>
-      </div>
-      <div class="dash-project-card scroll-reveal">
-        <div class="dash-project-header">
-          <div class="dash-project-name">💬 TalkNow</div>
-          <span class="dash-status-badge online">Online</span>
-        </div>
-        <div class="log-feed" id="log-talknow"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Hobbies Section -->
-  <section id="hobbies" class="section">
-    <h2 class="section-title">Hobbies</h2>
-    <div class="hobbies-container">
-      <div class="hobby-card scroll-reveal">
-        <div class="icon">💻</div>
-        <p>Coding</p>
-      </div>
-      <div class="hobby-card scroll-reveal">
-        <div class="icon">🎨</div>
-        <p>Designing</p>
-      </div>
-      <div class="hobby-card scroll-reveal">
-        <div class="icon">✈️</div>
-        <p>Traveling</p>
-      </div>
-      <div class="hobby-card scroll-reveal">
-        <div class="icon">🎵</div>
-        <p>Music</p>
-      </div>
-       <div class="hobby-card scroll-reveal">
-        <div class="icon">🎙️</div>
-        <p>Singing</p>
-      </div>
-    </div>
-  </section>
 
   <section id="contact" class="contact">
     <h2 class="section-title">Contact Me</h2>
@@ -1306,7 +1176,7 @@ high-speed data retrieval.
       spotlight.className = 'card-spotlight';
       spotlight.style.cssText = `
         position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
-        background:radial-gradient(circle at 50% 50%, rgba(10,132,255,0) 0%, transparent 70%);
+        background:radial-gradient(circle at 50% 50%, rgba(10, 132, 255,0) 0%, transparent 70%);
         transition:background 0.1s;opacity:0;
       `;
       card.appendChild(spotlight);
@@ -1336,10 +1206,10 @@ high-speed data retrieval.
         const magY = dy * 10;
 
         card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate(${magX}px,${magY}px) scale(1.04)`;
-        card.style.boxShadow = `0 ${20 + dy*10}px ${50 + Math.abs(dx)*20}px rgba(10,132,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3)`;
+        card.style.boxShadow = `0 ${20 + dy*10}px ${50 + Math.abs(dx)*20}px rgba(10, 132, 255,0.3), inset 0 1px 0 rgba(255,255,255,0.3)`;
 
         // Moving spotlight
-        spotlight.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(10,132,255,0.18) 0%, transparent 65%)`;
+        spotlight.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(10, 132, 255,0.18) 0%, transparent 65%)`;
       });
 
       card.addEventListener('mouseleave', () => {
@@ -1638,7 +1508,7 @@ high-speed data retrieval.
             <h5>🏙️ Smart Civic Eye</h5>
             <p>Crowdsourced civic issue reporting with AI analysis, live location &amp; admin dashboard.</p>
           </a>
-          <div class="os-proj-item" style="background:rgba(10,132,255,0.05);border-style:dashed;cursor:default;display:flex;align-items:center;justify-content:center;">
+          <div class="os-proj-item" style="background:rgba(10, 132, 255,0.05);border-style:dashed;cursor:default;display:flex;align-items:center;justify-content:center;">
             <p style="color:rgba(255,255,255,0.3);text-align:center;">🚀 More coming soon...</p>
           </div>
         </div>
@@ -1814,6 +1684,58 @@ high-speed data retrieval.
     setTimeout(tryExtend, 0);
   })();
   </script>
+  <!-- Lenis Smooth Scrolling -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script>
+    // Initialize Lenis
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    });
 
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Handle anchor links with Lenis
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        lenis.scrollTo(this.getAttribute('href'), { offset: -50, duration: 1.5 });
+      });
+    });
+
+    // Scroll Reveal Animation (Intersection Observer)
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -50px 0px',
+      threshold: 0.05
+    };
+    
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          // Optional: stop observing once revealed
+          // observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Select all elements to reveal
+    document.querySelectorAll('.section-title, .project-card, .timeline-item, .contact-item, .stat-box, .skill-tag').forEach(el => {
+      el.classList.add('scroll-reveal');
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
