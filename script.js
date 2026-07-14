@@ -165,6 +165,104 @@ window.addEventListener("DOMContentLoaded", () => {
     scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 1.2, vertexColors: true, transparent: true, opacity: 0.95, sizeAttenuation: true })));
 
     // ── LIGHTING ─────────────────────────────────────────────────────────────
+
+
+
+    // ── GLTF REALISTIC ROBOT ──────────────────────────────────────────────────
+    window.robotMixer = null;
+    window.robotModel = null;
+    window.robotRay = null;
+    window.robotActions = {};
+    window.robotActiveAction = null;
+    window.robotIsBusy = false;
+    
+    const loader = new THREE.GLTFLoader();
+    const url = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/gltf/RobotExpressive/RobotExpressive.glb';
+    loader.load(url, (gltf) => {
+      const model = gltf.scene;
+      
+      // Position robot near camera's starting position so it's visible in hero section
+      // Camera starts at (0, 80, 580) looking at (0,0,0)
+      // Robot should appear to the right side of hero, between camera and sun
+      if (window.innerWidth < 768) {
+        model.scale.set(2.5, 2.5, 2.5);
+        model.position.set(0, 60, 400); // Center screen on mobile, slightly lower
+      } else {
+        model.scale.set(3.5, 3.5, 3.5);
+        model.position.set(25, 65, 430); // Closer to center so it is immediately visible
+      }
+      model.rotation.y = -Math.PI / 6; 
+      
+      // Cinematic Rim Lighting just for the robot
+      const robotLight = new THREE.PointLight(0x00E6FF, 2, 50);
+      robotLight.position.set(5, 10, 5);
+      model.add(robotLight);
+      
+      const rimLight = new THREE.SpotLight(0xFFB347, 5, 50, Math.PI/4, 0.5, 2);
+      rimLight.position.set(-10, 10, -10);
+      rimLight.target = model;
+      model.add(rimLight);
+      
+      model.traverse(function (object) {
+        if (object.isMesh) {
+          object.castShadow = true;
+          object.receiveShadow = true;
+          if (object.material) {
+            object.material.envMapIntensity = 2.0; // Boost reflections
+          }
+        }
+      });
+      
+      scene.add(model);
+      window.robotModel = model;
+      if (typeof resize === 'function') resize(); // Trigger initial responsive placement
+      
+      // Animations Setup
+      window.robotMixer = new THREE.AnimationMixer(model);
+      
+      gltf.animations.forEach((clip) => {
+        const action = window.robotMixer.clipAction(clip);
+        window.robotActions[clip.name] = action;
+        // Make non-idle animations play once
+        if (clip.name !== 'Idle' && clip.name !== 'Walking' && clip.name !== 'Running') {
+          action.clampWhenFinished = true;
+          action.loop = THREE.LoopOnce;
+        }
+      });
+      
+      // Start Idle
+      if (window.robotActions['Idle']) {
+        window.robotActiveAction = window.robotActions['Idle'];
+        window.robotActiveAction.play();
+      }
+      
+      // Event listener when animation finishes to return to idle
+      window.robotMixer.addEventListener('finished', (e) => {
+        if (window.robotActiveAction !== window.robotActions['Idle']) {
+          fadeToAction('Idle', 0.5);
+          window.robotIsBusy = false;
+        }
+      });
+      
+      // Add invisible raycast box around it
+      const rayBox = new THREE.Mesh(new THREE.BoxGeometry(6, 12, 6), new THREE.MeshBasicMaterial({visible: false}));
+      rayBox.position.set(0, 4, 0);
+      model.add(rayBox);
+      window.robotRay = rayBox;
+    });
+    
+    window.fadeToAction = function(name, duration) {
+      const prevAction = window.robotActiveAction;
+      const activeAction = window.robotActions[name];
+      if (prevAction !== activeAction && activeAction) {
+        prevAction.fadeOut(duration);
+        activeAction.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).fadeIn(duration).play();
+        window.robotActiveAction = activeAction;
+      }
+    };
+
+
+
     scene.add(new THREE.PointLight(0xFFF5E4, isMobile ? 3 : 4.5, 2000, 1.1));
     scene.add(new THREE.AmbientLight(0x090918, 0.3));
 
@@ -402,12 +500,36 @@ window.addEventListener("DOMContentLoaded", () => {
       orbitGroup.add(new THREE.Points(abGeo, new THREE.PointsMaterial({ size: 0.55, color: 0x887766, transparent: true, opacity: 0.6 })));
     }
 
-    // ── MOUSE PARALLAX ────────────────────────────────────────────────────────
+    // ── MOUSE PARALLAX & RAYCASTING ───────────────────────────────────────────
     let mouseX = 0, mouseY = 0, tMX = 0, tMY = 0;
+    const heroRaycaster = new THREE.Raycaster();
+    const heroMouse = new THREE.Vector2();
+
     window.addEventListener('mousemove', e => {
       tMX = (e.clientX / window.innerWidth  - 0.5) * 2;
       tMY = (e.clientY / window.innerHeight - 0.5) * 2;
+      heroMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      heroMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     }, { passive: true });
+
+    window.addEventListener('pointerdown', e => {
+      heroMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      heroMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      heroRaycaster.setFromCamera(heroMouse, camera);
+      
+      if (window.robotRay && !window.robotIsBusy) {
+        const hits = heroRaycaster.intersectObject(window.robotRay, true);
+        if (hits.length > 0) {
+          window.robotIsBusy = true;
+          const actions = ['Wave', 'Jump', 'ThumbsUp', 'Dance', 'Punch'];
+          const randomAction = actions[Math.floor(Math.random() * actions.length)];
+          if (typeof window.fadeToAction === 'function') {
+             window.fadeToAction(randomAction, 0.2);
+             if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover();
+          }
+        }
+      }
+    });
 
     const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -457,6 +579,86 @@ window.addEventListener("DOMContentLoaded", () => {
         cx = tCX; cy = tCY; cz = tCZ;
       }
       window.lastSp = sp;
+
+
+
+      // ── GLTF REALISTIC ROBOT ────────────────────────────────────────────────
+      if (window.robotMixer) {
+        const delta = dt || 0.016; 
+        window.robotMixer.update(delta);
+      }
+      
+      if (window.robotModel) {
+        const rGroup = window.robotModel;
+        
+        // Gentle hover bob (no crazy vertical floating)
+        const baseY = window.innerWidth < 768 ? 60 : 65;
+        rGroup.position.y = baseY + Math.sin(time / 500) * 0.8;
+        
+        // Smoothly scale down and move backwards into space as you scroll
+        const baseScale = window.innerWidth < 768 ? 2.5 : 3.5;
+        const currentScale = Math.max(0, baseScale - (sp * baseScale * 3)); // Shrinks to 0 at 33% scroll
+        rGroup.scale.setScalar(currentScale);
+        
+        const baseZ = window.innerWidth < 768 ? 400 : 430;
+        rGroup.position.z = baseZ - (sp * 500); // Floats away into the sun
+        
+        // Mouse Tracking
+        const targetRotY = (-Math.PI / 6) + tMX * -0.5; 
+        rGroup.rotation.y += (targetRotY - rGroup.rotation.y) * 0.1;
+        
+        rGroup.visible = currentScale > 0.01;
+        // Raycasting for hover tooltip
+        if (window.robotRay) {
+          heroRaycaster.setFromCamera(heroMouse, camera);
+          const robotHits = heroRaycaster.intersectObject(window.robotRay, true);
+          if (robotHits.length > 0) {
+            document.body.style.cursor = 'pointer';
+            if (typeof tooltip !== 'undefined' && tooltip.classList.contains('hidden')) {
+              if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover();
+              tooltipTitle.innerText = "ROBOT.EXPRESSIVE";
+              tooltipSub.innerText = "CLICK ME!";
+              tooltip.classList.remove('hidden');
+            }
+          }
+        }
+      }
+
+      // ── MINI GAME ───────────────────────────────────────────────────────────
+      
+      // Gallery Animation and Raycasting
+      if (typeof window.galleryGroup !== 'undefined') {
+         window.galleryGroup.rotation.y += 0.001; // Slowly orbit the sun
+      }
+      
+      if (typeof window.raycaster !== 'undefined' && window.galleryPanels && window.galleryPanels.length > 0) {
+        const galleryHits = window.raycaster.intersectObjects(window.galleryPanels);
+        if (galleryHits.length > 0) {
+          document.body.style.cursor = 'pointer';
+          const panel = galleryHits[0].object;
+            
+            // Hover Scale Effect
+            window.galleryPanels.forEach(p => {
+              if (p !== panel) p.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+            });
+            panel.scale.lerp(new THREE.Vector3(1.3, 1.3, 1.3), 0.1);
+            
+            if (typeof tooltip !== 'undefined' && tooltip.classList.contains('hidden')) {
+              if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover();
+              tooltipTitle.innerText = "PROJECT DATA";
+              tooltipSub.innerText = panel.userData.title;
+              tooltip.classList.remove('hidden');
+            }
+          } else {
+            window.galleryPanels.forEach(p => p.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1));
+          }
+        }
+
+        if (typeof gameActive !== 'undefined' && gameActive) {
+        updateMiniGame(time);
+        return; // Skip normal camera updates if game is active
+      }
+
 
       const lf = isMobile ? 0.09 : 0.072;
       cx += (tCX - cx) * lf;
@@ -1352,6 +1554,7 @@ function initGalaxy() {
 
   // Raycaster for hover and drag events
   const raycaster = new THREE.Raycaster();
+  window.raycaster = raycaster;
   const mouse = new THREE.Vector2();
   let hoveredMesh = null;
   let draggedMesh = null;
@@ -1381,7 +1584,8 @@ function initGalaxy() {
       if (hoveredMesh !== mesh) {
         if (hoveredMesh) hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale);
         hoveredMesh = mesh;
-        hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale * 1.35); 
+        hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale * 1.35);
+          if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover(); 
       }
       // Tooltip logic
       const { name, cat } = mesh.userData;
@@ -1446,6 +1650,9 @@ function initGalaxy() {
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
+
+      // (Robot is updated in the main solar system render loop above)
+
     const t = Date.now() * 0.002;
     
     // Core pulsing effect
@@ -1557,3 +1764,173 @@ function initGalaxy() {
   else document.addEventListener('DOMContentLoaded', run, { once: true });
 })();
 
+
+
+// ── ELITE 3D FEATURES: AUDIO, BOOT, WARP ──────────────────────────────────
+window.AudioEngine = {
+  ctx: null,
+  humOsc: null,
+  humGain: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    this.humOsc = this.ctx.createOscillator();
+    this.humOsc.type = 'sine';
+    this.humOsc.frequency.setValueAtTime(45, this.ctx.currentTime);
+    
+    this.humGain = this.ctx.createGain();
+    this.humGain.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.humGain.gain.linearRampToValueAtTime(0.04, this.ctx.currentTime + 2);
+    
+    this.humOsc.connect(this.humGain);
+    this.humGain.connect(this.ctx.destination);
+    this.humOsc.start();
+  },
+  playHover() {
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.1);
+    
+    gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+    
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.1);
+  }
+};
+
+document.body.addEventListener('click', () => window.AudioEngine.init(), { once: true });
+
+  // (Robot click logic moved to hero scene)
+
+document.querySelectorAll('a, button, .project-card, .skill-card').forEach(el => {
+  el.addEventListener('mouseenter', () => window.AudioEngine.playHover());
+});
+
+document.querySelectorAll('.nav-links a, #terminalNavBtn').forEach(el => {
+  el.addEventListener('click', (e) => {
+    if (el.getAttribute('href') && el.getAttribute('href').startsWith('#')) {
+      document.body.classList.add('warping');
+      setTimeout(() => document.body.classList.remove('warping'), 600);
+    }
+  });
+});
+
+const bootScreen = document.getElementById('boot-screen');
+const bootProgress = document.querySelector('.boot-progress');
+if (bootScreen && bootProgress) {
+  setTimeout(() => { bootProgress.style.width = '100%'; }, 600);
+  setTimeout(() => { bootScreen.classList.add('hidden'); }, 1800);
+}
+
+
+// ── ASTEROIDS MINI-GAME ───────────────────────────────────────────────────
+const Konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIndex = 0;
+let gameActive = false;
+const GameState = {
+  ship: null, lasers: [], asteroids: [], 
+  keys: { ArrowUp: false, ArrowLeft: false, ArrowRight: false, Space: false },
+  score: 0
+};
+
+window.addEventListener('keydown', (e) => {
+  if (!gameActive) {
+    if (e.key === Konami[konamiIndex]) {
+      konamiIndex++;
+      if (konamiIndex === Konami.length) { startMiniGame(); konamiIndex = 0; }
+    } else { konamiIndex = 0; }
+  } else {
+    if (e.code === 'ArrowUp') GameState.keys.ArrowUp = true;
+    if (e.code === 'ArrowLeft') GameState.keys.ArrowLeft = true;
+    if (e.code === 'ArrowRight') GameState.keys.ArrowRight = true;
+    if (e.code === 'Space') { e.preventDefault(); GameState.keys.Space = true; }
+  }
+});
+window.addEventListener('keyup', (e) => {
+  if (gameActive) {
+    if (e.code === 'ArrowUp') GameState.keys.ArrowUp = false;
+    if (e.code === 'ArrowLeft') GameState.keys.ArrowLeft = false;
+    if (e.code === 'ArrowRight') GameState.keys.ArrowRight = false;
+    if (e.code === 'Space') GameState.keys.Space = false;
+  }
+});
+
+function startMiniGame() {
+  gameActive = true;
+  document.body.style.overflow = 'hidden';
+  const ui = document.createElement('div');
+  ui.id = 'game-ui';
+  ui.innerHTML = '<h1 style="color:#ff3333; font-family:Space Grotesk; font-size:4rem; text-align:center; margin-top:20vh; animation: pulse 1s infinite">SYSTEM BREACH</h1><h2 id="game-score" style="color:#00E6FF; text-align:center; font-family:Space Grotesk">SCORE: 0</h2>';
+  ui.style.cssText = 'position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:99999; pointer-events:none; background:rgba(0,0,0,0.7); transition:opacity 1s;';
+  document.body.appendChild(ui);
+  setTimeout(() => { ui.querySelector('h1').style.display = 'none'; }, 2000);
+  
+  if(typeof window.AudioEngine !== 'undefined' && window.AudioEngine.ctx) window.AudioEngine.playHover();
+  
+  const shipGeo = new THREE.ConeGeometry(2, 6, 3);
+  shipGeo.rotateX(Math.PI / 2);
+  GameState.ship = new THREE.Mesh(shipGeo, new THREE.MeshBasicMaterial({ color: 0x00E6FF, wireframe: true }));
+  GameState.ship.position.copy(camera.position);
+  GameState.ship.position.z -= 50; 
+  GameState.ship.position.y -= 10;
+  scene.add(GameState.ship);
+}
+
+function updateMiniGame(time) {
+  if (!gameActive || !GameState.ship) return;
+  camera.position.x = GameState.ship.position.x;
+  camera.position.z = GameState.ship.position.z + 60;
+  camera.position.y = GameState.ship.position.y + 100;
+  camera.lookAt(GameState.ship.position);
+  
+  if (GameState.keys.ArrowLeft) GameState.ship.rotation.y += 0.08;
+  if (GameState.keys.ArrowRight) GameState.ship.rotation.y -= 0.08;
+  if (GameState.keys.ArrowUp) {
+    GameState.ship.position.x -= Math.sin(GameState.ship.rotation.y) * 1.5;
+    GameState.ship.position.z -= Math.cos(GameState.ship.rotation.y) * 1.5;
+  }
+  
+  if (GameState.keys.Space && Math.random() > 0.5) {
+    const laser = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 4), new THREE.MeshBasicMaterial({color: 0xFFB347}));
+    laser.rotation.copy(GameState.ship.rotation);
+    laser.rotation.x = Math.PI / 2;
+    laser.position.copy(GameState.ship.position);
+    laser.userData = { vx: -Math.sin(GameState.ship.rotation.y) * 4, vz: -Math.cos(GameState.ship.rotation.y) * 4, life: 100 };
+    scene.add(laser); GameState.lasers.push(laser); GameState.keys.Space = false; 
+  }
+  
+  if (Math.random() < 0.02) {
+    const ast = new THREE.Mesh(new THREE.IcosahedronGeometry(Math.random()*4+2, 0), new THREE.MeshStandardMaterial({color: 0x555555, roughness: 0.8}));
+    const angle = Math.random() * Math.PI * 2;
+    ast.position.set(GameState.ship.position.x + Math.sin(angle)*150, GameState.ship.position.y, GameState.ship.position.z + Math.cos(angle)*150);
+    ast.userData = { vx: -Math.sin(angle)*0.5, vz: -Math.cos(angle)*0.5 };
+    scene.add(ast); GameState.asteroids.push(ast);
+  }
+  
+  for (let i = GameState.lasers.length - 1; i >= 0; i--) {
+    let l = GameState.lasers[i]; l.position.x += l.userData.vx; l.position.z += l.userData.vz; l.userData.life--;
+    if (l.userData.life <= 0) { scene.remove(l); GameState.lasers.splice(i, 1); }
+  }
+  
+  for (let i = GameState.asteroids.length - 1; i >= 0; i--) {
+    let a = GameState.asteroids[i]; a.position.x += a.userData.vx; a.position.z += a.userData.vz; a.rotation.x += 0.01; a.rotation.y += 0.01;
+    for (let j = GameState.lasers.length - 1; j >= 0; j--) {
+      let l = GameState.lasers[j];
+      if (a.position.distanceTo(l.position) < 5) {
+        scene.remove(a); scene.remove(l); GameState.asteroids.splice(i, 1); GameState.lasers.splice(j, 1);
+        GameState.score += 100; document.getElementById('game-score').innerText = 'SCORE: ' + GameState.score; break;
+      }
+    }
+    if (a && GameState.ship && a.position.distanceTo(GameState.ship.position) < 5) {
+      document.getElementById('game-score').innerHTML = 'GAME OVER<br>SCORE: ' + GameState.score;
+      scene.remove(GameState.ship); GameState.ship = null;
+    }
+  }
+}
