@@ -107,13 +107,29 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth < 768;
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 6000);
+    
+    // Post-Processing (Bloom)
+    let composer, bloomPass;
+    if (window.THREE.EffectComposer && window.THREE.UnrealBloomPass) {
+       const renderScene = new window.THREE.RenderPass(scene, camera);
+       bloomPass = new window.THREE.UnrealBloomPass(new window.THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+       bloomPass.threshold = 0.85; // High threshold so only emissive/bright lights glow (not the planets)
+       bloomPass.strength = 0.4; // Subtle, realistic bloom
+       bloomPass.radius = 0.6;
+       
+       composer = new window.THREE.EffectComposer(renderer);
+       composer.addPass(renderScene);
+       composer.addPass(bloomPass);
+    }
 
     // ── NEBULA BACKGROUND ────────────────────────────────────────────────────
     function makeProceduralTexture(w, h, drawFn) {
@@ -162,7 +178,9 @@ window.addEventListener("DOMContentLoaded", () => {
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
     starGeo.setAttribute('color',    new THREE.BufferAttribute(starColors, 3));
     starGeo.setAttribute('size',     new THREE.BufferAttribute(starSizes, 1));
-    scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 1.2, vertexColors: true, transparent: true, opacity: 0.95, sizeAttenuation: true })));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 1.2, vertexColors: true, transparent: true, opacity: 0.95, sizeAttenuation: true }));
+    scene.add(stars);
+    window.stars = stars;
 
     // ── LIGHTING ─────────────────────────────────────────────────────────────
 
@@ -175,87 +193,392 @@ window.addEventListener("DOMContentLoaded", () => {
     window.robotActions = {};
     window.robotActiveAction = null;
     window.robotIsBusy = false;
+    window.ufoModel = null;
+    window.ufoIsBusy = false;
     
     const loader = new THREE.GLTFLoader();
-    const url = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/gltf/RobotExpressive/RobotExpressive.glb';
+    
+    // Load UFO
+    const ufoUrl = 'https://models.babylonjs.com/ufo.glb';
+    loader.load(ufoUrl, (gltf) => {
+      const ufo = gltf.scene;
+      
+      const box = new THREE.Box3().setFromObject(ufo);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const scaleFactor = 22 / Math.max(size.x, size.y, size.z); 
+      ufo.scale.set(scaleFactor, scaleFactor, scaleFactor);
+      ufo.userData.baseScale = scaleFactor;
+      
+      // Add abduction spotlight (placed lower, narrower, softer blue-white color, completely soft edges)
+      const beamLight = new THREE.SpotLight(0xcceeff, 0, 150, Math.PI / 5, 1.0, 1);
+      beamLight.position.set(0, -6, 0); 
+      beamLight.target.position.set(0, -50, 0);
+      ufo.add(beamLight);
+      ufo.add(beamLight.target);
+      ufo.userData.beamLight = beamLight;
+      
+      // Volumetric beam texture: soft vertical ice-blue fade
+      const beamTex = makeProceduralTexture(256, 256, (ctx, w, h) => {
+        const g = ctx.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, 'rgba(255, 255, 255, 0.9)'); // very bright core at source
+        g.addColorStop(0.1, 'rgba(160, 240, 255, 0.5)'); // quickly transitions to soft blue
+        g.addColorStop(0.5, 'rgba(160, 240, 255, 0.15)'); // very transparent midway
+        g.addColorStop(1.0, 'rgba(160, 240, 255, 0)'); // fully dissipates
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      });
+
+      // Add visual beam cone
+      const beamGeo = new THREE.CylinderGeometry(0.5, 9, 30, 32, 1, true); // pointed top, wide bottom
+      beamGeo.translate(0, -15, 0); // shift pivot to origin
+      const beamMat = new THREE.MeshBasicMaterial({ 
+        map: beamTex, 
+        transparent: true, 
+        opacity: 0, 
+        side: THREE.DoubleSide, 
+        blending: THREE.AdditiveBlending, 
+        depthWrite: false 
+      });
+      const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+      ufo.add(beamMesh);
+      ufo.userData.beamMesh = beamMesh;
+      
+      // Tractor beam particles (dust floating up)
+      const particleCount = 200;
+      const pGeo = new THREE.BufferGeometry();
+      const pPos = new Float32Array(particleCount * 3);
+      for(let i=0; i<particleCount; i++) {
+        pPos[i*3] = (Math.random() - 0.5) * 8; // x spread
+        pPos[i*3+1] = -Math.random() * 30;     // y spread (downwards)
+        pPos[i*3+2] = (Math.random() - 0.5) * 8; // z spread
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      
+      // Particle texture for soft glowing dots
+      const pTex = makeProceduralTexture(64, 64, (ctx, w, h) => {
+        const g = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w/2);
+        g.addColorStop(0, 'rgba(255,255,255,1)');
+        g.addColorStop(0.3, 'rgba(160,240,255,0.8)');
+        g.addColorStop(1, 'rgba(160,240,255,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      });
+      
+      const pMat = new THREE.PointsMaterial({
+        map: pTex,
+        size: 0.8,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const beamParticles = new THREE.Points(pGeo, pMat);
+      ufo.add(beamParticles);
+      ufo.userData.beamParticles = beamParticles;
+      
+      ufo.traverse((object) => {
+        if (object.isMesh) {
+          object.castShadow = true;
+          object.receiveShadow = true;
+          if (object.material && object.material.emissive) {
+             object.material.emissiveIntensity = 2.0;
+          }
+        }
+      });
+      
+      window.ufoModel = ufo;
+      scene.add(ufo);
+    });
+
+    // Load Astronaut
+    const url = 'https://modelviewer.dev/shared-assets/models/Astronaut.glb';
     loader.load(url, (gltf) => {
       const model = gltf.scene;
       
-      // Position robot near camera's starting position so it's visible in hero section
-      // Camera starts at (0, 80, 580) looking at (0,0,0)
-      // Robot should appear to the right side of hero, between camera and sun
+      // Normalize model size
+      const box = new THREE.Box3().setFromObject(model);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const scaleFactor = 6 / Math.max(size.x, size.y, size.z); 
+      model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+      
+      const robotGroup = new THREE.Group();
+
       if (window.innerWidth < 768) {
-        model.scale.set(2.5, 2.5, 2.5);
-        model.position.set(0, 60, 400); // Center screen on mobile, slightly lower
+        robotGroup.scale.set(2, 2, 2);
+        robotGroup.position.set(12, 50, 420); 
       } else {
-        model.scale.set(3.5, 3.5, 3.5);
-        model.position.set(25, 65, 430); // Closer to center so it is immediately visible
+        robotGroup.scale.set(3.5, 3.5, 3.5);
+        robotGroup.position.set(25, 65, 430); 
       }
-      model.rotation.y = -Math.PI / 6; 
+      robotGroup.rotation.y = -Math.PI / 6; 
       
-      // Cinematic Rim Lighting just for the robot
-      const robotLight = new THREE.PointLight(0x00E6FF, 2, 50);
-      robotLight.position.set(5, 10, 5);
-      model.add(robotLight);
+      const fillLight = new THREE.PointLight(0xffffff, 4.0, 150);
+      fillLight.position.set(15, 20, 20);
+      robotGroup.add(fillLight);
       
-      const rimLight = new THREE.SpotLight(0xFFB347, 5, 50, Math.PI/4, 0.5, 2);
-      rimLight.position.set(-10, 10, -10);
-      rimLight.target = model;
-      model.add(rimLight);
+      const rimLight = new THREE.PointLight(0x00E6FF, 5.0, 150);
+      rimLight.position.set(-15, 15, -15);
+      robotGroup.add(rimLight);
+      
+      const warmLight = new THREE.PointLight(0xFFB347, 3.0, 150);
+      warmLight.position.set(15, -5, -10);
+      robotGroup.add(warmLight);
       
       model.traverse(function (object) {
         if (object.isMesh) {
           object.castShadow = true;
           object.receiveShadow = true;
           if (object.material) {
-            object.material.envMapIntensity = 2.0; // Boost reflections
+            object.material.envMapIntensity = 3.0; 
+            object.material.roughness = 0.4;
+            object.material.metalness = 0.5;
           }
         }
       });
       
-      scene.add(model);
-      window.robotModel = model;
-      if (typeof resize === 'function') resize(); // Trigger initial responsive placement
+      robotGroup.add(model);
+      scene.add(robotGroup);
+      window.robotModel = robotGroup;
       
-      // Animations Setup
       window.robotMixer = new THREE.AnimationMixer(model);
+      window.idleAnimName = null;
       
       gltf.animations.forEach((clip) => {
         const action = window.robotMixer.clipAction(clip);
         window.robotActions[clip.name] = action;
-        // Make non-idle animations play once
-        if (clip.name !== 'Idle' && clip.name !== 'Walking' && clip.name !== 'Running') {
+        if (clip.name.toLowerCase().includes('idle')) window.idleAnimName = clip.name;
+        if (!clip.name.toLowerCase().includes('idle') && !clip.name.toLowerCase().includes('walk') && !clip.name.toLowerCase().includes('run')) {
           action.clampWhenFinished = true;
           action.loop = THREE.LoopOnce;
         }
       });
       
-      // Start Idle
-      if (window.robotActions['Idle']) {
-        window.robotActiveAction = window.robotActions['Idle'];
-        window.robotActiveAction.play();
+      // If no idle found, only use the first animation as idle if there are MULTIPLE animations.
+      // Otherwise, keep it for the click action!
+      if (!window.idleAnimName && gltf.animations.length > 1) {
+         window.idleAnimName = gltf.animations[0].name;
       }
       
-      // Event listener when animation finishes to return to idle
-      window.robotMixer.addEventListener('finished', (e) => {
-        if (window.robotActiveAction !== window.robotActions['Idle']) {
-          fadeToAction('Idle', 0.5);
-          window.robotIsBusy = false;
+      if (window.idleAnimName && window.robotActions[window.idleAnimName]) {
+        window.robotActiveAction = window.robotActions[window.idleAnimName];
+        if (window.robotActiveAction) {
+           window.robotActiveAction.loop = THREE.LoopRepeat;
+           window.robotActiveAction.clampWhenFinished = false;
+           window.robotActiveAction.play();
         }
+      }
+      
+      window.robotMixer.addEventListener('finished', (e) => {
+        if (window.idleAnimName && window.robotActiveAction !== window.robotActions[window.idleAnimName]) {
+          fadeToAction(window.idleAnimName, 0.5);
+        }
+        window.robotIsBusy = false;
       });
       
-      // Add invisible raycast box around it
+      // Automatic random action
+      setInterval(() => {
+        if (!window.robotIsBusy && Math.random() > 0.4 && window.robotModel) {
+          if (window.beamUpAstronaut) window.beamUpAstronaut();
+        }
+      }, 12000);
+      
       const rayBox = new THREE.Mesh(new THREE.BoxGeometry(6, 12, 6), new THREE.MeshBasicMaterial({visible: false}));
       rayBox.position.set(0, 4, 0);
-      model.add(rayBox);
+      robotGroup.add(rayBox);
       window.robotRay = rayBox;
     });
     
+    window.beamUpAstronaut = function() {
+       if (window.robotIsBusy || !window.gsap || !window.robotModel || !window.ufoModel) return;
+       window.robotIsBusy = true;
+       window.ufoIsBusy = true;
+       
+       const rGroup = window.robotModel;
+       const ufo = window.ufoModel;
+       const beamLight = ufo.userData.beamLight;
+       const beamMesh = ufo.userData.beamMesh;
+       
+       const availableActions = Object.keys(window.robotActions).filter(name => name !== window.idleAnimName);
+       if (availableActions.length > 0 && typeof window.fadeToAction === 'function') {
+          window.fadeToAction(availableActions[0], 0.2);
+       }
+       if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover();
+       
+       const tl = gsap.timeline({
+         onComplete: () => {
+           window.robotIsBusy = false;
+           window.ufoIsBusy = false;
+         }
+       });
+       
+       // 1. UFO banks and flies over the astronaut
+       const targetX = rGroup.position.x;
+       const targetY = rGroup.position.y + 25;
+       const targetZ = rGroup.position.z;
+       
+       // Tilt in direction of movement
+       const dx = targetX - ufo.position.x;
+       const dz = targetZ - ufo.position.z;
+       const tiltX = dz * 0.005;
+       const tiltZ = -dx * 0.005;
+       
+       tl.to(ufo.rotation, {
+          x: tiltX,
+          z: tiltZ,
+          duration: 0.4,
+          ease: "power1.out"
+       }, "start");
+       
+       tl.to(ufo.position, {
+          x: targetX,
+          y: targetY,
+          z: targetZ,
+          duration: 1.0,
+          ease: "power2.inOut"
+       }, "start");
+       
+       // Level out rotation when arriving
+       tl.to(ufo.rotation, {
+          x: 0,
+          z: 0,
+          duration: 0.6,
+          ease: "power1.out"
+       }, "start+=0.8");
+       
+       // 2. Turn on volumetric beam with scaling/pulsing effect and particles
+       if (beamLight) tl.to(beamLight, { intensity: 15, duration: 0.4 }, "beam");
+       if (beamMesh) {
+          beamMesh.scale.set(0.1, 1, 0.1);
+          tl.to(beamMesh.scale, { x: 1, z: 1, duration: 0.4, ease: "back.out(1.5)" }, "beam");
+          tl.to(beamMesh.material, { opacity: 0.8, duration: 0.3 }, "beam");
+       }
+       if (ufo.userData.beamParticles) {
+          tl.to(ufo.userData.beamParticles.material, { opacity: 0.8, duration: 0.3 }, "beam");
+       }
+       
+       // UFO engine throttle shake
+       tl.to(ufo.position, {
+          y: targetY + 1.5,
+          duration: 0.08,
+          repeat: 14,
+          yoyo: true,
+          ease: "sine.inOut"
+       }, "beam");
+       
+       // 3. Astronaut abduction: slow float then quick suck in
+       // Realistic 3D zero-G tumble
+       tl.to(rGroup.rotation, {
+          x: rGroup.rotation.x + Math.PI * 2,
+          y: rGroup.rotation.y + Math.PI * 3,
+          z: rGroup.rotation.z - Math.PI * 1.5,
+          duration: 1.4,
+          ease: "power2.in"
+       }, "beam+=0.2");
+       
+       tl.to(rGroup.position, {
+          y: rGroup.position.y + 10, // slow float up
+          duration: 0.8,
+          ease: "power1.out"
+       }, "beam+=0.2");
+       
+       // Fast suck up
+       tl.to(rGroup.position, {
+          y: targetY - 2, // enter hatch
+          duration: 0.6,
+          ease: "power3.in"
+       }, "beam+=1.0");
+       tl.to(rGroup.scale, {
+          x: 0.01, y: 0.01, z: 0.01,
+          duration: 0.5,
+          ease: "power3.in"
+       }, "beam+=1.1");
+       
+       // 4. Warp off: tilt and blast into deep space!
+       tl.to(ufo.rotation, {
+          x: -Math.PI / 4, // tilt up sharply
+          duration: 0.3,
+          ease: "power2.in"
+       }, "warp");
+       
+       if (beamLight) tl.to(beamLight, { intensity: 0, duration: 0.2 }, "warp");
+       if (beamMesh) tl.to(beamMesh.material, { opacity: 0, duration: 0.2 }, "warp");
+       if (ufo.userData.beamParticles) tl.to(ufo.userData.beamParticles.material, { opacity: 0, duration: 0.2 }, "warp");
+       
+       // Classic Sci-Fi Warp stretch
+       const ufoBaseScale = ufo.userData.baseScale || 1;
+       tl.to(ufo.scale, {
+          x: ufoBaseScale * 0.2,
+          y: ufoBaseScale * 5.0, // Stretch along local Y
+          z: ufoBaseScale * 0.2,
+          duration: 0.3,
+          ease: "power2.in"
+       }, "warp+=0.2");
+       
+       tl.to(ufo.position, {
+          y: targetY + 600,
+          z: targetZ - 800,
+          duration: 0.4,
+          ease: "power4.in"
+       }, "warp+=0.2");
+       
+       // 5. Warp back in: drop from sky with bounce squash
+       tl.set(ufo.position, { x: targetX, y: targetY + 400, z: targetZ }, "warpBack");
+       tl.set(ufo.scale, { x: ufoBaseScale * 0.1, y: ufoBaseScale * 4.0, z: ufoBaseScale * 0.1 }, "warpBack");
+       tl.set(ufo.rotation, { x: 0, z: 0 }, "warpBack");
+       
+       tl.to(ufo.position, {
+          y: targetY,
+          duration: 0.4,
+          ease: "power2.out"
+       }, "warpBack");
+       
+       tl.to(ufo.scale, {
+          x: ufoBaseScale, 
+          y: ufoBaseScale, 
+          z: ufoBaseScale,
+          duration: 0.6,
+          ease: "elastic.out(1, 0.5)" // bouncy squash back to normal
+       }, "warpBack+=0.2");
+       tl.to(ufo.position, {
+          y: targetY,
+          duration: 0.6,
+          ease: "power2.out"
+       }, "warpBack");
+       
+       // 6. Drop astronaut back down
+       const baseScale = window.innerWidth < 768 ? 1.8 : 3.0;
+       const baseY = window.innerWidth < 768 ? 40 : 50;
+       
+       // Flash light on drop
+       if (beamLight) {
+          tl.to(beamLight, { intensity: 45, duration: 0.1 }, "drop");
+          tl.to(beamLight, { intensity: 0, duration: 0.4 }, "drop+=0.3");
+       }
+       if (beamMesh) {
+          tl.set(beamMesh.scale, { x: 0.8, z: 0.8 }, "drop");
+          tl.to(beamMesh.material, { opacity: 0.5, duration: 0.1 }, "drop");
+          tl.to(beamMesh.material, { opacity: 0, duration: 0.4 }, "drop+=0.3");
+       }
+       
+       tl.to(rGroup.position, {
+          y: baseY,
+          duration: 0.8,
+          ease: "bounce.out"
+       }, "drop");
+       tl.to(rGroup.scale, {
+          x: baseScale, y: baseScale, z: baseScale,
+          duration: 0.8,
+          ease: "power2.out"
+       }, "drop");
+    };
+
     window.fadeToAction = function(name, duration) {
       const prevAction = window.robotActiveAction;
       const activeAction = window.robotActions[name];
       if (prevAction !== activeAction && activeAction) {
-        prevAction.fadeOut(duration);
+        if (prevAction) prevAction.fadeOut(duration);
         activeAction.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).fadeIn(duration).play();
         window.robotActiveAction = activeAction;
       }
@@ -263,8 +586,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
-    scene.add(new THREE.PointLight(0xFFF5E4, isMobile ? 3 : 4.5, 2000, 1.1));
-    scene.add(new THREE.AmbientLight(0x090918, 0.3));
+    // Slightly softer sunlight for realism
+    scene.add(new THREE.PointLight(0xFFF5E4, isMobile ? 1.8 : 2.5, 2000, 1.1));
+    scene.add(new THREE.AmbientLight(0x090918, 0.2));
 
     // ── SUN ──────────────────────────────────────────────────────────────────
     const sunTex = makeProceduralTexture(512, 512, (ctx, w, h) => {
@@ -284,8 +608,8 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     });
     const sun = new THREE.Mesh(
-      new THREE.SphereGeometry(22, isMobile ? 24 : 48, isMobile ? 24 : 48),
-      new THREE.MeshStandardMaterial({ map: sunTex, emissive: new THREE.Color(0xff5500), emissiveIntensity: 2.2, emissiveMap: sunTex, roughness: 1 })
+      new THREE.SphereGeometry(22, isMobile ? 32 : 64, isMobile ? 32 : 64),
+      new THREE.MeshStandardMaterial({ map: sunTex, emissive: new THREE.Color(0xff5500), emissiveIntensity: isMobile ? 1.4 : 1.8, emissiveMap: sunTex, roughness: 1 })
     );
     scene.add(sun);
 
@@ -305,6 +629,36 @@ window.addEventListener("DOMContentLoaded", () => {
       spr.scale.setScalar(scale);
       scene.add(spr);
     });
+
+    const _hash = (x, y) => { let h = Math.sin(x*12.9898 + y*78.233)*43758.5453; return h - Math.floor(h); };
+    const _noise = (x, y) => {
+      const i = Math.floor(x), j = Math.floor(y);
+      const f = x-i, g = y-j;
+      const u = f*f*(3-2*f), v = g*g*(3-2*g);
+      return _hash(i,j)*(1-u)*(1-v) + _hash(i+1,j)*u*(1-v) + _hash(i,j+1)*(1-u)*v + _hash(i+1,j+1)*u*v;
+    };
+    const _fbm = (x, y) => {
+      let v = 0, a = 0.5, f = 1;
+      for(let i=0; i<4; i++) { v += _noise(x*f, y*f)*a; a*=0.5; f*=2; }
+      return v;
+    };
+    const makeBumpMap = (w, h, scale, isGasGiant) => {
+      return makeProceduralTexture(w, h, (ctx, cw, ch) => {
+        const imgData = ctx.createImageData(cw, ch);
+        const data = imgData.data;
+        for (let y = 0; y < ch; y++) {
+          for (let x = 0; x < cw; x++) {
+             let nx = x / scale, ny = y / scale;
+             let val = isGasGiant ? _noise(nx * 0.2, ny * 3.0) : _fbm(nx, ny);
+             let color = Math.floor(val * 255);
+             const i = (y * cw + x) * 4;
+             data[i] = data[i+1] = data[i+2] = color;
+             data[i+3] = 255;
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+      });
+    };
 
     // ── PLANET DEFINITIONS ────────────────────────────────────────────────────
     const PLANET_DEFS = [
@@ -418,10 +772,19 @@ window.addEventListener("DOMContentLoaded", () => {
       orbitGroup.add(new THREE.Line(orbitGeo, orbitMat));
 
       // Planet mesh
-      const pTex = makeProceduralTexture(isMobile ? 128 : 256, isMobile ? 128 : 256, def.drawFn);
+      const isGasGiant = ['Jupiter', 'Saturn', 'Uranus', 'Neptune'].includes(def.name);
+      const pTex = makeProceduralTexture(isMobile ? 256 : 512, isMobile ? 256 : 512, def.drawFn);
+      const bumpTex = makeBumpMap(isMobile ? 256 : 512, isMobile ? 256 : 512, isGasGiant ? 30 : 15, isGasGiant);
+      
       const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(def.radius, isMobile ? 20 : 36, isMobile ? 20 : 36),
-        new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.75, metalness: 0.04 })
+        new THREE.SphereGeometry(def.radius, isMobile ? 32 : 64, isMobile ? 32 : 64),
+        new THREE.MeshStandardMaterial({ 
+          map: pTex, 
+          bumpMap: bumpTex, 
+          bumpScale: isGasGiant ? 0.05 : 0.8,
+          roughness: isGasGiant ? 0.4 : 0.85, 
+          metalness: isGasGiant ? 0.1 : 0.2
+        })
       );
       mesh.rotation.z = def.tilt;
 
@@ -520,13 +883,7 @@ window.addEventListener("DOMContentLoaded", () => {
       if (window.robotRay && !window.robotIsBusy) {
         const hits = heroRaycaster.intersectObject(window.robotRay, true);
         if (hits.length > 0) {
-          window.robotIsBusy = true;
-          const actions = ['Wave', 'Jump', 'ThumbsUp', 'Dance', 'Punch'];
-          const randomAction = actions[Math.floor(Math.random() * actions.length)];
-          if (typeof window.fadeToAction === 'function') {
-             window.fadeToAction(randomAction, 0.2);
-             if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover();
-          }
+          if (window.beamUpAstronaut) window.beamUpAstronaut();
         }
       }
     });
@@ -592,22 +949,60 @@ window.addEventListener("DOMContentLoaded", () => {
         const rGroup = window.robotModel;
         
         // Gentle hover bob (no crazy vertical floating)
-        const baseY = window.innerWidth < 768 ? 60 : 65;
-        rGroup.position.y = baseY + Math.sin(time / 500) * 0.8;
+        const baseY = window.innerWidth < 768 ? 40 : 50; // Lowered position
+        if (!window.robotIsBusy) {
+           rGroup.position.y = baseY + Math.sin(time / 500) * 0.8;
+        }
         
         // Smoothly scale down and move backwards into space as you scroll
-        const baseScale = window.innerWidth < 768 ? 2.5 : 3.5;
+        const baseScale = window.innerWidth < 768 ? 1.8 : 3.0;
         const currentScale = Math.max(0, baseScale - (sp * baseScale * 3)); // Shrinks to 0 at 33% scroll
-        rGroup.scale.setScalar(currentScale);
         
-        const baseZ = window.innerWidth < 768 ? 400 : 430;
-        rGroup.position.z = baseZ - (sp * 500); // Floats away into the sun
-        
-        // Mouse Tracking
-        const targetRotY = (-Math.PI / 6) + tMX * -0.5; 
-        rGroup.rotation.y += (targetRotY - rGroup.rotation.y) * 0.1;
+        if (!window.robotIsBusy) {
+           rGroup.scale.setScalar(currentScale);
+           const baseZ = window.innerWidth < 768 ? 420 : 430;
+           rGroup.position.z = baseZ - (sp * 500); // Floats away into the sun
+           
+           // Mouse Tracking
+           const targetRotY = (-Math.PI / 6) + tMX * -0.5; 
+           rGroup.rotation.y += (targetRotY - rGroup.rotation.y) * 0.1;
+        }
         
         rGroup.visible = currentScale > 0.01;
+        
+        // UFO logic
+        if (window.ufoModel) {
+           const ufo = window.ufoModel;
+           const t = time / 1000;
+           if (!window.ufoIsBusy) {
+             // Orbit around the astronaut
+             const orbitRadius = 45;
+             ufo.position.x = rGroup.position.x + Math.sin(t) * orbitRadius;
+             ufo.position.z = rGroup.position.z + Math.cos(t) * orbitRadius;
+             ufo.position.y = rGroup.position.y + 18 + Math.sin(t * 2.5) * 6;
+             
+             ufo.rotation.y -= 0.04; // Fast spin
+             ufo.rotation.z = Math.sin(t * 4) * 0.15; // Wobble
+             
+             // Scale down with astronaut
+             const ufoBaseScale = ufo.userData.baseScale || 1;
+             const ufoCurrentScale = Math.max(0, ufoBaseScale - (sp * ufoBaseScale * 3));
+             ufo.scale.setScalar(ufoCurrentScale);
+           }
+           ufo.visible = currentScale > 0.01;
+           
+           // Animate beam particles if active
+           if (ufo.userData.beamParticles && ufo.userData.beamParticles.material.opacity > 0) {
+              const pos = ufo.userData.beamParticles.geometry.attributes.position.array;
+              for(let i = 0; i < pos.length; i += 3) {
+                 pos[i + 1] += 0.4; // float upwards
+                 if (pos[i + 1] > 0) pos[i + 1] = -30; // reset to bottom
+                 pos[i] += Math.sin(time / 200 + i) * 0.02; // slight sway
+              }
+              ufo.userData.beamParticles.geometry.attributes.position.needsUpdate = true;
+           }
+        }
+
         // Raycasting for hover tooltip
         if (window.robotRay) {
           heroRaycaster.setFromCamera(heroMouse, camera);
@@ -616,7 +1011,7 @@ window.addEventListener("DOMContentLoaded", () => {
             document.body.style.cursor = 'pointer';
             if (typeof tooltip !== 'undefined' && tooltip.classList.contains('hidden')) {
               if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover();
-              tooltipTitle.innerText = "ROBOT.EXPRESSIVE";
+              tooltipTitle.innerText = "ASTRONAUT";
               tooltipSub.innerText = "CLICK ME!";
               tooltip.classList.remove('hidden');
             }
@@ -709,7 +1104,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
       // Sun rotates very slowly, planets keep medium speed
       sun.rotation.y += 0.0006 * dt * 60;
-      renderer.render(scene, camera);
+      
+      // Animate stars slowly
+      if (window.stars) window.stars.rotation.y -= 0.0003 * dt * 60;
+      
+      if (typeof composer !== 'undefined' && composer) {
+         composer.render();
+      } else {
+         renderer.render(scene, camera);
+      }
     }
 
 
@@ -1325,411 +1728,13 @@ function initDesktopOS() {
 
 
 
-// ── FEATURE 5: 3D TECH STACK GALAXY ───────────────────────────────────────
-// ── FEATURE 5: 3D TECH STACK GALAXY (Three.js) ────────────────────────────
-function initGalaxy() {
-  const container = document.querySelector('.galaxy-wrapper');
-  const tooltip = document.getElementById('galaxy-tooltip');
-  if (!container || !tooltip || !window.THREE) return;
 
-  // Remove the old 2D canvas
-  const oldCanvas = document.getElementById('galaxyCanvas');
-  if (oldCanvas) oldCanvas.remove();
-
-  const scene = new THREE.Scene();
-  // Optional: add subtle fog to give depth
-  scene.fog = new THREE.FogExp2(0x050510, 0.001);
-
-  const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 1, 3000);
-  camera.position.z = 700;
-
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setSize(container.clientWidth, container.clientHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ReinhardToneMapping;
-  container.insertBefore(renderer.domElement, tooltip);
-
-  // Setup Post-Processing (Bloom)
-  const renderScene = new THREE.RenderPass(scene, camera);
-  const bloomPass = new THREE.UnrealBloomPass(
-    new THREE.Vector2(container.clientWidth, container.clientHeight), 
-    1.2, // strength
-    0.5, // radius
-    0.2  // threshold
-  );
-  const composer = new THREE.EffectComposer(renderer);
-  composer.addPass(renderScene);
-  composer.addPass(bloomPass);
-
-  // OrbitControls for dragging and rotation
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.0;
-  controls.enablePan = false;
-  controls.minDistance = 300;
-  controls.maxDistance = 1200;
-
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-  scene.add(ambientLight);
-  const pointLight = new THREE.PointLight(0xffffff, 1.5, 2000);
-  pointLight.position.set(300, 400, 300);
-  scene.add(pointLight);
-
-  // Starfield Background
-  const starGeo = new THREE.BufferGeometry();
-  const starCount = 1200;
-  const starPositions = new Float32Array(starCount * 3);
-  for(let i = 0; i < starCount * 3; i++) {
-    starPositions[i] = (Math.random() - 0.5) * 4000;
-  }
-  starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-  const starMat = new THREE.PointsMaterial({ 
-    color: 0xffffff, size: 2.5, transparent: true, opacity: 0.7, sizeAttenuation: true 
-  });
-  const stars = new THREE.Points(starGeo, starMat);
-  scene.add(stars);
-
-  // Nebula Background
-  const createNebulaTexture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256; canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-    grad.addColorStop(0, 'rgba(255,255,255,1)');
-    grad.addColorStop(0.2, 'rgba(255,255,255,0.6)');
-    grad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 256, 256);
-    return new THREE.CanvasTexture(canvas);
-  };
-  const nebulaTex = createNebulaTexture();
-  const nebulaColors = [0x5E5CE6, 0x0A84FF, 0x8E75B2, 0x32D74B];
-  for(let i=0; i<12; i++) {
-    const mat = new THREE.SpriteMaterial({ 
-      map: nebulaTex, color: nebulaColors[i % nebulaColors.length], 
-      transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false
-    });
-    const sprite = new THREE.Sprite(mat);
-    sprite.scale.set(1500 + Math.random()*1500, 1500 + Math.random()*1500, 1);
-    sprite.position.set(
-      (Math.random() - 0.5) * 3000,
-      (Math.random() - 0.5) * 3000,
-      (Math.random() - 0.5) * 2000 - 1000
-    );
-    scene.add(sprite);
-  }
-
-  const NODES = [
-    { name:'React',      cat:'Frontend', icon:'https://img.icons8.com/color/128/react-native.png', size:26, pos:[ 250,  100,  150] },
-    { name:'Node.js',    cat:'Backend',  icon:'https://img.icons8.com/color/128/nodejs.png', size:26, pos:[-200,  150, -250] },
-    { name:'MongoDB',    cat:'Database', icon:'https://img.icons8.com/color/128/mongodb.png', size:22, pos:[ 150, -200,  200] },
-    { name:'Express.js', cat:'Backend',  icon:'https://img.icons8.com/color/128/api.png', size:22, pos:[-280, -100,  120] },
-    { name:'JavaScript', cat:'Frontend', icon:'https://img.icons8.com/color/128/javascript--v1.png', size:22, pos:[ 350, -150, -100] },
-    { name:'HTML5',      cat:'Frontend', icon:'https://img.icons8.com/color/128/html-5--v1.png', size:18, pos:[-100,  300,   80] },
-    { name:'CSS3',       cat:'Frontend', icon:'https://img.icons8.com/color/128/css3.png', size:18, pos:[  80, -300, -150] },
-    { name:'Python',     cat:'Backend',  icon:'https://img.icons8.com/color/128/python--v1.png', size:20, pos:[ 180,  250, -280] },
-    { name:'Socket.io',  cat:'Backend',  icon:'https://img.icons8.com/fluency/128/network.png', size:16, pos:[-150, -250, -200] },
-    { name:'Gemini AI',  cat:'AI',       icon:'https://img.icons8.com/color/128/google-logo.png', size:22, pos:[ 400,  200,    0] },
-    { name:'Figma',      cat:'Tools',    icon:'https://img.icons8.com/color/128/figma--v1.png', size:18, pos:[-350,  180,  150] },
-    { name:'Git',        cat:'Tools',    icon:'https://img.icons8.com/color/128/git.png', size:18, pos:[ 280, -250,  250] },
-    { name:'Bootstrap',  cat:'Frontend', icon:'https://img.icons8.com/color/128/bootstrap.png', size:18, pos:[-250, -300,  -80] },
-    { name:'JWT',        cat:'Backend',  icon:'https://img.icons8.com/color/128/json--v1.png', size:16, pos:[  80,   80,  400] },
-    { name:'Postman',    cat:'Tools',    icon:'https://img.icons8.com/dusk/128/api-settings.png', size:16, pos:[-120,  180,  350] },
-  ];
-
-  const PROJECTS = {
-    'React':['StarNote AI','TalkNow','Smart Civic Eye'],'Node.js':['StarNote AI','TalkNow','Smart Civic Eye'],
-    'MongoDB':['StarNote AI','TalkNow'],'Express.js':['StarNote AI','TalkNow','Smart Civic Eye'],
-    'JavaScript':['StarNote AI','TalkNow','Smart Civic Eye'],'HTML5':['StarNote AI','TalkNow','Smart Civic Eye'],
-    'CSS3':['StarNote AI','TalkNow','Smart Civic Eye'],'Python':['Smart Civic Eye'],'Socket.io':['TalkNow'],
-    'Gemini AI':['StarNote AI'],'Figma':['StarNote AI','TalkNow'],'Git':['StarNote AI','TalkNow','Smart Civic Eye'],
-    'Bootstrap':['TalkNow'],'JWT':['StarNote AI','TalkNow'],'Postman':['StarNote AI','TalkNow','Smart Civic Eye'],
-  };
-
-  const group = new THREE.Group();
-  scene.add(group);
-
-  const meshes = [];
-
-  // MERN Core
-  const coreGeo = new THREE.SphereGeometry(35, 32, 32);
-  const coreMat = new THREE.MeshStandardMaterial({ 
-    color: 0x0A84FF, emissive: 0x0A84FF, emissiveIntensity: 0.8, roughness: 0.1, metalness: 0.9 
-  });
-  const core = new THREE.Mesh(coreGeo, coreMat);
-  group.add(core);
-
-  // Orbital Rings
-  const ringMat = new THREE.MeshBasicMaterial({ 
-    color: 0x0A84FF, transparent: true, opacity: 0.15, side: THREE.DoubleSide, blending: THREE.AdditiveBlending 
-  });
-  [180, 280, 380].forEach(radius => {
-    const ringGeo = new THREE.TorusGeometry(radius, 0.8, 16, 100);
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 2;
-    group.add(ring);
-  });
-
-  // Utility to create text sprites
-  function createTextSprite(message) {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 256; canvas.height = 128;
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.font = 'bold 36px -apple-system, sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(0,0,0,0.8)';
-    ctx.shadowBlur = 10;
-    ctx.fillText(message, 128, 64);
-    
-    const tex = new THREE.CanvasTexture(canvas);
-    const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
-    const sprite = new THREE.Sprite(spriteMat);
-    sprite.scale.set(120, 60, 1);
-    return sprite;
-  }
-
-  // Create tech nodes as images using Sprites
-  const textureLoader = new THREE.TextureLoader();
-  NODES.forEach(n => {
-    const tex = textureLoader.load(n.icon);
-    tex.generateMipmaps = true;
-    tex.minFilter = THREE.LinearMipmapLinearFilter;
-    
-    const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true });
-    const sprite = new THREE.Sprite(spriteMat);
-    const scaleSize = n.size * 2.5; 
-    sprite.scale.set(scaleSize, scaleSize, 1);
-    sprite.position.set(...n.pos);
-    sprite.userData = { name: n.name, cat: n.cat, baseScale: scaleSize, isSprite: true, basePos: new THREE.Vector3(...n.pos), velocity: new THREE.Vector3(0,0,0) };
-    
-    group.add(sprite);
-    meshes.push(sprite);
-
-    const label = createTextSprite(n.name);
-    label.position.set(n.pos[0], n.pos[1] - scaleSize / 2 - 20, n.pos[2]); 
-    group.add(label);
-    sprite.userData.label = label;
-  });
-
-  // Create constellation connecting lines based on categories
-  const catColors = {
-    'Frontend': new THREE.Color(0x0A84FF), 'Backend': new THREE.Color(0x32D74B),
-    'Database': new THREE.Color(0xFF9F0A), 'AI': new THREE.Color(0xBF5AF2), 'Tools': new THREE.Color(0xFF375F)
-  };
-  const lineMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending });
-  const lineGeo = new THREE.BufferGeometry();
-  
-  const linePairs = [];
-  for(let i=0; i<meshes.length; i++) {
-    for(let j=i+1; j<meshes.length; j++) {
-      if(meshes[i].userData.cat === meshes[j].userData.cat) {
-        linePairs.push([meshes[i], meshes[j], catColors[meshes[i].userData.cat] || new THREE.Color(0xffffff)]);
-      }
-    }
-  }
-  const linePositions = new Float32Array(linePairs.length * 6);
-  const lineColorsArray = new Float32Array(linePairs.length * 6);
-  linePairs.forEach((pair, idx) => {
-    const c = pair[2];
-    lineColorsArray[idx*6] = c.r; lineColorsArray[idx*6+1] = c.g; lineColorsArray[idx*6+2] = c.b;
-    lineColorsArray[idx*6+3] = c.r; lineColorsArray[idx*6+4] = c.g; lineColorsArray[idx*6+5] = c.b;
-  });
-  lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
-  lineGeo.setAttribute('color', new THREE.BufferAttribute(lineColorsArray, 3));
-  const lines = new THREE.LineSegments(lineGeo, lineMat);
-  group.add(lines);
-
-  // Shockwave Ripples Array
-  const ripples = [];
-
-  // Core Label
-  const coreLabel = createTextSprite("MERN");
-  coreLabel.scale.set(160, 80, 1);
-  coreLabel.position.set(0, -55, 0);
-  core.add(coreLabel);
-
-  // Raycaster for hover and drag events
-  const raycaster = new THREE.Raycaster();
-  window.raycaster = raycaster;
-  const mouse = new THREE.Vector2();
-  let hoveredMesh = null;
-  let draggedMesh = null;
-  let dragPlane = new THREE.Plane();
-  let dragOffset = new THREE.Vector3();
-
-  renderer.domElement.addEventListener('mousemove', e => {
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
-
-    if (draggedMesh) {
-      raycaster.ray.intersectPlane(dragPlane, dragOffset);
-      draggedMesh.position.copy(dragOffset);
-      controls.autoRotate = false;
-      return;
-    }
-
-    const intersects = raycaster.intersectObjects(meshes);
-    if (intersects.length > 0) {
-      document.body.style.cursor = 'pointer';
-      controls.autoRotate = false;
-      controls.enableRotate = false;
-      const mesh = intersects[0].object;
-      
-      if (hoveredMesh !== mesh) {
-        if (hoveredMesh) hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale);
-        hoveredMesh = mesh;
-        hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale * 1.35);
-          if (window.AudioEngine && typeof window.AudioEngine.playHover === 'function') window.AudioEngine.playHover(); 
-      }
-      // Tooltip logic
-      const { name, cat } = mesh.userData;
-      tooltip.querySelector('.galaxy-tooltip-name').textContent = name;
-      tooltip.querySelector('.galaxy-tooltip-cat').textContent = cat;
-      const projs = PROJECTS[name] || [];
-      tooltip.querySelector('.galaxy-tooltip-projects').innerHTML = projs.length
-        ? projs.map(p => `<div class="galaxy-tooltip-project">${p}</div>`).join('')
-        : '<div class="galaxy-tooltip-project" style="opacity:0.4">No linked projects yet</div>';
-      
-      let tx = e.clientX + 15, ty = e.clientY - 10;
-      if (tx + 220 > window.innerWidth) tx = e.clientX - 230;
-      if (ty + 130 > window.innerHeight) ty = e.clientY - 140;
-      tooltip.style.left = tx + 'px'; tooltip.style.top = ty + 'px';
-      tooltip.classList.add('visible');
-    } else {
-      document.body.style.cursor = 'grab';
-      controls.enableRotate = true;
-      if (hoveredMesh) {
-        hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale);
-        hoveredMesh = null;
-      }
-      tooltip.classList.remove('visible');
-    }
-  });
-
-  renderer.domElement.addEventListener('mousedown', () => { 
-    if (hoveredMesh) {
-      draggedMesh = hoveredMesh;
-      dragPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()), draggedMesh.position);
-      
-      // Shockwave logic
-      const geo = new THREE.RingGeometry(0.1, 80, 32);
-      const mat = new THREE.MeshBasicMaterial({ color: catColors[draggedMesh.userData.cat] || 0xffffff, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
-      const ring = new THREE.Mesh(geo, mat);
-      ring.position.copy(draggedMesh.position);
-      ring.lookAt(camera.position);
-      group.add(ring);
-      ripples.push({ mesh: ring, age: 0 });
-
-    } else {
-      document.body.style.cursor = 'grabbing';
-    }
-  });
-  
-  window.addEventListener('mouseup', () => { 
-    draggedMesh = null;
-    document.body.style.cursor = 'grab'; 
-    controls.enableRotate = true;
-    setTimeout(() => { if (!hoveredMesh && !draggedMesh) controls.autoRotate = true; }, 2000);
-  });
-
-  renderer.domElement.addEventListener('mouseleave', () => {
-    draggedMesh = null;
-    document.body.style.cursor = 'default';
-    controls.enableRotate = true;
-    tooltip.classList.remove('visible');
-    if(hoveredMesh) { hoveredMesh.scale.setScalar(hoveredMesh.userData.baseScale); hoveredMesh = null; }
-    controls.autoRotate = true;
-  });
-
-  function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-
-      // (Robot is updated in the main solar system render loop above)
-
-    const t = Date.now() * 0.002;
-    
-    // Core pulsing effect
-    core.scale.setScalar(1 + Math.sin(t) * 0.08);
-    group.position.y = Math.sin(t * 0.5) * 15;
-    group.rotation.y = Math.sin(t * 0.2) * 0.05;
-    stars.rotation.y = t * 0.02; stars.rotation.x = t * 0.01;
-    lineMat.opacity = 0.2 + Math.sin(t * 1.5) * 0.15;
-    
-    // Physics and Lines updates
-    const posArr = lineGeo.attributes.position.array;
-    let idx = 0;
-    
-    meshes.forEach(mesh => {
-      if (mesh !== draggedMesh) {
-        const force = new THREE.Vector3().subVectors(mesh.userData.basePos, mesh.position).multiplyScalar(0.04);
-        force.sub(mesh.userData.velocity.clone().multiplyScalar(0.15)); // damp
-        mesh.userData.velocity.add(force);
-        mesh.position.add(mesh.userData.velocity);
-      }
-      mesh.userData.label.position.set(mesh.position.x, mesh.position.y - mesh.userData.baseScale/2 - 20, mesh.position.z);
-    });
-
-    linePairs.forEach(pair => {
-      posArr[idx++] = pair[0].position.x; posArr[idx++] = pair[0].position.y; posArr[idx++] = pair[0].position.z;
-      posArr[idx++] = pair[1].position.x; posArr[idx++] = pair[1].position.y; posArr[idx++] = pair[1].position.z;
-    });
-    lineGeo.attributes.position.needsUpdate = true;
-
-    // Shockwaves
-    for(let i=ripples.length-1; i>=0; i--) {
-      let r = ripples[i];
-      r.age += 0.03;
-      r.mesh.scale.setScalar(1 + r.age * 4);
-      r.mesh.material.opacity = Math.max(0, 0.8 - r.age*1.2);
-      if(r.age > 0.8) { group.remove(r.mesh); ripples.splice(i, 1); }
-    }
-    
-    composer.render();
-  }
-
-  function resize() {
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    composer.setSize(container.clientWidth, container.clientHeight);
-  }
-  window.addEventListener('resize', resize, { passive: true });
-
-  let started = false;
-  const visObs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && !started) {
-      started = true;
-      resize();
-      // Cinematic Camera Intro
-      const startT = Date.now();
-      const intro = () => {
-        const prog = Math.min((Date.now() - startT) / 1500, 1);
-        const ease = 1 - Math.pow(1 - prog, 4); // ease out
-        camera.position.z = 2500 - (2500 - 700) * ease;
-        if (prog < 1) requestAnimationFrame(intro);
-      };
-      intro();
-      animate();
-      visObs.disconnect();
-    }
-  }, { threshold: 0.2 });
-  visObs.observe(container);
-}
 
 // ── INIT ALL PREMIUM FEATURES ─────────────────────────────────────────────
 (function() {
   function run() {
     initAIChat();
     initDesktopOS();
-
-    initGalaxy();
     
     // Staggered Scroll Reveal
     const revealElements = document.querySelectorAll('.scroll-reveal');
