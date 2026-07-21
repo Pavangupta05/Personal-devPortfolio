@@ -5516,3 +5516,339 @@ body.warping .main-wrapper { transform: scale(0.92); filter: blur(12px) contrast
   #rg-text { font-size: 0.75rem; }
   .rg-glow-ring { top: 78px; right: 20px; }
 }
+
+/* ========================================================
+   PREMIUM VISUAL UPGRADES (Typography & Glassmorphism)
+   ======================================================== */
+:root {
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Force Body Font */
+body, p, span, div:not([class*="fa"]), a:not([class*="fa"]), li, button:not([class*="fa"]), input, textarea {
+  font-family: var(--font-body);
+}
+
+/* Force Heading Font */
+h1, h2, h3, h4, h5, h6, 
+.btn, .nav-links-pill a,
+.loader-title, .tooltip-title, .typing-title, .desktop-navbar a, .mobile-dynamic-nav a,
+.modal-project-title, .hero-greeting, .mdn-brand {
+  font-family: var(--font-heading) !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.home-subtitle, p, .skill-card p, .project-info p, .timeline-content p {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  line-height: 1.6;
+}
+
+/* Upgrade Glassmorphism on Cards & Nav */
+.skill-card, .project-card, .desktop-navbar .nav-glass-container, .left-social-sidebar, .certificate-card {
+  background: rgba(10, 15, 30, 0.3) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 16px; /* slightly rounder */
+}
+
+/* Hover effects with matching 3D accent colors */
+.skill-card:hover, .project-card:hover, .certificate-card:hover {
+  background: rgba(20, 25, 45, 0.4) !important;
+  border: 1px solid rgba(0, 230, 255, 0.4) !important; /* Cyan accent */
+  box-shadow: 0 12px 40px rgba(0, 230, 255, 0.15), 0 0 15px rgba(191, 90, 242, 0.1) !important; /* Cyan & Purple glow */
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* Specific Navbar tweaks */
+.desktop-navbar .nav-glass-container {
+  border-radius: 40px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.nav-links-pill a:hover, .nav-slider {
+  background: rgba(0, 230, 255, 0.15) !important;
+  box-shadow: 0 0 15px rgba(0, 230, 255, 0.3) !important;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, #00e6ff 0%, #0088ff 100%) !important;
+  color: #000 !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0, 230, 255, 0.3) !important;
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(0, 230, 255, 0.6) !important;
+  transform: translateY(-2px);
+}
+
+/* Social icons magnet reset */
+.social-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s linear, color 0.3s ease, background 0.3s ease;
+}
+
+/* Fix FontAwesome overrides */
+.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", sans-serif !important;
+}
+
+/* ========================================================
+   PHASE 2 VISUAL UPGRADES (Cinematic & Micro-animations)
+   ======================================================== */
+
+/* 1. Cinematic Custom Cursor */
+.cursor {
+  mix-blend-mode: difference;
+  z-index: 10000;
+  pointer-events: none;
+  background-color: #fff;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.cursor-follower {
+  mix-blend-mode: difference;
+  z-index: 9999;
+  pointer-events: none;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover state added via JS */
+.cursor-follower.hovering {
+  width: 60px !important;
+  height: 60px !important;
+  border-color: #00e6ff;
+  border-width: 2px;
+  background-color: rgba(0, 230, 255, 0.1);
+  mix-blend-mode: normal;
+}
+
+/* 2. Cybernetic Glow Badge */
+.available-badge {
+  position: relative;
+  overflow: hidden;
+}
+.available-badge::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent 70%, rgba(0, 230, 255, 0.8) 100%);
+  animation: cyberSpin 4s linear infinite;
+  z-index: -1;
+}
+.available-badge::after {
+  content: '';
+  position: absolute;
+  inset: 1px; /* inner border */
+  background: rgba(10, 15, 30, 0.9);
+  border-radius: inherit;
+  z-index: -1;
+}
+@keyframes cyberSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 3. Neon Scroll Progress Line */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00e6ff, #bf5af2);
+  box-shadow: 0 0 10px #00e6ff, 0 0 20px #bf5af2;
+  z-index: 1000;
+}
+
+/* 4. "Wake Up" Project Images */
+.project-card img {
+  filter: grayscale(85%) contrast(1.1);
+  transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-origin: center;
+}
+.project-card:hover img {
+  filter: grayscale(0%) contrast(1);
+  transform: scale(1.08);
+}
+.project-card {
+  overflow: hidden; /* Ensure image scale doesn't break card bounds */
+}
+
+/* 5. Lens Blur In Transition */
+.lens-blur-in {
+  animation: cinematicFocus 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+@keyframes cinematicFocus {
+  0% {
+    filter: blur(25px) brightness(1.5);
+    transform: scale(1.05);
+  }
+  100% {
+    filter: blur(0px) brightness(1);
+    transform: scale(1);
+  }
+}
+
+
+
+/* ========================================================
+   SAAS UI REDESIGN: SLEEK VERTICAL CARDS (Original Grid)
+   ======================================================== */
+
+/* 1. Projects: Sleek Vertical Cards (Restoring Original Structure) */
+.project-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+  gap: 30px !important;
+}
+
+.project-card {
+  display: flex !important;
+  flex-direction: column !important;
+  background: rgba(15, 20, 35, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  /* Glowing top edge effect */
+  border-top: 1px solid rgba(0, 230, 255, 0.4) !important;
+  overflow: hidden !important;
+  padding: 0 !important; /* Image goes edge to edge */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.project-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 15px 40px rgba(0, 230, 255, 0.15) !important;
+  border-top: 1px solid rgba(0, 230, 255, 0.8) !important;
+}
+
+.project-card img {
+  width: 100% !important;
+  height: 220px !important;
+  object-fit: cover !important;
+  border-radius: 16px 16px 0 0 !important;
+  margin: 0 !important;
+}
+
+.project-info {
+  padding: 25px !important;
+}
+
+/* 2. Skills: Premium Grid Squares (Restoring Original Structure) */
+.skills-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.skills-container .skill-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  background: rgba(15, 20, 35, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 25px 20px !important;
+  transition: transform 0.3s ease, border-color 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Subtle radial glow on hover */
+.skills-container .skill-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 230, 255, 0.15), transparent 60%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  pointer-events: none !important;
+}
+
+.skills-container .skill-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(0, 230, 255, 0.3) !important;
+}
+
+.skills-container .skill-card:hover::before {
+  opacity: 1 !important;
+}
+
+/* Restoring icon and text display */
+.skills-container .skill-card img,
+.skills-container .skill-card svg {
+  width: 48px !important;
+  height: 48px !important;
+  margin-bottom: 15px !important;
+  display: block !important;
+}
+
+.skills-container .skill-card h3 {
+  font-size: 1.1rem !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.skills-container .skill-card p {
+  font-size: 0.85rem !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  display: block !important;
+  margin-bottom: 15px !important;
+}
+
+/* Restoring and upgrading the progress bar */
+.skills-container .skill-card .skill-progress {
+  display: block !important;
+  width: 100% !important;
+  height: 4px !important;
+  background: rgba(255,255,255,0.1) !important;
+  border-radius: 2px !important;
+  overflow: hidden !important;
+  margin-top: auto !important;
+}
+
+.skills-container .skill-card .skill-progress-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #00e6ff, #bf5af2) !important;
+  box-shadow: 0 0 8px rgba(0, 230, 255, 0.5) !important;
+}
+
+/* ========================================================
+   TIMELINE UI FIX: PREMIUM GLASSMORPHISM
+   ======================================================== */
+.timeline-content {
+  background: rgba(15, 20, 35, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-top: 1px solid rgba(0, 230, 255, 0.4) !important;
+  padding: 25px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.timeline-content:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 40px rgba(0, 230, 255, 0.15) !important;
+  border-top: 1px solid rgba(0, 230, 255, 0.8) !important;
+}
+
+.timeline-dot {
+  background: linear-gradient(135deg, #00e6ff, #bf5af2) !important;
+  box-shadow: 0 0 15px rgba(0, 230, 255, 0.6) !important;
+  border: 2px solid rgba(15, 20, 35, 1) !important;
+}

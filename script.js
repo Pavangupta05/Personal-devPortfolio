@@ -129,6 +129,49 @@ window.addEventListener("DOMContentLoaded", () => {
        composer = new window.THREE.EffectComposer(renderer);
        composer.addPass(renderScene);
        composer.addPass(bloomPass);
+
+      // CINEMATIC POST-PROCESSING
+      const cinematicShader = {
+        uniforms: {
+          tDiffuse: { value: null },
+          uTime: { value: 0 },
+          uDistortion: { value: 0.003 } // Chromatic aberration strength
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+        `,
+        fragmentShader: `
+          uniform sampler2D tDiffuse;
+          uniform float uTime;
+          uniform float uDistortion;
+          varying vec2 vUv;
+          
+          float rand(vec2 co){ return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453); }
+          
+          void main() {
+            vec2 uv = vUv;
+            vec2 d = uv - 0.5;
+            float dist = length(d);
+            
+            // Chromatic Aberration
+            vec2 offset = d * dist * uDistortion;
+            float r = texture2D(tDiffuse, uv + offset).r;
+            float g = texture2D(tDiffuse, uv).g;
+            float b = texture2D(tDiffuse, uv - offset).b;
+            
+            // Film Grain
+            float noise = (rand(uv + uTime) - 0.5) * 0.05;
+            
+            // Vignette
+            float vignette = smoothstep(1.1, 0.4, dist);
+            
+            gl_FragColor = vec4(vec3(r, g, b) + noise, 1.0) * vignette;
+          }
+        `
+      };
+      window.cinematicPass = new window.THREE.ShaderPass(cinematicShader);
+      composer.addPass(window.cinematicPass);
     }
 
     // ── NEBULA BACKGROUND ────────────────────────────────────────────────────
@@ -1082,6 +1125,25 @@ window.addEventListener("DOMContentLoaded", () => {
       const px = isMobile ? 2 : 8;
       camera.position.set(cx + mouseX * px, cy - mouseY * px * 0.3, cz);
       camera.lookAt(lx, ly, lz);
+        
+        // CINEMATIC CAMERA CHOREOGRAPHY
+        // Dutch angle (bank and roll) based on scroll and mouse
+        camera.rotation.z = Math.sin(sp * Math.PI * 4) * 0.05 - (mouseX * 0.02);
+        
+        // Update Space Dust
+        if (window.spaceDust) {
+            window.spaceDust.position.y += 0.5; // Drift upwards
+            if (window.spaceDust.position.y > 1000) window.spaceDust.position.y = -1000;
+            window.spaceDust.rotation.y += 0.001;
+            window.spaceDust.rotation.x = Math.sin(time/2000) * 0.1;
+        }
+        
+        // Update Cinematic Pass
+        if (window.cinematicPass) {
+            window.cinematicPass.uniforms.uTime.value = time * 0.001;
+            window.cinematicPass.uniforms.uDistortion.value = 0.003 + (Math.sin(sp * Math.PI) * 0.005);
+        }
+
 
       // Orbit ring stays flat
       orbitGroup.rotation.x = 0.06;
@@ -1939,3 +2001,55 @@ function updateMiniGame(time) {
     }
   }
 }
+
+// ========================================================
+// PREMIUM MICRO-INTERACTIONS (Magnetic Buttons)
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const magneticElements = document.querySelectorAll('.btn, .social-icon-btn, .nav-links-pill a');
+    
+    magneticElements.forEach((el) => {
+        el.addEventListener('mousemove', (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = (e.clientX - rect.left) - (rect.width / 2);
+            const y = (e.clientY - rect.top) - (rect.height / 2);
+            
+            // Subtle pull
+            gsap.to(el, {
+                x: x * 0.2,
+                y: y * 0.2,
+                duration: 0.4,
+                ease: "power2.out"
+            });
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            gsap.to(el, {
+                x: 0,
+                y: 0,
+                duration: 0.7,
+                ease: "elastic.out(1, 0.3)"
+            });
+        });
+    });
+});
+
+// ========================================================
+// PHASE 2: CINEMATIC CURSOR LOGIC
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const follower = document.querySelector('.cursor-follower');
+    if (!follower) return;
+
+    // Elements that trigger the hollow glow effect
+    const interactiveElements = document.querySelectorAll('a, button, .project-card, .skill-card, .social-icon-btn');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            follower.classList.add('hovering');
+        });
+        el.addEventListener('mouseleave', () => {
+            follower.classList.remove('hovering');
+        });
+    });
+});
