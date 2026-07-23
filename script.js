@@ -949,6 +949,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Smoothed camera Z (lerped each frame for cinematic feel)
     let cx = 0, cy = 80, cz = 580;
     let lx = 0, ly = 0, lz = 0; // smoothed look-at target
+    let smoothSp = 0;
 
     function render(time) {
       solId = requestAnimationFrame(render);
@@ -956,9 +957,11 @@ window.addEventListener("DOMContentLoaded", () => {
       const dt = Math.min((time - lastT) / 1000, 0.05);
       lastT = time;
 
-      // Scroll progress — direct read, no lag
+      // Scroll progress — lerped smoothly so 3D camera travel stays silky smooth
       const maxS = document.documentElement.scrollHeight - window.innerHeight || 1;
-      const sp   = Math.min(Math.max(window.scrollY / maxS, 0), 1);
+      const targetSp = Math.min(Math.max(window.scrollY / maxS, 0), 1);
+      smoothSp += (targetSp - smoothSp) * 0.12;
+      const sp = smoothSp;
 
       // Mouse
       mouseX += (tMX - mouseX) * 0.07;
@@ -1833,52 +1836,14 @@ function initDesktopOS() {
 
 
 
-// ── ELITE 3D FEATURES: AUDIO, BOOT, WARP ──────────────────────────────────
+// ── ELITE 3D FEATURES: AUDIO (DISABLED) ──────────────────────────────────
 window.AudioEngine = {
   ctx: null,
   humOsc: null,
   humGain: null,
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    this.humOsc = this.ctx.createOscillator();
-    this.humOsc.type = 'sine';
-    this.humOsc.frequency.setValueAtTime(45, this.ctx.currentTime);
-    
-    this.humGain = this.ctx.createGain();
-    this.humGain.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.humGain.gain.linearRampToValueAtTime(0.04, this.ctx.currentTime + 2);
-    
-    this.humOsc.connect(this.humGain);
-    this.humGain.connect(this.ctx.destination);
-    this.humOsc.start();
-  },
-  playHover() {
-    if (!this.ctx) return;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.1);
-    
-    gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
-    
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start();
-    osc.stop(this.ctx.currentTime + 0.1);
-  }
+  init() {},
+  playHover() {}
 };
-
-document.body.addEventListener('click', () => window.AudioEngine.init(), { once: true });
-
-  // (Robot click logic moved to hero scene)
-
-document.querySelectorAll('a, button, .project-card, .skill-card').forEach(el => {
-  el.addEventListener('mouseenter', () => window.AudioEngine.playHover());
-});
 
 document.querySelectorAll('.nav-links a, #terminalNavBtn').forEach(el => {
   el.addEventListener('click', (e) => {
@@ -2053,3 +2018,733 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+// ========================================================
+// FEATURE 3: PROJECT CATEGORY FILTERING LOGIC
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const filterBtns = document.querySelectorAll('.project-filter-bar .filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.getAttribute('data-filter');
+
+      projectCards.forEach(card => {
+        const categories = (card.getAttribute('data-category') || '').split(' ');
+        if (filter === 'all' || categories.includes(filter)) {
+          card.classList.remove('filter-hidden');
+        } else {
+          card.classList.add('filter-hidden');
+        }
+      });
+    });
+  });
+});
+
+// ========================================================
+// FEATURE 5: TIMELINE SCROLL GLOW OBSERVER
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const timelineItems = document.querySelectorAll('.timeline-item');
+  if (!timelineItems.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active-glow');
+      } else {
+        entry.target.classList.remove('active-glow');
+      }
+    });
+  }, { threshold: 0.4 });
+
+  timelineItems.forEach(item => observer.observe(item));
+});
+
+// ========================================================
+// FEATURE 5: INTERACTIVE SKILL LEVEL TOOLTIPS
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const tooltip = document.getElementById('skill-tooltip');
+  if (!tooltip) return;
+
+  const skillData = {
+    'React.js': { level: 'Advanced (90%)', detail: 'Hooks, Context API, Redux Toolkit, Virtual DOM' },
+    'React': { level: 'Advanced (90%)', detail: 'Hooks, Context API, Redux Toolkit, Virtual DOM' },
+    'Node.js': { level: 'Advanced (85%)', detail: 'REST APIs, Event Loop, Express Middleware, Async' },
+    'Express.js': { level: 'Advanced (85%)', detail: 'Route Controllers, JWT Auth, CORS, Multer' },
+    'Mongo DB': { level: 'Intermediate (80%)', detail: 'Aggregations, Schemas, Indexing, Mongoose' },
+    'MongoDB': { level: 'Intermediate (80%)', detail: 'Aggregations, Schemas, Indexing, Mongoose' },
+    'JavaScript': { level: 'Expert (92%)', detail: 'ES6+, Async/Await, Closures, DOM Manipulation' },
+    'JavaScript ES6+': { level: 'Expert (92%)', detail: 'ES6+, Async/Await, Closures, DOM Manipulation' },
+    'TypeScript': { level: 'Intermediate (75%)', detail: 'Interfaces, Generics, Type Guards' },
+    'HTML5 & CSS3': { level: 'Expert (95%)', detail: 'Flexbox, Grid, Glassmorphism, Animations' },
+    'Tailwind CSS': { level: 'Advanced (88%)', detail: 'Utility-first layout, custom themes, dark mode' },
+    'WebSockets': { level: 'Intermediate (78%)', detail: 'Socket.io real-time events, full-duplex streams' },
+    'Python': { level: 'Proficient (70%)', detail: 'Automation scripts, AI API integrations' },
+    'C++': { level: 'Proficient (65%)', detail: 'Data structures, OOP, algorithmic logic' },
+    'VS Code': { level: 'Expert (95%)', detail: 'Workflow extensions, debugging, Git integration' },
+    'Figma': { level: 'Proficient (70%)', detail: 'UI prototyping, component design, wireframing' },
+    'Postman': { level: 'Advanced (85%)', detail: 'API endpoint testing, environment variables' },
+    'Cursor': { level: 'Advanced (85%)', detail: 'AI-assisted rapid prototyping & refactoring' },
+    'OpenWeather API': { level: 'Advanced (85%)', detail: 'Live forecast data, Geolocation updates' },
+    'JWT + Google OAuth': { level: 'Advanced (85%)', detail: 'Secure token storage, OAuth2 authentication' }
+  };
+
+  const skillCards = document.querySelectorAll('.skill-card, .badge');
+
+  skillCards.forEach(card => {
+    const titleEl = card.querySelector('h3') || card;
+    const name = titleEl ? titleEl.textContent.trim() : '';
+
+    card.addEventListener('mouseenter', (e) => {
+      const data = skillData[name] || { 
+        level: 'Proficient (80%)', 
+        detail: 'Modern web development & production usage' 
+      };
+
+      tooltip.innerHTML = `
+        <div class="skill-tooltip-header">⚡ ${name} — ${data.level}</div>
+        <div class="skill-tooltip-detail">${data.detail}</div>
+      `;
+      tooltip.classList.add('visible');
+    });
+
+    card.addEventListener('mousemove', (e) => {
+      tooltip.style.left = e.clientX + 'px';
+      tooltip.style.top = e.clientY + 'px';
+    });
+
+    card.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
+});
+
+// ========================================================
+// FEATURE 3: ADVANCED FLUID GLASS REFRACTION MOUSE TRACKER
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const glassCards = document.querySelectorAll('.project-card, .skill-card, .timeline-content');
+  glassCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mouse-x', `${x}%`);
+      card.style.setProperty('--mouse-y', `${y}%`);
+    });
+  });
+});
+
+// ========================================================
+// FEATURE 4: CINEMATIC DEPTH-OF-FIELD FOCUS OBSERVER
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener('scroll', () => {
+    const maxS = document.documentElement.scrollHeight - window.innerHeight || 1;
+    const sp = window.scrollY / maxS;
+    
+    // Smooth depth-of-field blur when deep inside reading projects/experience
+    if (sp > 0.4 && sp < 0.85) {
+      document.body.classList.add('dof-blur-distant');
+    } else {
+      document.body.classList.remove('dof-blur-distant');
+    }
+  }, { passive: true });
+});
+
+// ========================================================
+// FEATURE 1: BRUNO SIMON STYLE PLAYABLE 3D WORLD (ROVER ENGINE)
+// ========================================================
+(function initPlayable3DWorldModule() {
+  let worldScene, worldCamera, worldRenderer, roverGroup, wheels = [], beacons = [];
+  let techOrbs = [], trailParticles;
+  let score = 0;
+  let animId = null;
+  let isWorldActive = false;
+
+  // Rover Physics State
+  const roverState = {
+    x: 0,
+    z: 0,
+    angle: 0,
+    speed: 0,
+    maxSpeed: 0.8,
+    accel: 0.03,
+    friction: 0.94,
+    steerSpeed: 0.04
+  };
+
+  const keys = { forward: false, reverse: false, left: false, right: false };
+
+  // Beacons Content
+  const beaconData = [
+    { x: -35, z: -35, title: "🚀 StarNote AI Study Platform", body: "<p><strong>Tech Stack:</strong> React.js, Node.js, Express, MongoDB, Gemini API</p><p>Engineered intelligent study platform enabling AI chat, note summarization, and roadmap generation.</p>" },
+    { x: 35, z: -35, title: "💬 TalkNow Real-Time Chat", body: "<p><strong>Tech Stack:</strong> React.js, Socket.io, Node.js, MongoDB</p><p>Full-stack low-latency messaging platform supporting 100+ concurrent users with JWT authentication.</p>" },
+    { x: 0, z: -60, title: "🏛️ The Civic Eye System", body: "<p><strong>Tech Stack:</strong> React, Tailwind CSS, Node.js, Python AI</p><p>Crowdsourced civic issue reporting platform with live location tracking and admin dashboards.</p>" },
+    { x: -45, z: 25, title: "⚡ Technical Skill Set", body: "<p><strong>Full Stack Mastery:</strong> React.js, Node.js, Express.js, MongoDB, JavaScript ES6+, Python, C++</p>" },
+    { x: 45, z: 25, title: "📫 Get in Touch", body: "<p><strong>Pavan Kumar Gupta</strong><br>Email: vinodguptamertiya05@gmail.com<br>Location: Jaipur, India</p>" }
+  ];
+
+  window.openPlayableWorld = function() {
+    const overlay = document.getElementById('playable-world-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+    isWorldActive = true;
+    document.body.style.overflow = 'hidden';
+
+    // Hide overlapping UI elements
+    const socialSidebar = document.querySelector('.left-social-sidebar');
+    const aiToggle = document.getElementById('ai-chat-toggle');
+    const aiChatWindow = document.getElementById('ai-chat-window');
+    if (socialSidebar) socialSidebar.style.display = 'none';
+    if (aiToggle) aiToggle.style.display = 'none';
+    if (aiChatWindow) aiChatWindow.classList.add('hidden'); // Ensure chat is closed
+
+    if (!worldRenderer) {
+      setupWorldScene();
+    }
+    animateWorld();
+  };
+
+  window.closePlayableWorld = function() {
+    const overlay = document.getElementById('playable-world-overlay');
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    isWorldActive = false;
+    document.body.style.overflow = 'auto';
+    if (animId) cancelAnimationFrame(animId);
+
+    // Restore UI elements
+    const socialSidebar = document.querySelector('.left-social-sidebar');
+    const aiToggle = document.getElementById('ai-chat-toggle');
+    if (socialSidebar) socialSidebar.style.display = 'flex';
+    if (aiToggle) aiToggle.style.display = 'flex';
+  };
+
+  window.closeBeaconCard = function() {
+    const card = document.getElementById('world-beacon-card');
+    if (card) card.classList.add('hidden');
+  };
+
+  function setupWorldScene() {
+    const canvas = document.getElementById('rover-canvas');
+    if (!canvas || !window.THREE) return;
+
+    worldScene = new THREE.Scene();
+    worldScene.background = new THREE.Color(0x04060c);
+    worldScene.fog = new THREE.FogExp2(0x04060c, 0.012);
+
+    worldCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    
+    worldRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    worldRenderer.setSize(window.innerWidth, window.innerHeight);
+    worldRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    worldRenderer.shadowMap.enabled = true;
+
+    // Lights
+    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    worldScene.add(ambient);
+
+    const sunLight = new THREE.DirectionalLight(0x00e6ff, 1.2);
+    sunLight.position.set(50, 80, 50);
+    sunLight.castShadow = true;
+    worldScene.add(sunLight);
+
+    // Grid Terrain Ground
+    const gridGeo = new THREE.PlaneGeometry(300, 300, 60, 60);
+    // Add terrain height variation
+    const pos = gridGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const vx = pos.getX(i);
+      const vy = pos.getY(i);
+      pos.setZ(i, Math.sin(vx * 0.05) * Math.cos(vy * 0.05) * 1.5);
+    }
+    gridGeo.computeVertexNormals();
+
+    const gridMat = new THREE.MeshStandardMaterial({
+      color: 0x0a1020,
+      wireframe: true,
+      roughness: 0.8
+    });
+    const ground = new THREE.Mesh(gridGeo, gridMat);
+    ground.rotation.x = -Math.PI / 2;
+    worldScene.add(ground);
+
+    // Build 3D Rover Vehicle
+    roverGroup = new THREE.Group();
+    
+    // Body
+    const bodyGeo = new THREE.BoxGeometry(3, 1.2, 5);
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00e6ff, roughness: 0.3, metalness: 0.8 });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 1.2;
+    body.castShadow = true;
+    roverGroup.add(body);
+
+    // Cockpit Glass
+    const glassGeo = new THREE.BoxGeometry(2.2, 0.9, 2.2);
+    const glassMat = new THREE.MeshStandardMaterial({ color: 0xbf5af2, roughness: 0.1, metalness: 0.9 });
+    const glass = new THREE.Mesh(glassGeo, glassMat);
+    glass.position.set(0, 2.0, -0.4);
+    roverGroup.add(glass);
+
+    // Headlights
+    const light1 = new THREE.SpotLight(0x00e6ff, 3, 40, Math.PI / 6, 0.5);
+    light1.position.set(-1, 1.2, -2.5);
+    light1.target.position.set(-1, 0, -15);
+    roverGroup.add(light1); roverGroup.add(light1.target);
+
+    const light2 = new THREE.SpotLight(0x00e6ff, 3, 40, Math.PI / 6, 0.5);
+    light2.position.set(1, 1.2, -2.5);
+    light2.target.position.set(1, 0, -15);
+    roverGroup.add(light2); roverGroup.add(light2.target);
+
+    // Wheels
+    const wheelGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.6, 16);
+    const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111522, roughness: 0.9 });
+    
+    const wheelOffsets = [
+      { x: -1.8, y: 0.8, z: -1.8 },
+      { x: 1.8, y: 0.8, z: -1.8 },
+      { x: -1.8, y: 0.8, z: 1.8 },
+      { x: 1.8, y: 0.8, z: 1.8 }
+    ];
+
+    wheelOffsets.forEach(off => {
+      const w = new THREE.Mesh(wheelGeo, wheelMat);
+      w.rotation.z = Math.PI / 2;
+      w.position.set(off.x, off.y, off.z);
+      roverGroup.add(w);
+      wheels.push(w);
+    });
+
+    worldScene.add(roverGroup);
+
+    // Build 3D Hologram Beacons
+    const beaconGeos = [
+      new THREE.OctahedronGeometry(1.4),
+      new THREE.DodecahedronGeometry(1.3),
+      new THREE.IcosahedronGeometry(1.3),
+      new THREE.TorusKnotGeometry(0.8, 0.3, 32, 8),
+      new THREE.TetrahedronGeometry(1.4)
+    ];
+
+    const beaconColors = [0x00e6ff, 0xbf5af2, 0x30d158, 0xff9f0a, 0xff375f];
+
+    beaconData.forEach((b, idx) => {
+      const bColor = beaconColors[idx % beaconColors.length];
+      const beaconGroup = new THREE.Group();
+      beaconGroup.position.set(b.x, 0, b.z);
+
+      // Base ring
+      const ringGeo = new THREE.RingGeometry(2, 3.2, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color: bColor, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      beaconGroup.add(ring);
+
+      // Vertical Light Beam Cone
+      const beamGeo = new THREE.CylinderGeometry(0.2, 3.0, 14, 16, 1, true);
+      const beamMat = new THREE.MeshBasicMaterial({ color: bColor, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+      const beam = new THREE.Mesh(beamGeo, beamMat);
+      beam.position.y = 7;
+      beaconGroup.add(beam);
+
+      // Floating 3D Geometric Icon
+      const orbGeo = beaconGeos[idx % beaconGeos.length];
+      const orbMat = new THREE.MeshStandardMaterial({ color: bColor, emissive: bColor, emissiveIntensity: 0.9, roughness: 0.2 });
+      const orb = new THREE.Mesh(orbGeo, orbMat);
+      orb.position.y = 13;
+      beaconGroup.add(orb);
+
+      beaconGroup.userData = { data: b, orb, ring };
+      worldScene.add(beaconGroup);
+      beacons.push(beaconGroup);
+    });
+
+    // ── SCATTERED 3D GLOWING CRYSTALS & OBSTACLES ──────────────────────────────
+    for (let i = 0; i < 30; i++) {
+      const rx = (Math.random() - 0.5) * 240;
+      const rz = (Math.random() - 0.5) * 240;
+      if (Math.hypot(rx, rz) < 15) continue; // Keep spawn clear
+
+      const cScale = Math.random() * 1.5 + 1.0;
+      const cGeo = Math.random() > 0.5 ? new THREE.OctahedronGeometry(cScale) : new THREE.DodecahedronGeometry(cScale);
+      const cColor = Math.random() > 0.5 ? 0x00e6ff : 0xbf5af2;
+      const cMat = new THREE.MeshStandardMaterial({ color: cColor, emissive: cColor, emissiveIntensity: 0.5, roughness: 0.3 });
+      const crystal = new THREE.Mesh(cGeo, cMat);
+      crystal.position.set(rx, cScale, rz);
+      crystal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+      worldScene.add(crystal);
+    }
+
+    // ── WORLD PARTICLES (STARDUST) ─────────────────────────────────────────────
+    const pCount = 600;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+      pPos[i * 3]     = (Math.random() - 0.5) * 280;
+      pPos[i * 3 + 1] = Math.random() * 40 + 2;
+      pPos[i * 3 + 2] = (Math.random() - 0.5) * 280;
+    }
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: 0x00e6ff, size: 0.8, transparent: true, opacity: 0.6 });
+    const pSystem = new THREE.Points(pGeo, pMat);
+    worldScene.add(pSystem);
+
+    // ── COLLECTIBLE TECH ORBS ──────────────────────────────────────────────────
+    const orbGeom = new THREE.SphereGeometry(0.8, 16, 16);
+    const orbMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0xFFD700, emissiveIntensity: 0.8 });
+    for (let i = 0; i < 10; i++) {
+      const orbMesh = new THREE.Mesh(orbGeom, orbMat);
+      orbMesh.position.set((Math.random() - 0.5) * 200, 2, (Math.random() - 0.5) * 200);
+      worldScene.add(orbMesh);
+      techOrbs.push({ mesh: orbMesh, active: true });
+    }
+
+    // ── ROVER ENGINE TRAIL PARTICLES ───────────────────────────────────────────
+    const trailGeo = new THREE.BufferGeometry();
+    const trailPos = new Float32Array(300 * 3); // 300 particles max
+    trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
+    const trailMat = new THREE.PointsMaterial({ color: 0x00e6ff, size: 1.5, transparent: true, opacity: 0.8 });
+    trailParticles = new THREE.Points(trailGeo, trailMat);
+    trailParticles.userData = { index: 0 };
+    worldScene.add(trailParticles);
+
+    // ── INITIALIZE RADAR BLIPS ─────────────────────────────────────────────────
+    const radarContainer = document.getElementById('radarBlipsContainer');
+    if (radarContainer) {
+      radarContainer.innerHTML = '';
+      beaconData.forEach((b, idx) => {
+        const blip = document.createElement('div');
+        blip.className = 'radar-blip';
+        blip.style.color = '#' + beaconColors[idx % beaconColors.length].toString(16).padStart(6, '0');
+        blip.id = 'blip-' + idx;
+        radarContainer.appendChild(blip);
+      });
+    }
+
+    // Event Listeners
+    window.addEventListener('keydown', (e) => {
+      if (!isWorldActive) return;
+      if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.forward = true;
+      if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.reverse = true;
+      if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = true;
+      if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
+      if (e.key === 'Shift') keys.boost = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (!isWorldActive) return;
+      if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.forward = false;
+      if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.reverse = false;
+      if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = false;
+      if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = false;
+      if (e.key === 'Shift') keys.boost = false;
+    });
+
+    // Touch Controls
+    setupTouchButton('btnDriveForward', 'forward');
+    setupTouchButton('btnDriveReverse', 'reverse');
+    setupTouchButton('btnSteerLeft', 'left');
+    setupTouchButton('btnSteerRight', 'right');
+
+    window.addEventListener('resize', () => {
+      if (!worldRenderer || !worldCamera) return;
+      worldCamera.aspect = window.innerWidth / window.innerHeight;
+      worldCamera.updateProjectionMatrix();
+      worldRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
+
+  function setupTouchButton(id, keyName) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
+    btn.addEventListener('mousedown', () => { keys[keyName] = true; });
+    btn.addEventListener('mouseup', () => { keys[keyName] = false; });
+  }
+
+  function animateWorld() {
+    if (!isWorldActive) return;
+    animId = requestAnimationFrame(animateWorld);
+
+    // Turbo Boost Speed
+    const effectiveMaxSpeed = keys.boost ? roverState.maxSpeed * 1.8 : roverState.maxSpeed;
+    const effectiveAccel = keys.boost ? roverState.accel * 2 : roverState.accel;
+
+    // Update Rover Physics
+    if (keys.forward) {
+      roverState.speed = Math.min(roverState.speed + effectiveAccel, effectiveMaxSpeed);
+    } else if (keys.reverse) {
+      roverState.speed = Math.max(roverState.speed - effectiveAccel, -effectiveMaxSpeed * 0.5);
+    } else {
+      roverState.speed *= roverState.friction;
+    }
+
+    if (Math.abs(roverState.speed) > 0.01) {
+      const dir = roverState.speed > 0 ? 1 : -1;
+      if (keys.left) roverState.angle += roverState.steerSpeed * dir;
+      if (keys.right) roverState.angle -= roverState.steerSpeed * dir;
+    }
+
+    roverState.x -= Math.sin(roverState.angle) * roverState.speed;
+    roverState.z -= Math.cos(roverState.angle) * roverState.speed;
+
+    // Boundaries
+    roverState.x = Math.max(-130, Math.min(130, roverState.x));
+    roverState.z = Math.max(-130, Math.min(130, roverState.z));
+
+    roverGroup.position.set(roverState.x, 0, roverState.z);
+    roverGroup.rotation.y = roverState.angle;
+
+    // Rotate Wheels
+    wheels.forEach(w => w.rotation.x += roverState.speed * 0.5);
+
+    // Update Trail Particles
+    if (Math.abs(roverState.speed) > 0.05) {
+      const pIdx = trailParticles.userData.index;
+      const positions = trailParticles.geometry.attributes.position.array;
+      // Emit particle behind rover
+      const pX = roverState.x + Math.sin(roverState.angle) * 2 + (Math.random()-0.5);
+      const pY = 0.5 + Math.random() * 0.5;
+      const pZ = roverState.z + Math.cos(roverState.angle) * 2 + (Math.random()-0.5);
+      positions[pIdx * 3] = pX;
+      positions[pIdx * 3 + 1] = pY;
+      positions[pIdx * 3 + 2] = pZ;
+      trailParticles.userData.index = (pIdx + 1) % 300;
+      trailParticles.geometry.attributes.position.needsUpdate = true;
+    }
+
+    // Update Camera (Chase Cam)
+    const camDist = 22;
+    const camHeight = 12;
+    const targetCamX = roverState.x + Math.sin(roverState.angle) * camDist;
+    const targetCamZ = roverState.z + Math.cos(roverState.angle) * camDist;
+
+    worldCamera.position.x += (targetCamX - worldCamera.position.x) * 0.1;
+    worldCamera.position.y += (camHeight - worldCamera.position.y) * 0.1;
+    worldCamera.position.z += (targetCamZ - worldCamera.position.z) * 0.1;
+    worldCamera.lookAt(roverState.x, 2, roverState.z);
+
+    // Animate Beacons & Check Proximity
+    const t = Date.now() * 0.003;
+    beacons.forEach((b, idx) => {
+      b.userData.orb.rotation.y += 0.03;
+      b.userData.orb.rotation.x = Math.sin(t) * 0.2;
+      b.userData.orb.position.y = 13 + Math.sin(t) * 1.2;
+
+      // Pulse beacon ring
+      const ringScale = 1 + Math.sin(t * 2) * 0.15;
+      b.userData.ring.scale.set(ringScale, ringScale, 1);
+
+      const dx = roverState.x - b.position.x;
+      const dz = roverState.z - b.position.z;
+      const dist = Math.hypot(dx, dz);
+
+      if (dist < 12) {
+        showBeaconCard(b.userData.data);
+      }
+
+      // Update Radar Blip
+      const blip = document.getElementById('blip-' + idx);
+      if (blip) {
+        const mapScale = 0.4; // Scale world units to radar pixels
+        const rX = 70 + (-dx * mapScale); // 70 is center of 140px radar
+        const rY = 70 + (-dz * mapScale);
+        if (rX > 0 && rX < 140 && rY > 0 && rY < 140) {
+          blip.style.left = rX + 'px';
+          blip.style.top = rY + 'px';
+          blip.style.display = 'block';
+        } else {
+          blip.style.display = 'none';
+        }
+      }
+    });
+
+    // Tech Orbs Collision
+    techOrbs.forEach(orbObj => {
+      if (!orbObj.active) return;
+      orbObj.mesh.rotation.y += 0.05;
+      orbObj.mesh.position.y = 2 + Math.sin(t * 2 + orbObj.mesh.position.x) * 0.5;
+
+      const dist = Math.hypot(roverState.x - orbObj.mesh.position.x, roverState.z - orbObj.mesh.position.z);
+      if (dist < 4) {
+        orbObj.active = false;
+        orbObj.mesh.visible = false;
+        score++;
+        const scoreEl = document.getElementById('techOrbScore');
+        if (scoreEl) scoreEl.innerText = score;
+        if (score === 10 && scoreEl) scoreEl.style.color = '#00FF00'; // Green on completion
+      }
+    });
+
+    worldRenderer.render(worldScene, worldCamera);
+  }
+
+  function showBeaconCard(data) {
+    const card = document.getElementById('world-beacon-card');
+    const title = document.getElementById('beaconCardTitle');
+    const body = document.getElementById('beaconCardBody');
+
+    if (!card || !title || !body) return;
+    title.innerText = data.title;
+    body.innerHTML = data.body;
+    card.classList.remove('hidden');
+  }
+})();
+
+// ========================================================
+// FEATURE: AI VOICE ASSISTANT & CHATBOT
+// ========================================================
+(function initAIAssistantModule() {
+  const toggleBtn = document.getElementById('ai-chat-toggle');
+  const chatWindow = document.getElementById('ai-chat-window');
+  const closeBtn = document.getElementById('ai-chat-close');
+  const msgContainer = document.getElementById('ai-chat-messages');
+  const inputEl = document.getElementById('ai-chat-input');
+  const sendBtn = document.getElementById('ai-send-btn');
+  const micBtn = document.getElementById('ai-mic-btn');
+
+  if (!toggleBtn || !chatWindow) return;
+
+  // AI Brain / NLP Responses
+  const responses = {
+    greetings: ["Hello!", "Hi there! I'm Pavan's AI Assistant.", "Hey! How can I help you explore Pavan's portfolio?"],
+    skills: ["Pavan is highly skilled in React.js, Node.js, Express, MongoDB, Python, and C++. Shall I scroll down to the skills section?"],
+    projects: ["Pavan has built incredible platforms like StarNote AI, TalkNow Chat, and Civic Eye. Want me to take you there?"],
+    contact: ["You can reach Pavan at vinodguptamertiya05@gmail.com, or check his LinkedIn/GitHub in the contact section!"],
+    experience: ["Pavan has worked as a Web Developer Intern at Internshala, building modern UIs and optimizing backend services."],
+    default: ["I'm a simple AI! You can ask me about Pavan's skills, projects, contact info, or experience."]
+  };
+
+  function matchIntent(text) {
+    const lower = text.toLowerCase();
+    if (lower.includes('skill') || lower.includes('stack') || lower.includes('tech')) return 'skills';
+    if (lower.includes('project') || lower.includes('work') || lower.includes('portfolio')) return 'projects';
+    if (lower.includes('contact') || lower.includes('email') || lower.includes('reach')) return 'contact';
+    if (lower.includes('experience') || lower.includes('intern') || lower.includes('work')) return 'experience';
+    if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey')) return 'greetings';
+    return 'default';
+  }
+
+  function appendMessage(text, isUser = false) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `ai-message ${isUser ? 'user' : 'bot'}`;
+    
+    if (isUser) {
+      msgDiv.innerHTML = `<div class="msg-bubble">${text}</div>`;
+    } else {
+      msgDiv.innerHTML = `
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-bubble">${text}</div>
+      `;
+    }
+    msgContainer.appendChild(msgDiv);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+  }
+
+  function handleUserMessage(text) {
+    if (!text.trim()) return;
+    appendMessage(text, true);
+    inputEl.value = '';
+
+    // Show typing effect
+    setTimeout(() => {
+      const intent = matchIntent(text);
+      const possibleReplies = responses[intent];
+      const reply = possibleReplies[Math.floor(Math.random() * possibleReplies.length)];
+      appendMessage(reply, false);
+
+      // Scroll logic
+      if (intent === 'skills') document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' });
+      if (intent === 'projects') document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+      if (intent === 'contact') document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    }, 600);
+  }
+
+  // Event Listeners
+  toggleBtn.addEventListener('click', () => {
+    chatWindow.classList.toggle('hidden');
+    if (!chatWindow.classList.contains('hidden')) inputEl.focus();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    chatWindow.classList.add('hidden');
+  });
+
+  sendBtn.addEventListener('click', () => {
+    handleUserMessage(inputEl.value);
+  });
+
+  inputEl.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleUserMessage(inputEl.value);
+  });
+
+  // Web Speech API for Voice Input
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.onstart = function() {
+      micBtn.classList.add('recording');
+      inputEl.placeholder = "Listening...";
+    };
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      inputEl.value = transcript;
+      handleUserMessage(transcript);
+    };
+
+    recognition.onerror = function(event) {
+      console.error("Speech recognition error", event.error);
+      micBtn.classList.remove('recording');
+      inputEl.placeholder = "Ask anything...";
+    };
+
+    recognition.onend = function() {
+      micBtn.classList.remove('recording');
+      inputEl.placeholder = "Ask anything...";
+    };
+
+    micBtn.addEventListener('click', () => {
+      if (micBtn.classList.contains('recording')) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+  } else {
+    // Hide mic button if not supported
+    if (micBtn) micBtn.style.display = 'none';
+  }
+
+  // Mobile Scroll Hide/Show Logic
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    if (window.innerWidth <= 768) {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        // Scrolling down
+        toggleBtn.classList.add('mobile-hide');
+        chatWindow.classList.add('mobile-hide');
+      } else {
+        // Scrolling up
+        toggleBtn.classList.remove('mobile-hide');
+        chatWindow.classList.remove('mobile-hide');
+      }
+      lastScrollY = currentScrollY;
+    }
+  });
+})();
+

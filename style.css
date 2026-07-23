@@ -49,7 +49,7 @@ html.lenis, html.lenis body {
   background-color: var(--accent);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 100000;
+  z-index: 99999999 !important;
   transform: translate(-50%, -50%);
   transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
 }
@@ -62,7 +62,7 @@ html.lenis, html.lenis body {
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 99999;
+  z-index: 99999998 !important;
   transform: translate(-50%, -50%);
   transition: transform 0.15s ease-out, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
 }
@@ -5851,4 +5851,515 @@ h1, h2, h3, h4, h5, h6,
   background: linear-gradient(135deg, #00e6ff, #bf5af2) !important;
   box-shadow: 0 0 15px rgba(0, 230, 255, 0.6) !important;
   border: 2px solid rgba(15, 20, 35, 1) !important;
+}
+
+/* ========================================================
+   FEATURE: 3D WORLD HUD UPDATES
+   ======================================================== */
+.hud-score-tracker {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-family: monospace;
+  color: #fff;
+  margin-top: 10px;
+  display: inline-block;
+  font-size: 1.1rem;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+.hud-radar-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(4, 6, 12, 0.7);
+  border: 2px solid rgba(0, 230, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 230, 255, 0.2), inset 0 0 15px rgba(0, 230, 255, 0.1);
+  overflow: hidden;
+  z-index: 100;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+.radar-scanline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0,230,255,0.8), transparent);
+  transform-origin: left center;
+  animation: radar-spin 3s linear infinite;
+}
+
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-center-rover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px #fff;
+}
+
+.radar-blip {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* ========================================================
+   FEATURE: AI VOICE ASSISTANT & CHATBOT
+   ======================================================== */
+.ai-floating-btn {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: none;
+  z-index: 99999;
+  box-shadow: 0 0 20px rgba(0, 230, 255, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-floating-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(0, 230, 255, 0.7);
+}
+
+.ai-chat-window {
+  position: fixed;
+  bottom: 110px;
+  left: 30px;
+  width: 360px;
+  max-width: calc(100vw - 60px);
+  height: 500px;
+  max-height: calc(100vh - 140px);
+  background: rgba(10, 14, 25, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  z-index: 99998;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,230,255,0.2) inset;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+}
+
+.ai-chat-window.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.95);
+}
+
+.ai-chat-header {
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.ai-close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+  cursor: none;
+  transition: color 0.2s ease;
+}
+
+.ai-close-btn:hover { color: #fff; }
+
+.ai-chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.ai-message {
+  display: flex;
+  gap: 12px;
+  max-width: 85%;
+}
+
+.ai-message.bot { align-self: flex-start; }
+.ai-message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 230, 255, 0.1);
+  border: 1px solid rgba(0, 230, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00E6FF;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.msg-bubble {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #e0e0e0;
+  border-top-left-radius: 4px;
+}
+
+.ai-message.user .msg-bubble {
+  background: linear-gradient(135deg, rgba(0,230,255,0.2), rgba(191,90,242,0.2));
+  border: 1px solid rgba(0, 230, 255, 0.3);
+  color: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 4px;
+}
+
+.ai-chat-input-area {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#ai-chat-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+#ai-chat-input:focus {
+  border-color: rgba(0, 230, 255, 0.5);
+}
+
+.ai-send-btn, .ai-mic-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 18px;
+  cursor: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ai-send-btn:hover { color: #00E6FF; background: rgba(0,230,255,0.1); }
+.ai-mic-btn:hover { color: #FF375F; background: rgba(255,55,95,0.1); }
+
+.ai-mic-btn.recording {
+  color: #FF375F;
+  background: rgba(255,55,95,0.2);
+  animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(255,55,95,0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(255,55,95,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,55,95,0); }
+}
+
+@media (max-width: 768px) {
+  .ai-floating-btn.mobile-hide {
+    transform: translateY(150px);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ai-chat-window.mobile-hide {
+    transform: translateY(150px) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Force Hide AI Chat during 3D World */
+#playable-world-overlay:not(.hidden) ~ #ai-chat-toggle,
+#playable-world-overlay:not(.hidden) ~ #ai-chat-window {
+  display: none !important;
+}
+
+﻿/* ========================================================
+   FEATURE: 3D WORLD UI & HUD CONTROLS
+   ======================================================== */
+.world-hud-header {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  right: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.world-title-badge {
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 230, 255, 0.3);
+  padding: 8px 18px;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 20px rgba(0, 230, 255, 0.2);
+}
+
+.world-close-btn {
+  pointer-events: auto;
+  background: rgba(255, 55, 95, 0.2);
+  color: #FF375F;
+  border: 1px solid rgba(255, 55, 95, 0.4);
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.world-close-btn:hover {
+  background: #FF375F;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 55, 95, 0.6);
+  transform: scale(1.05);
+}
+
+.world-hud-controls {
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hud-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 15, 30, 0.65);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.key-badge {
+  background: rgba(0, 230, 255, 0.15);
+  color: #00E6FF;
+  border: 1px solid rgba(0, 230, 255, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.hud-label {
+  color: #b0b5c0;
+  font-size: 0.8rem;
+  margin-left: 6px;
+}
+
+.hud-hint {
+  color: #00E6FF;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(0, 230, 255, 0.5);
+}
+
+/* Mobile Touch Controls */
+.world-touch-controls {
+  display: none;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 10;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .world-touch-controls { display: flex; }
+  .world-hud-controls { bottom: 120px; left: 15px; }
+}
+
+.touch-row { display: flex; gap: 8px; }
+
+.touch-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: rgba(10, 15, 30, 0.7);
+  border: 1px solid rgba(0, 230, 255, 0.3);
+  color: #00E6FF;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  touch-action: manipulation;
+}
+
+.touch-btn:active {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Hologram Beacon Card */
+.beacon-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 90%;
+  max-width: 480px;
+  background: rgba(10, 15, 30, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 230, 255, 0.4);
+  box-shadow: 0 0 40px rgba(0, 230, 255, 0.3);
+  border-radius: 20px;
+  padding: 22px;
+  z-index: 20;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.beacon-card.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -45%) scale(0.9);
+}
+
+.beacon-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #00E6FF;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.beacon-close {
+  background: none;
+  border: none;
+  color: #b0b5c0;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.beacon-card-body h4 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.beacon-card-body p {
+  color: #b0b5c0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ========================================================
+   FEATURE 3: ADVANCED FLUID GLASS REFRACTION HOVER EFFECT
+   ======================================================== */
+.project-card, .skill-card, .timeline-content {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card::after, .skill-card::after, .timeline-content::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 230, 255, 0.12) 0%, transparent 50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover::after, .skill-card:hover::after, .timeline-content:hover::after {
+  opacity: 1;
+}
+
+/* ========================================================
+   FEATURE 4: CINEMATIC DEPTH-OF-FIELD BOKEH BLUR
+   ======================================================== */
+.dof-focused canvas#bg-canvas {
+  filter: blur(0px);
+}
+
+.dof-blur-distant canvas#bg-canvas {
+  filter: blur(3px);
+  transition: filter 0.8s ease;
 }

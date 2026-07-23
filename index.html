@@ -291,7 +291,7 @@
         <a href="#skills">Skills</a>
         <a href="#experience">Experience</a>
         <a href="#certificates">Certificates</a>
-        <a href="#projects">Projects</a>
+        <a id="worldModeNavBtn" href="javascript:void(0)" onclick="openPlayableWorld()" title="Explore 3D World">🕹️ 3D World</a>
         <a id="terminalNavBtn" href="javascript:void(0)" onclick="openTerminal()">Terminal</a>
         <a id="cameraScrollBtn" href="javascript:void(0)" onclick="toggleCameraScroll()">Gesture</a>
         <a id="osToggleBtn" href="javascript:void(0)" title="Portfolio OS Mode">🖥️ OS</a>
@@ -310,6 +310,7 @@
       <span class="mdn-brand" id="mdnBrand">Pavan.</span>
       
       <div class="mdn-links" id="mdnLinks">
+        <a href="javascript:void(0)" onclick="toggleMdn(); openPlayableWorld();">🕹️ 3D World</a>
         <a href="#skills" onclick="toggleMdn()">Skills.</a>
         <a href="#experience" onclick="toggleMdn()">Work.</a>
         <a href="#projects" onclick="toggleMdn()">Projects.</a>
@@ -318,6 +319,7 @@
     </div>
 
     <div class="mdn-right">
+      <button class="mdn-btn" onclick="openPlayableWorld()" title="3D World"><i class="fa-solid fa-gamepad"></i></button>
       <button class="mdn-btn" onclick="openTerminal()"><i class="fa-solid fa-terminal"></i></button>
       <button class="mdn-btn" onclick="toggleCameraScroll()"><i class="fa-solid fa-camera"></i></button>
     </div>
@@ -697,9 +699,17 @@
   <section id="projects" class="projects" style="position: relative;">
     <h2 class="section-title">Projects</h2>
 
+    <!-- Project Category Filter Bar -->
+    <div class="project-filter-bar">
+      <button class="filter-btn active" data-filter="all">All Projects</button>
+      <button class="filter-btn" data-filter="fullstack">Full-Stack</button>
+      <button class="filter-btn" data-filter="react">React.js</button>
+      <button class="filter-btn" data-filter="ai">AI / Smart</button>
+    </div>
+
     <div class="project-grid">
       <!-- Project 1 -->
-      <div class="project-card scroll-reveal project-clickable" data-project-tags="javascript">
+      <div class="project-card scroll-reveal project-clickable" data-category="fullstack react ai" data-project-tags="javascript">
         <img src="/StarNote.png" alt="Project 2" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="cursor: pointer;">
         <div class="project-info">
           <h3>StarNote AI-Integrated Smart Study Platform</h3>
@@ -725,7 +735,7 @@ creation, and intelligent study assistance.</p>
       </div>
 
       <!-- Project 2 -->
-      <div class="project-card scroll-reveal project-clickable" data-project-tags="react nodejs">
+      <div class="project-card scroll-reveal project-clickable" data-category="fullstack react" data-project-tags="react nodejs">
         <img src="/ChatApp.png" alt="Project 1" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="cursor: pointer;">
         <div class="project-info">
           <h3>TalkNow Real-Time Chat Application</h3>
@@ -755,7 +765,7 @@ high-speed data retrieval.
       
        <!-- Project 3 -->
 
-      <div class="project-card scroll-reveal project-clickable" data-project-tags="react nodejs">
+      <div class="project-card scroll-reveal project-clickable" data-category="fullstack react ai" data-project-tags="react nodejs">
         <img src="./Screenshot 2025-10-05 204623.png" alt="Civic Issue Reporting System Screenshot" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="cursor: pointer;">
         <div class="project-info">
           <h3> The Civic eye crowdedsourced Issue Reporting System </h3>
@@ -776,6 +786,34 @@ high-speed data retrieval.
           </div>
         </div>
       </div> 
+
+      <!-- Project 4: Weather App -->
+      <div class="project-card scroll-reveal project-clickable" data-category="fullstack react" data-project-tags="react javascript">
+        <div class="weather-card-banner" style="width: 100%; height: 180px; background: linear-gradient(135deg, rgba(0,230,255,0.15), rgba(94,92,230,0.3)); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 15px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+          <i class="fa-solid fa-cloud-sun-rain" style="font-size: 3.5rem; color: #00E6FF; filter: drop-shadow(0 0 15px rgba(0,230,255,0.6));"></i>
+          <div>
+            <div style="font-size: 2.2rem; font-weight: 700; color: #fff; line-height: 1;">28°C</div>
+            <div style="font-size: 0.9rem; color: #b0b5c0; margin-top: 4px;"><i class="fa-solid fa-location-dot" style="color: #FF9F0A;"></i> Live Forecast</div>
+          </div>
+        </div>
+        <div class="project-info">
+          <h3>SkyPulse Live Weather & Climate Dashboard</h3>
+          <p>• Built an interactive meteorology application delivering real-time weather metrics, 7-day extended forecasts, and air quality index updates.</p>
+          <p>• Leveraged OpenWeatherMap API, browser Geolocation, and dynamic weather-condition UI themes (Sunny, Rainy, Stormy).</p>
+          <div class="badge-list">
+            <span class="badge">React.js</span>
+            <span class="badge">OpenWeather API</span>
+            <span class="badge">JavaScript ES6+</span>
+            <span class="badge">Tailwind CSS</span>
+            <span class="badge">REST APIs</span>
+          </div>
+          <div class="project-actions">
+            <a class="btn btn-primary" href="https://github.com/Pavangupta05" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 6px;"></i> Demo</a>
+            <a class="btn btn-secondary" href="https://github.com/Pavangupta05" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" style="margin-right: 6px;"></i> Code</a>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </section>
@@ -1413,30 +1451,7 @@ high-speed data retrieval.
   }
   </script>
 
-  <!-- ===== AI CHAT WIDGET ===== -->
-  <button class="ai-chat-btn" id="ai-chat-btn" aria-label="Open AI Assistant">
-    <svg class="icon-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-    <svg class="icon-close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-  </button>
-  <div class="ai-chat-panel" id="ai-chat-panel" role="dialog" aria-label="AI Assistant">
-    <div class="ai-chat-header">
-      <div class="ai-chat-avatar">🤖</div>
-      <div class="ai-chat-info"><h4>Pavan's AI Assistant</h4><p>Online — Ready to help</p></div>
-    </div>
-    <div class="ai-chat-messages" id="ai-chat-messages"></div>
-    <div class="ai-chat-suggestions">
-      <div class="ai-suggestion-chip">Show projects</div>
-      <div class="ai-suggestion-chip">What skills?</div>
-      <div class="ai-suggestion-chip">Contact info</div>
-      <div class="ai-suggestion-chip">Download resume</div>
-    </div>
-    <div class="ai-chat-input-row">
-      <input type="text" id="ai-chat-input" placeholder="Ask about Pavan..." autocomplete="off">
-      <button class="ai-chat-send" id="ai-chat-send" aria-label="Send">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </div>
-  </div>
+
 
   <!-- ===== PORTFOLIO OS DESKTOP MODE ===== -->
   <div id="desktop-os">
@@ -1688,27 +1703,34 @@ high-speed data retrieval.
     setTimeout(tryExtend, 0);
   })();
   </script>
-  <!-- Lenis Smooth Scrolling -->
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <!-- Lenis Smooth Scrolling Initialization -->
   <script>
-    // Initialize Lenis
+    // Initialize Lenis with GSAP ScrollTrigger synchronization for ultra-smooth scrolling
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
       mouseMultiplier: 1,
       smoothTouch: false,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
       infinite: false,
     });
 
-    function raf(time) {
-      lenis.raf(time);
+    if (window.gsap && window.ScrollTrigger) {
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
       requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
 
     // Handle anchor links with Lenis
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1741,5 +1763,103 @@ high-speed data retrieval.
       observer.observe(el);
     });
   </script>
+
+  <!-- Interactive Skill Level Tooltip -->
+  <div id="skill-tooltip" class="skill-tooltip"></div>
+
+  <!-- 🕹️ BRUNO SIMON STYLE PLAYABLE 3D WORLD OVERLAY -->
+  <div id="playable-world-overlay" class="world-modal-overlay hidden" aria-hidden="true" role="dialog">
+    <canvas id="rover-canvas"></canvas>
+    
+    <!-- World HUD Header -->
+    <div class="world-hud-header">
+      <div class="world-title-badge">
+        <i class="fa-solid fa-gamepad" style="color: #00E6FF;"></i>
+        <span>Pavan's 3D Planet Rover Mode</span>
+      </div>
+      <button class="world-close-btn" onclick="closePlayableWorld()" aria-label="Exit 3D World">
+        <i class="fa-solid fa-xmark"></i> Exit 3D World
+      </button>
+    </div>
+
+    <!-- World HUD Controls & Instructions -->
+    <div class="world-hud-controls">
+      <div class="hud-keys">
+        <span class="key-badge">W</span>
+        <span class="key-badge">A</span>
+        <span class="key-badge">S</span>
+        <span class="key-badge">D</span>
+        <span class="hud-label">Drive</span>
+        <span class="key-badge" style="margin-left:8px;background:rgba(0,230,255,0.2);color:#00e6ff;border-color:#00e6ff;">SHIFT</span>
+        <span class="hud-label">Turbo</span>
+      </div>
+      <div class="hud-hint">⚡ Drive near Beacons or collect <span style="color:#FFD700">Tech Orbs</span>!</div>
+      
+      <!-- Tech Orbs Score -->
+      <div class="hud-score-tracker">
+        <i class="fa-solid fa-gem" style="color: #FFD700;"></i>
+        <span id="techOrbScore">0</span> / 10 Orbs
+      </div>
+    </div>
+
+    <!-- HUD Live Radar / Mini-Map -->
+    <div class="hud-radar-container">
+      <div class="radar-scanline"></div>
+      <div class="radar-center-rover"></div>
+      <div id="radarBlipsContainer"></div>
+    </div>
+
+    <!-- Mobile Touch Joystick Controls -->
+    <div class="world-touch-controls">
+      <button class="touch-btn touch-up" id="btnDriveForward"><i class="fa-solid fa-arrow-up"></i></button>
+      <div class="touch-row">
+        <button class="touch-btn touch-left" id="btnSteerLeft"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="touch-btn touch-down" id="btnDriveReverse"><i class="fa-solid fa-arrow-down"></i></button>
+        <button class="touch-btn touch-right" id="btnSteerRight"><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Hologram Beacon Info Popup Card -->
+    <div id="world-beacon-card" class="beacon-card hidden">
+      <div class="beacon-card-header">
+        <i class="fa-solid fa-tower-broadcast" style="color: #00E6FF;"></i>
+        <span id="beaconCardTitle">BEACON SIGNAL</span>
+        <button class="beacon-close" onclick="closeBeaconCard()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="beaconCardBody" class="beacon-card-body"></div>
+    </div>
+  </div>
+
+  <!-- AI Voice Assistant & Chatbot UI -->
+  <button id="ai-chat-toggle" class="ai-floating-btn" aria-label="Open AI Assistant">
+    <i class="fa-solid fa-robot"></i>
+  </button>
+
+  <div id="ai-chat-window" class="ai-chat-window hidden" aria-hidden="true">
+    <div class="ai-chat-header">
+      <div class="ai-header-info">
+        <i class="fa-solid fa-robot" style="color:#00E6FF;"></i>
+        <span>Pavan AI Assistant</span>
+      </div>
+      <button id="ai-chat-close" class="ai-close-btn" aria-label="Close AI Chat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <div id="ai-chat-messages" class="ai-chat-messages">
+      <div class="ai-message bot">
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-bubble">Hi! I'm Pavan's AI Assistant. You can ask me about his skills, projects, experience, or how to contact him. Try typing or speaking!</div>
+      </div>
+    </div>
+
+    <div class="ai-chat-input-area">
+      <button id="ai-mic-btn" class="ai-mic-btn" aria-label="Voice Input">
+        <i class="fa-solid fa-microphone"></i>
+      </button>
+      <input type="text" id="ai-chat-input" placeholder="Ask anything..." autocomplete="off">
+      <button id="ai-send-btn" class="ai-send-btn" aria-label="Send Message">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
 </body>
 </html>
