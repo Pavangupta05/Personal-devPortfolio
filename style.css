@@ -6618,3 +6618,17 @@ body.mobile-space-fallback::after {
     animation: starsTwinkleSlow 6s infinite alternate;
   }
 }
+
+@media (max-width: 768px) {
+  .mobile-nebula {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: -3 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    display: block !important;
+  }
+}
