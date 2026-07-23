@@ -6363,3 +6363,82 @@ h1, h2, h3, h4, h5, h6,
   filter: blur(3px);
   transition: filter 0.8s ease;
 }
+
+/* =========================================
+   SCROLLING PERFORMANCE OPTIMIZATIONS
+   ========================================= */
+body, html {
+  scroll-behavior: smooth;
+  overscroll-behavior-y: none;
+}
+canvas {
+  will-change: transform;
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+
+/* =========================================
+   MOBILE 2D DEEP SPACE FALLBACK
+   ========================================= */
+body.mobile-space-fallback {
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+body.mobile-space-fallback::before,
+body.mobile-space-fallback::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+
+body.mobile-space-fallback::before {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: starsTwinkle 4s infinite alternate;
+}
+
+body.mobile-space-fallback::after {
+  background-image: 
+    radial-gradient(3px 3px at 50px 50px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 100px 150px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 180px 80px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 250px 250px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 300px 100px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 400px 400px;
+  animation: starsTwinkleSlow 6s infinite alternate;
+}
+
+/* Add a stunning subtle nebula glow */
+.mobile-space-fallback .mobile-nebula {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -3;
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(0, 230, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+@keyframes starsTwinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+@keyframes starsTwinkleSlow {
+  0% { opacity: 0.1; }
+  100% { opacity: 0.8; }
+}

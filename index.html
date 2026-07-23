@@ -279,6 +279,7 @@
   </div>
 
   <div id="scroll-progress"></div>
+  <div class="mobile-nebula"></div>
   <canvas id="bg-canvas"></canvas>
 
   <!-- Desktop Pill Navbar -->
@@ -291,10 +292,10 @@
         <a href="#skills">Skills</a>
         <a href="#experience">Experience</a>
         <a href="#certificates">Certificates</a>
-        <a id="worldModeNavBtn" href="javascript:void(0)" onclick="openPlayableWorld()" title="Explore 3D World">🕹️ 3D World</a>
+        
         <a id="terminalNavBtn" href="javascript:void(0)" onclick="openTerminal()">Terminal</a>
         <a id="cameraScrollBtn" href="javascript:void(0)" onclick="toggleCameraScroll()">Gesture</a>
-        <a id="osToggleBtn" href="javascript:void(0)" title="Portfolio OS Mode">🖥️ OS</a>
+        
       </div>
     </div>
   </nav>
@@ -310,7 +311,7 @@
       <span class="mdn-brand" id="mdnBrand">Pavan.</span>
       
       <div class="mdn-links" id="mdnLinks">
-        <a href="javascript:void(0)" onclick="toggleMdn(); openPlayableWorld();">🕹️ 3D World</a>
+        
         <a href="#skills" onclick="toggleMdn()">Skills.</a>
         <a href="#experience" onclick="toggleMdn()">Work.</a>
         <a href="#projects" onclick="toggleMdn()">Projects.</a>
@@ -319,7 +320,7 @@
     </div>
 
     <div class="mdn-right">
-      <button class="mdn-btn" onclick="openPlayableWorld()" title="3D World"><i class="fa-solid fa-gamepad"></i></button>
+      
       <button class="mdn-btn" onclick="openTerminal()"><i class="fa-solid fa-terminal"></i></button>
       <button class="mdn-btn" onclick="toggleCameraScroll()"><i class="fa-solid fa-camera"></i></button>
     </div>
@@ -1453,168 +1454,6 @@ high-speed data retrieval.
 
 
 
-  <!-- ===== PORTFOLIO OS DESKTOP MODE ===== -->
-  <div id="desktop-os">
-    <!-- OS Boot Screen -->
-    <div class="os-boot-screen" id="os-boot-screen">
-      <div class="os-boot-logo">P</div>
-      <div class="os-boot-progress"><div class="os-boot-progress-bar" id="os-boot-bar"></div></div>
-    </div>
-    
-    <!-- OS Context Menu -->
-    <div class="os-context-menu" id="os-context-menu">
-      <div class="os-context-item">New Folder</div>
-      <div class="os-context-item">Get Info</div>
-      <div class="os-context-sep"></div>
-      <div class="os-context-item" onclick="changeWallpaper()">Change Wallpaper</div>
-      <div class="os-context-sep"></div>
-      <div class="os-context-item" style="color:var(--accent)" onclick="document.body.removeAttribute('data-theme')">Theme: Default Glass</div>
-      <div class="os-context-item" style="color:var(--accent)" onclick="document.body.setAttribute('data-theme', 'cyberpunk')">Theme: Cyberpunk</div>
-      <div class="os-context-item" style="color:var(--accent)" onclick="document.body.setAttribute('data-theme', 'retro')">Theme: Retro Terminal</div>
-      <div class="os-context-sep"></div>
-      <div class="os-context-item" onclick="closeOS()">Exit OS Mode</div>
-    </div>
-
-    <div class="os-wallpaper" id="os-wallpaper"></div>
-    <div class="os-menubar">
-      <div class="os-menubar-left">
-        <span>🍎</span>
-        <span class="os-menu-item">Portfolio</span>
-        <span class="os-menu-item">File</span>
-        <span class="os-menu-item">View</span>
-        <span class="os-menu-item">Projects</span>
-      </div>
-      <div class="os-menubar-right"><span class="os-clock-display" id="os-clock">12:00 PM</span></div>
-    </div>
-    <button class="os-exit-btn" id="os-exit-btn">✕ Exit OS Mode</button>
-    <div class="os-desktop-area">
-      <div class="os-icon" ondblclick="osOpenWindow('win-projects')">
-        <div class="os-icon-img" style="background:linear-gradient(135deg,#0A84FF,#5E5CE6)">📂</div>
-        <span class="os-icon-label">Projects</span>
-      </div>
-      <div class="os-icon" ondblclick="osOpenWindow('win-about')">
-        <div class="os-icon-img" style="background:linear-gradient(135deg,#32D74B,#0A84FF)">👤</div>
-        <span class="os-icon-label">About Me</span>
-      </div>
-      <div class="os-icon" ondblclick="osOpenWindow('win-skills')">
-        <div class="os-icon-img" style="background:linear-gradient(135deg,#FF9F0A,#FF375F)">🛠️</div>
-        <span class="os-icon-label">Skills</span>
-      </div>
-      <div class="os-icon" ondblclick="osOpenWindow('win-certs')">
-        <div class="os-icon-img" style="background:linear-gradient(135deg,#BF5AF2,#FF375F)">🏆</div>
-        <span class="os-icon-label">Certs</span>
-      </div>
-    </div>
-    <!-- OS Windows -->
-    <div class="os-window" id="win-projects" style="display:none;width:620px;">
-      <div class="os-titlebar">
-        <div class="os-traffic-dot red" onclick="osCloseWindow('win-projects')"></div>
-        <div class="os-traffic-dot yellow" onclick="osMinimize('win-projects')"></div>
-        <div class="os-traffic-dot green" onclick="osMaximize('win-projects')"></div>
-        <span class="os-title-text">Projects — Pavan's Portfolio</span>
-      </div>
-      <div class="os-window-body">
-        <div class="os-proj-grid">
-          <a href="https://starnote-ai.vercel.app/" target="_blank" rel="noopener" class="os-proj-item">
-            <h5>🌟 StarNote AI</h5>
-            <p>AI-powered smart study platform with Gemini, note summarization, quiz generation &amp; roadmaps.</p>
-          </a>
-          <a href="https://chat-app-frontend-kappa-tan.vercel.app" target="_blank" rel="noopener" class="os-proj-item">
-            <h5>💬 TalkNow</h5>
-            <p>Real-time chat with Socket.io, JWT auth, Google OAuth — 100+ concurrent users.</p>
-          </a>
-          <a href="https://smart-civic-eye.vercel.app/" target="_blank" rel="noopener" class="os-proj-item">
-            <h5>🏙️ Smart Civic Eye</h5>
-            <p>Crowdsourced civic issue reporting with AI analysis, live location &amp; admin dashboard.</p>
-          </a>
-          <div class="os-proj-item" style="background:rgba(10, 132, 255,0.05);border-style:dashed;cursor:default;display:flex;align-items:center;justify-content:center;">
-            <p style="color:rgba(255,255,255,0.3);text-align:center;">🚀 More coming soon...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="os-window" id="win-about" style="display:none;width:460px;">
-      <div class="os-titlebar">
-        <div class="os-traffic-dot red" onclick="osCloseWindow('win-about')"></div>
-        <div class="os-traffic-dot yellow" onclick="osMinimize('win-about')"></div>
-        <div class="os-traffic-dot green" onclick="osMaximize('win-about')"></div>
-        <span class="os-title-text">About Pavan</span>
-      </div>
-      <div class="os-window-body">
-        <div style="display:flex;flex-direction:column;gap:16px;color:rgba(255,255,255,0.8);font-size:0.9rem;line-height:1.6">
-          <div style="display:flex;align-items:center;gap:14px">
-            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0A84FF,#5E5CE6);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0">👨‍💻</div>
-            <div><div style="font-size:1.1rem;font-weight:700;color:#fff">Pavan Kumar Gupta</div><div style="color:var(--accent);font-size:0.85rem">Full Stack MERN Developer</div></div>
-          </div>
-          <p>Passionate developer from <strong>Jaipur, India</strong> pursuing B.Tech IT at JECRC (2023–2027). Specializes in AI-powered full-stack web apps.</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">LOCATION</div><div style="font-size:0.85rem">📍 Jaipur, Rajasthan</div></div>
-            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">STATUS</div><div style="font-size:0.85rem;color:#32D74B">● Open to Work</div></div>
-            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">EMAIL</div><div style="font-size:0.82rem">📧 pavangupta150605@gmail.com</div></div>
-            <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:4px">PHONE</div><div style="font-size:0.85rem">📱 +91-8005872338</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="os-window" id="win-skills" style="display:none;width:420px;">
-      <div class="os-titlebar">
-        <div class="os-traffic-dot red" onclick="osCloseWindow('win-skills')"></div>
-        <div class="os-traffic-dot yellow" onclick="osMinimize('win-skills')"></div>
-        <div class="os-traffic-dot green" onclick="osMaximize('win-skills')"></div>
-        <span class="os-title-text">Skills.exe</span>
-      </div>
-      <div class="os-window-body">
-        <div class="os-skill-list">
-          <div class="os-skill-row"><div class="os-skill-name">React</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="80%" style="width:0"></div></div><div class="os-skill-pct">80%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">Node.js</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="80%" style="width:0"></div></div><div class="os-skill-pct">80%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">MongoDB</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="80%" style="width:0"></div></div><div class="os-skill-pct">80%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">JavaScript</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="85%" style="width:0"></div></div><div class="os-skill-pct">85%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">HTML5</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="90%" style="width:0"></div></div><div class="os-skill-pct">90%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">CSS3</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="85%" style="width:0"></div></div><div class="os-skill-pct">85%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">Express.js</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="75%" style="width:0"></div></div><div class="os-skill-pct">75%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">Python</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="70%" style="width:0"></div></div><div class="os-skill-pct">70%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">VS Code</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="95%" style="width:0"></div></div><div class="os-skill-pct">95%</div></div>
-          <div class="os-skill-row"><div class="os-skill-name">Figma</div><div class="os-skill-bar"><div class="os-skill-fill" data-width="70%" style="width:0"></div></div><div class="os-skill-pct">70%</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="os-window" id="win-certs" style="display:none;width:420px;">
-      <div class="os-titlebar">
-        <div class="os-traffic-dot red" onclick="osCloseWindow('win-certs')"></div>
-        <div class="os-traffic-dot yellow" onclick="osMinimize('win-certs')"></div>
-        <div class="os-traffic-dot green" onclick="osMaximize('win-certs')"></div>
-        <span class="os-title-text">Certificates 🏆</span>
-      </div>
-      <div class="os-window-body">
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center">
-            <div style="width:42px;height:42px;background:linear-gradient(135deg,#FF6B35,#F7C59F);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">☕</div>
-            <div><div style="color:#fff;font-weight:600;font-size:0.9rem">Java Programming</div><div style="color:rgba(255,255,255,0.5);font-size:0.78rem">Infosys Springboard</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center">
-            <div style="width:42px;height:42px;background:linear-gradient(135deg,#3776AB,#FFD343);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🐍</div>
-            <div><div style="color:#fff;font-weight:600;font-size:0.9rem">Python Programming</div><div style="color:rgba(255,255,255,0.5);font-size:0.78rem">Kaizen Innovations</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center">
-            <div style="width:42px;height:42px;background:linear-gradient(135deg,#0A84FF,#5E5CE6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🌐</div>
-            <div><div style="color:#fff;font-weight:600;font-size:0.9rem">Full Stack Web Dev</div><div style="color:rgba(255,255,255,0.5);font-size:0.78rem">Upflairs Pvt. Ltd.</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- OS Dock -->
-    <div class="os-dock">
-      <div class="os-dock-inner">
-        <div class="os-dock-item" onclick="osOpenWindow('win-projects')" style="background:linear-gradient(135deg,#0A84FF,#5E5CE6)">📂<div class="dock-tooltip">Projects</div></div>
-        <div class="os-dock-item" onclick="osOpenWindow('win-about')" style="background:linear-gradient(135deg,#32D74B,#0A84FF)">👤<div class="dock-tooltip">About</div></div>
-        <div class="os-dock-item" onclick="osOpenWindow('win-skills')" style="background:linear-gradient(135deg,#FF9F0A,#FF375F)">🛠️<div class="dock-tooltip">Skills</div></div>
-        <div class="os-dock-item" onclick="osOpenWindow('win-certs')" style="background:linear-gradient(135deg,#BF5AF2,#FF375F)">🏆<div class="dock-tooltip">Certs</div></div>
-        <div class="os-dock-sep"></div>
-        <div class="os-dock-item" onclick="openTerminal()" style="background:linear-gradient(135deg,#1C1C1E,#3A3A3C)">⌨️<div class="dock-tooltip">Terminal</div></div>
-      </div>
-    </div>
-  </div>
-
   <!-- ===== TERMINAL QUEST EXTENSION (Feature 4) ===== -->
   <script>
   ;(function() {
@@ -1766,69 +1605,6 @@ high-speed data retrieval.
 
   <!-- Interactive Skill Level Tooltip -->
   <div id="skill-tooltip" class="skill-tooltip"></div>
-
-  <!-- 🕹️ BRUNO SIMON STYLE PLAYABLE 3D WORLD OVERLAY -->
-  <div id="playable-world-overlay" class="world-modal-overlay hidden" aria-hidden="true" role="dialog">
-    <canvas id="rover-canvas"></canvas>
-    
-    <!-- World HUD Header -->
-    <div class="world-hud-header">
-      <div class="world-title-badge">
-        <i class="fa-solid fa-gamepad" style="color: #00E6FF;"></i>
-        <span>Pavan's 3D Planet Rover Mode</span>
-      </div>
-      <button class="world-close-btn" onclick="closePlayableWorld()" aria-label="Exit 3D World">
-        <i class="fa-solid fa-xmark"></i> Exit 3D World
-      </button>
-    </div>
-
-    <!-- World HUD Controls & Instructions -->
-    <div class="world-hud-controls">
-      <div class="hud-keys">
-        <span class="key-badge">W</span>
-        <span class="key-badge">A</span>
-        <span class="key-badge">S</span>
-        <span class="key-badge">D</span>
-        <span class="hud-label">Drive</span>
-        <span class="key-badge" style="margin-left:8px;background:rgba(0,230,255,0.2);color:#00e6ff;border-color:#00e6ff;">SHIFT</span>
-        <span class="hud-label">Turbo</span>
-      </div>
-      <div class="hud-hint">⚡ Drive near Beacons or collect <span style="color:#FFD700">Tech Orbs</span>!</div>
-      
-      <!-- Tech Orbs Score -->
-      <div class="hud-score-tracker">
-        <i class="fa-solid fa-gem" style="color: #FFD700;"></i>
-        <span id="techOrbScore">0</span> / 10 Orbs
-      </div>
-    </div>
-
-    <!-- HUD Live Radar / Mini-Map -->
-    <div class="hud-radar-container">
-      <div class="radar-scanline"></div>
-      <div class="radar-center-rover"></div>
-      <div id="radarBlipsContainer"></div>
-    </div>
-
-    <!-- Mobile Touch Joystick Controls -->
-    <div class="world-touch-controls">
-      <button class="touch-btn touch-up" id="btnDriveForward"><i class="fa-solid fa-arrow-up"></i></button>
-      <div class="touch-row">
-        <button class="touch-btn touch-left" id="btnSteerLeft"><i class="fa-solid fa-arrow-left"></i></button>
-        <button class="touch-btn touch-down" id="btnDriveReverse"><i class="fa-solid fa-arrow-down"></i></button>
-        <button class="touch-btn touch-right" id="btnSteerRight"><i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- Hologram Beacon Info Popup Card -->
-    <div id="world-beacon-card" class="beacon-card hidden">
-      <div class="beacon-card-header">
-        <i class="fa-solid fa-tower-broadcast" style="color: #00E6FF;"></i>
-        <span id="beaconCardTitle">BEACON SIGNAL</span>
-        <button class="beacon-close" onclick="closeBeaconCard()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div id="beaconCardBody" class="beacon-card-body"></div>
-    </div>
-  </div>
 
   <!-- AI Voice Assistant & Chatbot UI -->
   <button id="ai-chat-toggle" class="ai-floating-btn" aria-label="Open AI Assistant">
