@@ -8643,5 +8643,38 @@ body.light-mode .home-subtitle {
   color: rgba(0, 0, 0, 0.65) !important;
 }
 
+/* ── 4. Tech Skills Page & General Section Desktop Navbar Clearance ── */
+#skills,
+#about,
+#experience,
+#contact,
+#portfolio-grid,
+.portfolio-stack-section {
+  padding-top: 155px !important; /* Proper desktop spacing below the floating navbar */
+}
+
+/* ── 5. Light Mode Filter Button Legibility & Contrast ── */
+body.light-mode .skill-filter-btn,
+body.light-mode .project-filter-btn {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: var(--text-primary) !important;
+}
+
+body.light-mode .skill-filter-btn:hover,
+body.light-mode .project-filter-btn:hover {
+  background: rgba(0, 0, 0, 0.09) !important;
+  color: var(--text-primary) !important;
+}
+
+body.light-mode .skill-filter-btn.active,
+body.light-mode .project-filter-btn.active {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 8px 16px rgba(217, 119, 6, 0.25) !important;
+}
+
+
 
 
