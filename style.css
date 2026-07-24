@@ -8137,16 +8137,9 @@ body.light-mode .page-transition-overlay {
     margin-bottom: 20px !important;
   }
 
-  /* un-stick cards on mobile so they scroll naturally */
+  /* keep cards sticky on mobile for the stack animation */
   .sticky-card {
-    position: relative !important;
-    top: auto !important;
-    margin-bottom: 24px !important;
-  }
-
-  /* Reset huge desktop padding-bottom on mobile */
-  .portfolio-stack-container {
-    padding-bottom: 20px !important;
+    margin-bottom: 24px !important; /* Slightly tighter spacing for mobile */
   }
 }
 
@@ -8476,12 +8469,7 @@ body.light-mode .page-transition-overlay {
     overflow-x: hidden !important;
   }
 
-  /* Remove body dot grid on very small screens for performance */
-  @media (max-width: 480px) {
-    body {
-      background-image: none !important;
-    }
-  }
+  /* Retain body dot grid on small screens as requested */
 }
 
 /* ── CRITICAL: Top Section & Heading Navbar Clearance (50px-70px gap below navbar) ── */
@@ -8673,6 +8661,25 @@ body.light-mode .project-filter-btn.active {
   color: #fff !important;
   border-color: var(--accent) !important;
   box-shadow: 0 8px 16px rgba(217, 119, 6, 0.25) !important;
+}
+
+/* ── 6. Home Subtitle Highlights (Light/Dark Mode Support) ── */
+.highlight-interactive {
+  color: #0A84FF;
+  font-weight: 700;
+}
+
+.highlight-delightful {
+  color: #BF5AF2;
+  font-weight: 700;
+}
+
+body.light-mode .highlight-interactive {
+  color: #0056b3;
+}
+
+body.light-mode .highlight-delightful {
+  color: #8c19c2;
 }
 
 
