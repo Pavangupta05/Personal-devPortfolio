@@ -765,9 +765,9 @@ window.addEventListener("DOMContentLoaded", () => {
       origin: 'bottom', distance: '40px', duration: 700,
       delay: 80, easing: 'cubic-bezier(0.25,1,0.5,1)', reset: false
     });
-    sr.reveal('.section-title',    { origin: 'left', distance: '30px' });
+    // sr.reveal('.section-title',    { origin: 'left', distance: '30px' });
     sr.reveal('.about-img',        { origin: 'left', distance: '50px' });
-    sr.reveal('.about-text',       { origin: 'right', distance: '50px' });
+    // sr.reveal('.about-text',       { origin: 'right', distance: '50px' });
     sr.reveal('.project-card',     { interval: 120 });
     sr.reveal('.skill-card',       { interval: 80, scale: 0.9 });
     sr.reveal('.certificate-card', { interval: 120 });
@@ -826,7 +826,20 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 100);
   }
 
-  const mobileLinks = [...document.querySelectorAll('.mobile-nav-links a')];
+  
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  navPillLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    const active = (href === currentPath) || (currentPath === '' && href === 'index.html');
+    link.classList.toggle('active', active);
+    if (active) updateSlider(link);
+  });
+  const mobileLinks = [...document.querySelectorAll('.mobile-nav-links a, .mdn-links a')];
+  mobileLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    link.classList.toggle('active', (href === currentPath) || (currentPath === '' && href === 'index.html'));
+  });
+
   const sections    = [...document.querySelectorAll('section')];
   const progressBar = document.getElementById("scroll-progress");
   const scrollTopBtn = document.getElementById("scrollTopBtn");
@@ -843,17 +856,9 @@ window.addEventListener("DOMContentLoaded", () => {
       if (scrollTopBtn) scrollTopBtn.style.display = sy > 400 ? "block" : "none";
       if (progressBar)  progressBar.style.width = ((sy / total) * 100) + "%";
 
-      let current = '';
-      sections.forEach(s => { if (sy >= s.offsetTop - s.clientHeight / 3) current = s.id; });
+      
+      // Active link logic moved to DOMContentLoaded
 
-      navPillLinks.forEach(link => {
-        const active = Boolean(current && link.getAttribute('href').includes(current));
-        link.classList.toggle('active', active);
-        if (active) updateSlider(link);
-      });
-      mobileLinks.forEach(link => {
-        link.classList.toggle('active', Boolean(current && link.getAttribute('href').includes(current)));
-      });
 
       scrollRafPending = false;
     });
@@ -902,7 +907,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   // ── 3D TILT CARDS (rect cached on mouseenter) ────────────────────────────────
-  document.querySelectorAll('.skill-card, .project-card, .recruiter-card').forEach(card => {
+  document.querySelectorAll('.project-card, .recruiter-card').forEach(card => {
     let rect;
     card.addEventListener('mouseenter', () => { rect = card.getBoundingClientRect(); });
     card.addEventListener('mousemove', e => {
@@ -1840,3 +1845,297 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })();
 
+
+
+// ========================================================
+// FEATURE: GSAP DOCK MAGNIFICATION EFFECT
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  // Guard for touch devices and reduced-motion preferences
+  if (window.innerWidth < 768) return;
+
+  // Configuration for different card types
+  const configs = [
+    {
+      containerSelector: '.skills-container, .soft-skills-container',
+      cardSelector: '.skill-card, .soft-skill-item',
+      maxScale: 1.45,
+      maxY: -15,
+      radius: 160 // px
+    },
+
+  ];
+
+  configs.forEach(config => {
+    const containers = document.querySelectorAll(config.containerSelector);
+    if (!containers.length) return;
+
+    containers.forEach(container => {
+      const cards = Array.from(container.querySelectorAll(config.cardSelector));
+      if (!cards.length) return;
+
+      // Set up quickTo instances for each card
+      cards.forEach(card => {
+        card.scaleTo = gsap.quickTo(card, "scale", { duration: 0.3, ease: "power2.out" });
+        card.yTo = gsap.quickTo(card, "y", { duration: 0.3, ease: "power2.out" });
+        card.zTo = gsap.quickSetter(card, "zIndex");
+        
+        // Ensure default transform origin
+        gsap.set(card, { transformOrigin: "center center" });
+
+        // Focus accessibility
+        card.addEventListener('focus', () => {
+          card.scaleTo(config.maxScale);
+          card.yTo(config.maxY);
+          card.zTo(10);
+        });
+        card.addEventListener('blur', () => {
+          card.scaleTo(1);
+              
+          card.yTo(0);
+          card.zTo(1);
+        });
+      });
+
+      let mouseX = 0;
+      let mouseY = 0;
+      let isHovering = false;
+      let rafId = null;
+      let cachedRects = []; // Cache rects to prevent infinite scaling jitter
+
+      // Distance calculation and scale mapping
+      const updateDock = () => {
+        if (!isHovering) return;
+
+        let nearestCard = null;
+        let minDistance = Infinity;
+
+        // Use cached rects (untransformed base positions) for perfectly stable math
+        cachedRects.forEach((rect, i) => {
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          // Euclidean distance
+          const dist = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+          if (dist < minDistance) {
+            minDistance = dist;
+            nearestCard = { index: i, rect: rect };
+          }
+        });
+
+        if (!nearestCard) return;
+
+        // Apply scaling only to cards in the same row as the nearest card
+        cards.forEach((card, i) => {
+          const rect = cachedRects[i];
+          
+          // Check if it's in the same visual row (tolerance of 30px to account for minor alignment differences)
+          const isSameRow = Math.abs(rect.y - nearestCard.rect.y) < 30;
+          
+          if (isSameRow) {
+            const centerX = rect.left + rect.width / 2;
+            const distX = Math.abs(mouseX - centerX);
+
+            // Cosine falloff (bell curve shape)
+            if (distX < config.radius) {
+              // Map distance (0 to radius) to a normalized value (1 to 0)
+              const normalizedDist = 1 - (distX / config.radius);
+              
+              // Use Math.cos for smooth ease-in-out curve: from 1 at center down to 0 at edges
+              const curve = (Math.cos((1 - normalizedDist) * Math.PI) + 1) / 2;
+              
+              const currentScale = 1 + ((config.maxScale - 1) * curve);
+              const currentY = config.maxY * curve;
+
+              card.scaleTo(currentScale);
+              
+              card.yTo(currentY);
+              // Bump z-index based on proximity so scaling cards stay on top
+              card.zTo(Math.round(10 * curve));
+            } else {
+              // Outside radius but in same row
+              card.scaleTo(1);
+              
+              card.yTo(0);
+              card.zTo(1);
+            }
+          } else {
+            // Different row: stay flat
+            card.scaleTo(1);
+              
+            card.yTo(0);
+            card.zTo(1);
+          }
+        });
+
+        rafId = requestAnimationFrame(updateDock);
+      };
+
+      container.addEventListener('mouseenter', () => {
+        cachedRects = cards.map(c => c.getBoundingClientRect());
+        // Force disable CSS transitions so GSAP can run at 60fps without being frozen!
+        cards.forEach(card => card.style.setProperty('transition', 'none', 'important'));
+      });
+
+      container.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!isHovering) {
+          isHovering = true;
+          rafId = requestAnimationFrame(updateDock);
+        }
+      });
+
+      container.addEventListener('mouseleave', () => {
+        isHovering = false;
+        cancelAnimationFrame(rafId);
+        // Reset all cards
+        cards.forEach(card => {
+          card.scaleTo(1);
+              
+          card.yTo(0);
+          card.zTo(1);
+        });
+      });
+    });
+  });
+});
+
+
+// ========================================================
+// FEATURE: STICKY SCROLL-STACK REVEAL
+// ========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.gsap || !window.ScrollTrigger) return;
+  
+  gsap.registerPlugin(ScrollTrigger);
+
+  ScrollTrigger.matchMedia({
+    // Desktop only
+    "all": function() {
+      const cards = gsap.utils.toArray('.sticky-card');
+      if (!cards.length) return;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      cards.forEach((card, i) => {
+        // Enforce DOM z-index so lower cards sit on top of earlier cards
+        card.style.zIndex = i + 1;
+
+        // DOM Elements
+        const overlay = card.querySelector('.sticky-card-overlay');
+        const cardLeft = card.querySelector('.card-left');
+        const img = card.querySelector('.browser-mockup img');
+        const dots = card.querySelectorAll('.browser-header .dot');
+        const mockupContainer = card.querySelector('.browser-mockup');
+
+        // ==========================================
+        // 1. ENTRY & PARALLAX ANIMATIONS (All Cards)
+        // ==========================================
+        if (!prefersReducedMotion && img && cardLeft) {
+          
+          // Set initial will-change for performance
+          gsap.set(img, { willChange: "transform, clip-path", clipPath: "inset(100% 0 0 0)", scale: 1.08 });
+          gsap.set(dots, { scale: 0, opacity: 0 });
+          gsap.set(cardLeft, { opacity: 0, y: 30 });
+
+          // Create the Entry Timeline
+          const entryTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: card,
+              start: "top top+=170", // Triggers just as it pins
+              toggleActions: "play none none reverse"
+            },
+            onComplete: () => {
+              // Clean up GPU flags after entry
+              gsap.set(img, { willChange: "auto" });
+
+              // Create Parallax Scrub ScrollTrigger ONLY after entry finishes
+              gsap.fromTo(img, 
+                { yPercent: -5 },
+                {
+                  yPercent: 5,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: card,
+                    start: "top top+=160",
+                    end: () => "+=" + (card.offsetHeight * 1.5),
+                    scrub: true
+                  }
+                }
+              );
+            }
+          });
+
+          // Left Column Entry
+          entryTl.to(cardLeft, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0);
+          
+          // Mockup Dots Boot-up
+          if (dots.length) {
+            entryTl.to(dots, { scale: 1, opacity: 1, duration: 0.4, stagger: 0.08, ease: "back.out(1.5)" }, 0.15);
+          }
+          
+          // Image Reveal & Settle
+          entryTl.to(img, {
+            clipPath: "inset(0% 0 0 0)",
+            scale: 1,
+            duration: 0.9,
+            ease: "power3.out"
+          }, 0.2);
+
+          // Hover Micro-interaction
+          if (mockupContainer) {
+            mockupContainer.addEventListener('mouseenter', () => {
+              gsap.to(img, { scale: 1.03, duration: 0.4, ease: "power2.out", overwrite: "auto" });
+            });
+            mockupContainer.addEventListener('mouseleave', () => {
+              gsap.to(img, { scale: 1, duration: 0.4, ease: "power2.out", overwrite: "auto" });
+            });
+          }
+
+        } else if (img && cardLeft) {
+          // Reduced Motion Fallback
+          gsap.set(img, { clipPath: "inset(0% 0 0 0)", scale: 1, opacity: 0 });
+          gsap.to([cardLeft, img], {
+            opacity: 1,
+            duration: 0.5,
+            scrollTrigger: { trigger: card, start: "top top+=170", toggleActions: "play none none reverse" }
+          });
+        }
+
+
+        // ==========================================
+        // 2. DIMMING STACK ANIMATION (Skipped for last card)
+        // ==========================================
+        if (i !== cards.length - 1) {
+          const cardInner = card.querySelector('.card-inner');
+          
+          if (cardInner) {
+            gsap.to(cardInner, {
+              scale: 0.94,
+              scrollTrigger: {
+                trigger: card, // trigger is the sticky wrapper (static size)
+                start: "top top+=160",
+                end: () => "+=" + card.offsetHeight, 
+                scrub: true,
+                invalidateOnRefresh: true 
+              }
+            });
+          }
+
+          if (overlay) {
+            gsap.to(overlay, {
+              opacity: 0.7,
+              scrollTrigger: {
+                trigger: card,
+                start: "top top+=160",
+                end: () => "+=" + card.offsetHeight,
+                scrub: true,
+                invalidateOnRefresh: true
+              }
+            });
+          }
+        }
+      });
+    }
+  });
+});
