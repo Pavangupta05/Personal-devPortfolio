@@ -8033,3 +8033,603 @@ body.light-mode .page-transition-overlay {
 .page-transition-overlay.fade-out {
   opacity: 0;
 }
+
+
+/* ==========================================================
+   GLOBAL MINIMAL BUTTON STYLES
+   ========================================================== */
+
+/* Make all buttons minimal and clean everywhere */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-outline,
+.btn-hire,
+.btn-resume,
+.cta-btn,
+.btn-calendly,
+.btn-call {
+  gap: 6px !important;
+  letter-spacing: 0.01em !important;
+  font-weight: 600 !important;
+}
+
+/* Default button sizing – compact across all pages */
+.btn {
+  padding: 9px 18px !important;
+  font-size: 0.875rem !important;
+  border-radius: 10px !important;
+}
+
+.btn-primary {
+  padding: 9px 20px !important;
+  font-size: 0.875rem !important;
+  border-radius: 10px !important;
+}
+
+.btn-secondary {
+  padding: 9px 18px !important;
+  font-size: 0.875rem !important;
+  border-radius: 10px !important;
+}
+
+/* Outlined buttons on project cards — more compact */
+.btn-outline {
+  padding: 8px 18px !important;
+  font-size: 0.82rem !important;
+  border-radius: 50px !important;
+  gap: 6px !important;
+}
+
+/* CTA button slightly larger but still clean */
+.cta-btn {
+  padding: 13px 28px !important;
+  font-size: 1rem !important;
+  border-radius: 50px !important;
+}
+
+
+/* ==========================================================
+   COMPREHENSIVE MOBILE RESPONSIVE FIX
+   Covers: index, projects, about, skills, experience, contact
+   ========================================================== */
+
+/* ── Projects page: CRITICAL card-inner override for mobile ── */
+@media (max-width: 900px) {
+  /* Override the !important grid from Fixed Desktop Grid block */
+  .sticky-card .card-inner {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 24px !important;
+  }
+
+  .browser-mockup {
+    height: 220px !important;
+  }
+
+  .sticky-card h3 {
+    font-size: 1.6rem !important;
+  }
+
+  .sticky-card .desc-line {
+    font-size: 0.95rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  .project-features {
+    margin-bottom: 18px !important;
+  }
+
+  .project-features li {
+    font-size: 0.88rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .outline-badges {
+    margin-bottom: 20px !important;
+  }
+
+  /* un-stick cards on tablets so they scroll naturally */
+  .sticky-card {
+    position: relative !important;
+    top: auto !important;
+    margin-bottom: 24px !important;
+  }
+}
+
+/* ── Section Titles: proper sizing on all breakpoints ── */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: clamp(1.4rem, 6vw, 2rem) !important;
+    margin-bottom: 28px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* About headings */
+  .about-text h2 {
+    font-size: clamp(1.3rem, 5.5vw, 1.7rem) !important;
+  }
+
+  /* Experience / Skills / Contact section headings */
+  h2.section-title,
+  .section > h2,
+  #portfolio-grid > h2 {
+    font-size: clamp(1.3rem, 6vw, 1.9rem) !important;
+  }
+
+  /* Hero / home section */
+  .typing-title {
+    font-size: clamp(22px, 7.5vw, 40px) !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .hero-greeting {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem) !important;
+  }
+
+  .home-subtitle {
+    font-size: clamp(0.85rem, 3.5vw, 1rem) !important;
+    padding: 0 12px !important;
+  }
+
+  /* General section padding */
+  .section {
+    padding: 60px 16px !important;
+  }
+
+  #portfolio-grid {
+    padding-top: 80px !important;
+    padding-bottom: 60px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Portfolio container full width on mobile */
+  .portfolio-stack-container {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* CTA section — tighten up on mobile */
+  .cta-section {
+    padding: 60px 20px !important;
+  }
+
+  .cta-headline {
+    font-size: clamp(1.5rem, 7vw, 2.8rem) !important;
+    margin-bottom: 30px !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  .cta-badge-container {
+    width: 110px !important;
+    height: 110px !important;
+    margin-bottom: 28px !important;
+  }
+
+  .cta-subtext {
+    font-size: 0.88rem !important;
+    margin-top: 20px !important;
+  }
+
+  .cta-subtext strong {
+    font-size: 0.95rem !important;
+  }
+
+  /* Buttons on mobile — minimal, not full-width by default */
+  .btn,
+  .btn-primary,
+  .btn-secondary {
+    padding: 9px 16px !important;
+    font-size: 0.82rem !important;
+    min-height: 40px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Home CTA row on mobile */
+  .home-cta {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+
+  .home-cta .btn {
+    width: auto !important;
+    max-width: none !important;
+    padding: 9px 16px !important;
+    font-size: 0.82rem !important;
+    flex: 0 1 auto !important;
+  }
+
+  /* Skills grid */
+  .skills-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  /* Project actions buttons row wraps nicely */
+  .project-actions {
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .btn-outline {
+    padding: 7px 14px !important;
+    font-size: 0.78rem !important;
+  }
+
+  /* Left social sidebar hidden on mobile */
+  .left-social-sidebar {
+    display: none !important;
+  }
+
+  /* Desktop navbar on mobile — keep pill compact */
+  .desktop-navbar {
+    width: 95% !important;
+    max-width: 380px !important;
+  }
+
+  .nav-links-pill .nav-icon {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Experience page timeline cards */
+  .experience-card {
+    padding: 20px 16px !important;
+  }
+
+  /* Contact form */
+  .contact-form {
+    padding: 0 4px !important;
+  }
+}
+
+/* ── Extra small phones ── */
+@media (max-width: 480px) {
+  .section-title {
+    font-size: clamp(1.2rem, 7vw, 1.6rem) !important;
+    margin-bottom: 22px !important;
+  }
+
+  .typing-title {
+    font-size: clamp(20px, 8.5vw, 32px) !important;
+  }
+
+  .home-subtitle {
+    font-size: 0.82rem !important;
+  }
+
+  .section {
+    padding: 50px 14px !important;
+  }
+
+  #portfolio-grid {
+    padding-top: 70px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .sticky-card .card-inner {
+    padding: 18px !important;
+    gap: 18px !important;
+  }
+
+  .sticky-card h3 {
+    font-size: 1.3rem !important;
+  }
+
+  .browser-mockup {
+    height: 180px !important;
+  }
+
+  .skills-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .skill-card {
+    padding: 18px 12px !important;
+  }
+
+  .skill-card img,
+  .skill-card .skill-svg-icon svg {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .skill-card h3 {
+    font-size: 1rem !important;
+  }
+
+  .cta-section {
+    padding: 50px 16px !important;
+  }
+
+  .cta-headline {
+    font-size: clamp(1.3rem, 8vw, 2rem) !important;
+    margin-bottom: 24px !important;
+  }
+
+  .cta-badge-container {
+    width: 90px !important;
+    height: 90px !important;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-secondary {
+    padding: 8px 14px !important;
+    font-size: 0.78rem !important;
+    border-radius: 8px !important;
+  }
+
+  .home-cta .btn {
+    padding: 8px 14px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .btn-outline {
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Nav pill tiny on very small phones */
+  .desktop-navbar {
+    max-width: 340px !important;
+  }
+
+  .nav-links-pill .nav-icon {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .nav-glass-container {
+    padding: 5px 6px !important;
+  }
+
+  /* About section photo sizing */
+  .about-img img {
+    width: 160px !important;
+    height: 160px !important;
+  }
+
+  /* profile-photo-wrap responsive */
+  .profile-photo-wrap {
+    max-width: 280px !important;
+    margin-top: 40px !important;
+  }
+}
+
+/* ── Very narrow devices (< 360px) ── */
+@media (max-width: 360px) {
+  .section-title {
+    font-size: clamp(1.1rem, 8vw, 1.4rem) !important;
+  }
+
+  .typing-title {
+    font-size: clamp(18px, 9vw, 26px) !important;
+  }
+
+  .skills-container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .sticky-card .card-inner {
+    padding: 14px !important;
+  }
+
+  .sticky-card h3 {
+    font-size: 1.15rem !important;
+  }
+
+  .desktop-navbar {
+    max-width: 310px !important;
+  }
+
+  .nav-links-pill .nav-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .home-cta .btn {
+    padding: 7px 12px !important;
+    font-size: 0.74rem !important;
+  }
+}
+
+/* ── Prevent horizontal overflow on all mobile viewports ── */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .section,
+  .portfolio-stack-section,
+  .cta-section {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Remove body dot grid on very small screens for performance */
+  @media (max-width: 480px) {
+    body {
+      background-image: none !important;
+    }
+  }
+}
+
+/* ── CRITICAL: Top Section & Heading Navbar Clearance (50px-70px gap below navbar) ── */
+@media (max-width: 768px) {
+  /* Floating navbar rests at top: 20px with ~48px height (ends around Y=68px).
+     padding-top: 130px ensures all page headings start with ~60px clean space below navbar */
+  .section:first-of-type,
+  .hero-container,
+  #portfolio-grid,
+  .portfolio-stack-section,
+  #about,
+  .about-section,
+  #skills,
+  #experience,
+  #contact,
+  main > section:first-child,
+  body > section:first-of-type {
+    padding-top: 130px !important;
+  }
+
+  /* Prevent negative or stray top margins on top section headings */
+  .section:first-of-type .section-title,
+  #portfolio-grid .section-title,
+  .portfolio-stack-section .section-title,
+  #about .about-text h2,
+  #skills .section-title,
+  .hero-container .hero-greeting,
+  .hero-container .typing-title {
+    margin-top: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .section:first-of-type,
+  .hero-container,
+  #portfolio-grid,
+  .portfolio-stack-section,
+  #about,
+  .about-section,
+  #skills,
+  #experience,
+  #contact,
+  main > section:first-child,
+  body > section:first-of-type {
+    padding-top: 120px !important;
+  }
+}
+
+
+/* ==========================================================
+   MINIMAL DESIGN ENHANCEMENTS (ITEMS 1, 2, 3)
+   ========================================================== */
+
+/* ── 1. Ultra-Clean Card Styling (Linear Style) ── */
+.skill-card,
+.project-card,
+.sticky-card,
+.experience-card,
+.education-card,
+.certificate-card,
+.recruiter-card {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.light-mode .skill-card,
+body.light-mode .project-card,
+body.light-mode .sticky-card,
+body.light-mode .experience-card,
+body.light-mode .education-card,
+body.light-mode .certificate-card,
+body.light-mode .recruiter-card {
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Linear-style top hairline highlight on card hover */
+.skill-card::after,
+.project-card::after,
+.sticky-card::after,
+.experience-card::after,
+.education-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 230, 255, 0.6), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.skill-card:hover::after,
+.project-card:hover::after,
+.sticky-card:hover::after,
+.experience-card:hover::after,
+.education-card:hover::after {
+  opacity: 1;
+}
+
+/* ── 2. Refined Minimal Navigation Pill ── */
+.desktop-navbar .nav-glass-container {
+  background: rgba(12, 16, 26, 0.75) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 50px !important;
+}
+
+body.light-mode .desktop-navbar .nav-glass-container {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Hide floating tooltips completely on mobile viewports */
+@media (max-width: 768px) {
+  .nav-tooltip,
+  .desktop-navbar .nav-tooltip {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
+
+/* ── 3. Monochrome Tech Badges & Muted Secondary Text ── */
+.badge,
+.outline-badges .badge {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500 !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+body.light-mode .badge,
+body.light-mode .outline-badges .badge {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid rgba(0, 0, 0, 0.14) !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.desc-line,
+.project-features li,
+.skill-card p,
+.experience-card p,
+.home-subtitle {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+body.light-mode .desc-line,
+body.light-mode .project-features li,
+body.light-mode .skill-card p,
+body.light-mode .experience-card p,
+body.light-mode .home-subtitle {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+
+
