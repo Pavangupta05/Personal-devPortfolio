@@ -8967,37 +8967,66 @@ body.light-mode .highlight-delightful {
 }
 
 /* ==========================================================
-   TECH SKILL CARDS - SIMPLE SUBTLE WHITE LINE HIGHLIGHT
+/* ==========================================================
+   ANIMATED GRADIENT EFFECT & ULTRA-SUBTLE TOP HIGHLIGHT
    ========================================================== */
+@keyframes cardGradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.category-card,
 .skill-card,
-.skills-container .skill-card {
+.sticky-card,
+.recruiter-card {
   position: relative !important;
-  background-image: none !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  background: linear-gradient(135deg, rgba(15, 18, 28, 0.9), rgba(28, 14, 42, 0.85), rgba(10, 25, 45, 0.9), rgba(15, 18, 28, 0.9)) !important;
+  background-size: 250% 250% !important;
+  animation: cardGradientShift 10s ease infinite !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease !important;
 }
 
-/* Subtle top white line highlight */
+.category-card::after,
 .skill-card::after,
-.skills-container .skill-card::after {
+.sticky-card::after {
   content: '' !important;
   position: absolute !important;
   top: 0 !important;
-  left: 12% !important;
-  right: 12% !important;
+  left: 15% !important;
+  right: 15% !important;
   height: 1px !important;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent) !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
   pointer-events: none !important;
   z-index: 2 !important;
+  opacity: 0.7 !important;
   transition: opacity 0.3s ease !important;
 }
 
-.skill-card:hover,
-.skills-container .skill-card:hover {
-  transform: translateY(-4px) !important;
-  border-top-color: rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+/* Hover Gradient Elevation */
+.category-card:hover,
+.skill-card:hover {
+  transform: translateY(-5px) !important;
+  border-top-color: rgba(0, 230, 255, 0.35) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 230, 255, 0.18) !important;
+}
+
+body.light-mode .category-card,
+body.light-mode .skill-card,
+body.light-mode .sticky-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 244, 255, 0.95), rgba(250, 245, 255, 0.95)) !important;
+  background-size: 200% 200% !important;
+  animation: cardGradientShift 12s ease infinite !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .category-card::after,
+body.light-mode .skill-card::after,
+body.light-mode .sticky-card::after {
+  background: linear-gradient(90deg, transparent, rgba(0, 102, 255, 0.25), transparent) !important;
 }
 
 /* ==========================================================
@@ -9223,6 +9252,477 @@ body.light-mode .contact-form .btn-primary {
 .magic-trail-dot {
   z-index: 2147483647 !important;
 }
+
+/* ==========================================================
+   SKILL CARD ICON MONOCHROME TO ORIGINAL COLOR ON HOVER
+   ========================================================== */
+.skill-card img,
+.skill-card svg,
+.skill-card .skill-svg-icon svg,
+.skills-container .skill-card img,
+.skills-container .skill-card svg {
+  filter: grayscale(100%) opacity(0.55) !important;
+  transition: filter 0.35s ease, transform 0.35s ease, opacity 0.35s ease !important;
+}
+
+/* On hover: Reveal full original vibrant brand colors! */
+.skill-card:hover img,
+.skill-card:hover svg,
+.skill-card:hover .skill-svg-icon svg,
+.skills-container .skill-card:hover img,
+.skills-container .skill-card:hover svg {
+  filter: grayscale(0%) opacity(1) !important;
+  transform: scale(1.12) !important;
+}
+
+/* Light mode monochrome default */
+body.light-mode .skill-card img,
+body.light-mode .skill-card svg,
+body.light-mode .skill-card .skill-svg-icon svg,
+body.light-mode .skills-container .skill-card img,
+body.light-mode .skills-container .skill-card svg {
+  filter: grayscale(100%) opacity(0.5) !important;
+}
+
+/* Light mode hover reveal */
+body.light-mode .skill-card:hover img,
+body.light-mode .skill-card:hover svg,
+body.light-mode .skill-card:hover .skill-svg-icon svg,
+body.light-mode .skills-container .skill-card:hover img,
+body.light-mode .skills-container .skill-card:hover svg {
+  filter: grayscale(0%) opacity(1) !important;
+  transform: scale(1.12) !important;
+}
+
+/* ==========================================================
+   CATEGORY CARDS SKILL DECK (MATCHING REFERENCE IMAGE)
+   ========================================================== */
+.skill-category-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.category-card {
+  background: rgba(15, 18, 28, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 28px 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 230, 255, 0.25);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 230, 255, 0.15);
+}
+
+body.light-mode .category-card {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Category Header */
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.category-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(0, 230, 255, 0.1);
+  color: #00e6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 1px solid rgba(0, 230, 255, 0.2);
+}
+
+.category-header h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+body.light-mode .category-header h3 {
+  color: #1a202c !important;
+}
+
+/* Category Skills Grid (3 Columns) */
+.category-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 12px;
+}
+
+.skill-pill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.pill-squircle {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .pill-squircle {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+.pill-squircle img,
+.pill-squircle svg {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.55);
+  transition: filter 0.35s ease, transform 0.35s ease, opacity 0.35s ease;
+}
+
+body.light-mode .pill-squircle img,
+body.light-mode .pill-squircle svg {
+  filter: grayscale(100%) opacity(0.5);
+}
+
+/* On Hover: Reveal vibrant original brand colors, glow & scale! */
+.skill-pill-item:hover .pill-squircle {
+  transform: translateY(-4px) scale(1.08);
+  background: rgba(0, 230, 255, 0.08);
+  border-color: rgba(0, 230, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(0, 230, 255, 0.25), 0 0 0 1px rgba(0, 230, 255, 0.3);
+}
+
+body.light-mode .skill-pill-item:hover .pill-squircle {
+  background: #ffffff !important;
+  border-color: #0066ff !important;
+  box-shadow: 0 10px 25px rgba(0, 102, 255, 0.25) !important;
+}
+
+.skill-pill-item:hover .pill-squircle img,
+.skill-pill-item:hover .pill-squircle svg {
+  filter: grayscale(0%) opacity(1) !important;
+  transform: scale(1.1);
+}
+
+.skill-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.skill-pill-item:hover .skill-label {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+body.light-mode .skill-label {
+  color: #4a5568 !important;
+}
+
+body.light-mode .skill-pill-item:hover .skill-label {
+  color: #0066ff !important;
+}
+
+/* ==========================================================
+   NATIVE FULL-BLEED GITHUB ACTIVITY CARD
+   ========================================================== */
+.github-activity-wrapper {
+  width: 100%;
+  margin-top: 50px;
+}
+
+.github-activity-card {
+  position: relative !important;
+  background: linear-gradient(135deg, rgba(15, 18, 28, 0.9), rgba(28, 14, 42, 0.85), rgba(10, 25, 45, 0.9), rgba(15, 18, 28, 0.9)) !important;
+  background-size: 250% 250% !important;
+  animation: cardGradientShift 10s ease infinite !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 32px 36px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.github-activity-card::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 15% !important;
+  right: 15% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  opacity: 0.7 !important;
+}
+
+body.light-mode .github-activity-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 244, 255, 0.95), rgba(250, 245, 255, 0.95)) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Header & Meta */
+.github-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.github-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.github-avatar-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(0, 230, 255, 0.1);
+  border: 1px solid rgba(0, 230, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #00e6ff;
+  box-shadow: 0 4px 15px rgba(0, 230, 255, 0.2);
+}
+
+body.light-mode .github-avatar-badge {
+  background: rgba(0, 102, 255, 0.08) !important;
+  border-color: rgba(0, 102, 255, 0.2) !important;
+  color: #0066ff !important;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.15) !important;
+}
+
+.github-user-meta h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+body.light-mode .github-user-meta h3 {
+  color: #1a202c !important;
+}
+
+.github-user-meta p {
+  margin: 2px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+body.light-mode .github-user-meta p {
+  color: #718096 !important;
+}
+
+.verified-badge {
+  background: rgba(0, 230, 255, 0.12);
+  color: #00e6ff;
+  border: 1px solid rgba(0, 230, 255, 0.3);
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+body.light-mode .verified-badge {
+  background: rgba(0, 102, 255, 0.1) !important;
+  color: #0066ff !important;
+  border-color: rgba(0, 102, 255, 0.25) !important;
+}
+
+.github-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-github-profile {
+  padding: 9px 20px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-github-profile:hover {
+  background: #00e6ff;
+  color: #0b0f19;
+  border-color: #00e6ff;
+  box-shadow: 0 4px 18px rgba(0, 230, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+body.light-mode .btn-github-profile {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #1a202c !important;
+}
+
+body.light-mode .btn-github-profile:hover {
+  background: #0066ff !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(0, 102, 255, 0.3) !important;
+}
+
+/* Month Labels Row */
+.github-months-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+body.light-mode .github-months-bar {
+  color: #718096 !important;
+}
+
+/* Heatmap Grid - 100% Full-Bleed */
+.github-native-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 14px);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(12px, 1fr);
+  justify-content: space-between;
+  gap: 5px;
+  width: 100%;
+  overflow-x: auto;
+  padding: 6px 2px 18px 2px;
+  scrollbar-width: none;
+}
+
+.github-native-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.heat-sq {
+  width: 100%;
+  height: 14px;
+  border-radius: 4px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, background-color 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.heat-sq:hover {
+  transform: scale(1.45);
+  z-index: 10;
+}
+
+/* Dark Mode Contribution Levels */
+.heat-sq.lvl-0 { background: rgba(255, 255, 255, 0.05); }
+.heat-sq.lvl-1 { background: rgba(0, 230, 255, 0.3); }
+.heat-sq.lvl-2 { background: rgba(0, 230, 255, 0.55); }
+.heat-sq.lvl-3 { background: rgba(0, 230, 255, 0.8); }
+.heat-sq.lvl-4 { background: #00e6ff; box-shadow: 0 0 10px rgba(0, 230, 255, 0.6); }
+
+/* Light Mode Contribution Levels */
+body.light-mode .heat-sq.lvl-0 { background: rgba(0, 102, 255, 0.06) !important; }
+body.light-mode .heat-sq.lvl-1 { background: rgba(0, 102, 255, 0.3) !important; }
+body.light-mode .heat-sq.lvl-2 { background: rgba(0, 102, 255, 0.55) !important; }
+body.light-mode .heat-sq.lvl-3 { background: rgba(0, 102, 255, 0.8) !important; }
+body.light-mode .heat-sq.lvl-4 { background: #0066ff !important; box-shadow: 0 0 10px rgba(0, 102, 255, 0.4) !important; }
+
+/* Footer Stats */
+.github-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+body.light-mode .github-card-footer {
+  border-top-color: rgba(0, 0, 0, 0.06) !important;
+  color: #4a5568 !important;
+}
+
+.footer-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #32d74b;
+  box-shadow: 0 0 8px rgba(50, 215, 75, 0.6);
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.legend-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.legend-box.lvl-0 { background: rgba(255, 255, 255, 0.05); }
+.legend-box.lvl-1 { background: rgba(0, 230, 255, 0.3); }
+.legend-box.lvl-2 { background: rgba(0, 230, 255, 0.55); }
+.legend-box.lvl-3 { background: rgba(0, 230, 255, 0.8); }
+.legend-box.lvl-4 { background: #00e6ff; }
+
+body.light-mode .legend-box.lvl-0 { background: rgba(0, 102, 255, 0.06) !important; }
+body.light-mode .legend-box.lvl-1 { background: rgba(0, 102, 255, 0.3) !important; }
+body.light-mode .legend-box.lvl-2 { background: rgba(0, 102, 255, 0.55) !important; }
+body.light-mode .legend-box.lvl-3 { background: rgba(0, 102, 255, 0.8) !important; }
+body.light-mode .legend-box.lvl-4 { background: #0066ff !important; }
 
 
 
