@@ -769,12 +769,12 @@ window.addEventListener("DOMContentLoaded", () => {
     sr.reveal('.about-img',        { origin: 'left', distance: '50px' });
     // sr.reveal('.about-text',       { origin: 'right', distance: '50px' });
     sr.reveal('.project-card',     { interval: 120 });
-    sr.reveal('.skill-card',       { interval: 80, scale: 0.9 });
+    // sr.reveal('.skill-card',       { interval: 80, scale: 0.9 });
     sr.reveal('.certificate-card', { interval: 120 });
     sr.reveal('.hobby-card',       { interval: 80 });
     sr.reveal('.timeline-item',    { interval: 100, origin: 'left', distance: '30px' });
     sr.reveal('.blog-card',        { interval: 120 });
-    sr.reveal('.soft-skill-item',  { interval: 80 });
+    // sr.reveal('.soft-skill-item',  { interval: 80 });
     sr.reveal('.contact-form, .recruiter-card', { delay: 100 });
   }
 
@@ -2138,4 +2138,172 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+});
+
+/* ==========================================================
+   FEATURE 6: ANIMATED COUNTER ROLL-UPS FOR METRICS
+   ========================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  const counterElements = document.querySelectorAll('.stat-number, .stat-box h3, .counter-number');
+  if (counterElements.length && typeof IntersectionObserver !== 'undefined') {
+    const counterObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const text = el.textContent.trim();
+          const match = text.match(/^(\d+)(.*)$/);
+          if (match) {
+            const targetNum = parseInt(match[1], 10);
+            const suffix = match[2] || '';
+            let startTime = null;
+            const duration = 1400; // ms
+
+            function updateCounter(timestamp) {
+              if (!startTime) startTime = timestamp;
+              const progress = Math.min((timestamp - startTime) / duration, 1);
+              const easeProgress = 1 - (1 - progress) * (1 - progress);
+              const currentNum = Math.floor(easeProgress * targetNum);
+              el.textContent = currentNum + suffix;
+              if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+              } else {
+                el.textContent = targetNum + suffix;
+              }
+            }
+
+            requestAnimationFrame(updateCounter);
+          }
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    counterElements.forEach(el => counterObserver.observe(el));
+  }
+
+  /* ==========================================================
+     FAST SPA-STYLE PAGE NAVIGATION TRANSITION
+     ========================================================== */
+  const transitionOverlay = document.querySelector('.page-transition-overlay');
+  
+  // Instant fade in on page load (0ms loader delay)
+  if (transitionOverlay) {
+    requestAnimationFrame(() => {
+      transitionOverlay.style.transition = 'opacity 0.2s ease';
+      transitionOverlay.style.opacity = '0';
+    });
+  }
+
+  // Hide any legacy boot screen immediately
+  const bootScr = document.getElementById('boot-screen');
+  if (bootScr) {
+    bootScr.style.display = 'none';
+    bootScr.classList.add('hidden');
+  }
+
+  // Intercept internal page links for instant smooth SPA transitions
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && href.endsWith('.html')) {
+      link.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        e.preventDefault();
+        
+        if (transitionOverlay) {
+          transitionOverlay.style.transition = 'opacity 0.15s ease';
+          transitionOverlay.style.opacity = '1';
+          setTimeout(() => {
+            window.location.href = href;
+          }, 150);
+        } else {
+          window.location.href = href;
+        }
+      });
+    }
+  });
+
+  // ── GITHUB LIVE REPO METRICS FETCHING ──────────────────────────────────────
+  async function fetchGitHubMetrics() {
+    const badges = document.querySelectorAll('.github-repo-badge[data-repo]');
+    badges.forEach(async (badge) => {
+      const repo = badge.getAttribute('data-repo');
+      if (!repo) return;
+      try {
+        const res = await fetch(`https://api.github.com/repos/${repo}`);
+        if (res.ok) {
+          const data = await res.json();
+          const starEl = badge.querySelector('.repo-stars');
+          const forkEl = badge.querySelector('.repo-forks');
+          if (starEl) starEl.textContent = data.stargazers_count || 0;
+          if (forkEl) forkEl.textContent = data.forks_count || 0;
+        }
+      } catch (err) {
+        console.warn('GitHub metrics fetch skipped:', err);
+      }
+    });
+  }
+  fetchGitHubMetrics();
+
+  // ── LIVE SKILL SEARCH LISTENER ─────────────────────────────────────────────
+  const skillSearchInput = document.getElementById('skillSearchInput');
+  if (skillSearchInput) {
+    skillSearchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('#skillsGrid .skill-card');
+      cards.forEach(card => {
+        const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
+        if (title.includes(query) || desc.includes(query)) {
+          card.style.display = 'flex';
+          card.style.opacity = '1';
+        } else {
+          card.style.display = 'none';
+          card.style.opacity = '0';
+        }
+      });
+    });
+  }
+
+  // ── PWA SERVICE WORKER REGISTRATION ────────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('SW registration skipped:', err);
+      });
+    });
+  }
+
+  // ── MATRIX DIGITAL RAIN EFFECT ─────────────────────────────────────────────
+  window.triggerMatrixRain = function() {
+    let canvas = document.getElementById('matrixCanvas');
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'matrixCanvas';
+      canvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999999;pointer-events:none;background:rgba(0,0,0,0.85);';
+      document.body.appendChild(canvas);
+    }
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const chars = '0123456789ABCDEFJAVAEXPRESSREACTNODEMONGODB';
+    const drops = Array(Math.floor(canvas.width / 20)).fill(1);
+    let frames = 0;
+    const interval = setInterval(() => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00e6ff';
+      ctx.font = '15px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * 20, drops[i] * 20);
+        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+      frames++;
+      if (frames > 200) {
+        clearInterval(interval);
+        canvas.remove();
+      }
+    }, 40);
+  };
 });

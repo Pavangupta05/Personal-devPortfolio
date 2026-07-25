@@ -1,8 +1,24 @@
 
+function updateAboutPhotos() {
+  const isLight = document.body.classList.contains('light-mode');
+  const spotlightWrap = document.getElementById('spotlightWrap');
+  if (spotlightWrap) {
+    const baseImg = spotlightWrap.querySelector('.photo-base');
+    const revealImg = spotlightWrap.querySelector('.photo-reveal');
+    if (baseImg) {
+      baseImg.src = isLight ? 'Base_image_white.png' : 'Base_image.png';
+    }
+    if (revealImg) {
+      revealImg.src = isLight ? 'Reaveal_image_white.png' : 'Reaveal_image.png';
+    }
+  }
+}
+
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light-mode');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
   updateThemeIcons();
+  updateAboutPhotos();
 }
 
 function updateThemeIcons() {
@@ -25,6 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('light-mode');
   }
   updateThemeIcons();
+  updateAboutPhotos();
 });
 
 

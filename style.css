@@ -682,44 +682,103 @@ display: flex;
   }
 }
 
-/* About */
+/* About Section */
 .about-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2rem;
-  max-width: 1100px;
-  margin: auto;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  max-width: 1650px !important;
+  width: 100% !important;
+  padding: 0 30px 0 90px !important; /* Keeps text completely clear of left vertical social bar */
+  margin: 0 auto !important;
+  position: relative !important;
 }
 
-.about-img {
-  flex: 0 2 400px;
-  display: flex;
-  justify-content: center;
+/* Desktop Overlapping Layout (Text floats cleanly on left, massive heroic photo backdrop on right) */
+@media (min-width: 992px) {
+  .about-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    position: relative !important;
+    gap: 0 !important;
+  }
+
+  .about-text {
+    order: 1 !important;
+    flex: 0 0 45% !important;
+    max-width: 620px !important;
+    z-index: 5 !important;
+    position: relative !important;
+    padding: 20px 0;
+  }
+
+  .about-img {
+    order: 2 !important;
+    flex: 0 0 65% !important;
+    max-width: 1050px !important;
+    width: 65% !important;
+    z-index: 1 !important;
+    margin-left: -5% !important;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .profile-photo-wrap {
+    max-width: 1050px !important;
+    width: 100% !important;
+    transform: translateX(35px) scale(1.15) !important;
+    transform-origin: center right !important;
+  }
 }
 
-.about-img img {
-  width: 250px;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  transition: all 0.4s ease-in-out;
-  box-shadow: var(--shadow-md);
-}
+/* Mobile & Tablet Layout (No overlap, clean stacked, centered, unclipped photo) */
+@media (max-width: 991px) {
+  .about-container {
+    flex-direction: column !important;
+    gap: 2rem !important;
+    padding: 0 16px !important;
+    text-align: center !important;
+    align-items: center !important;
+  }
 
-.about-img img:hover {
-  transform: scale(1.05);
-  border-color: var(--accent-2);
-  box-shadow: 0 0 24px rgba(124, 58, 237, 0.55), 0 0 14px rgba(34, 211, 238, 0.25);
-}
+  .about-img,
+  .about-text {
+    order: unset !important;
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    z-index: 1 !important;
+    padding: 0 !important;
+    text-align: center !important;
+  }
 
-.about-text {
-  flex: 1 1 530px;
-  font-size: 1rem;
-  line-height: 1.6;
+  .profile-photo-wrap {
+    max-width: 480px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  .about-heading {
+    text-align: center !important;
+    font-size: 1.75rem !important;
+  }
+
+  .about-tag-badge {
+    margin: 0 auto 16px auto !important;
+  }
+
+  .about-stats-grid {
+    justify-content: center !important;
+  }
+
+  .about-actions {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
 }
 
 .about-text h2 {
@@ -1684,10 +1743,7 @@ body {
     padding: 0 12px;
   }
 
-  .about-img { flex: 0 0 170px; }
-  .about-img img { width: 250px; height: 250px; }
-
-  .about-text { flex: 1 1 auto; font-size: 0.98rem;  margin-top: 30px; }
+  .about-text { flex: 1 1 auto; font-size: 0.98rem; margin-top: 30px; }
 
   /* Projects grid tighter gap */
   .project-grid { gap: 28px; max-width: 980px; padding: 0 12px; }
@@ -1803,7 +1859,7 @@ body {
   .typing-title { font-size: clamp(20px, 6.5vw, 36px); }
   .typing-hero { min-height: 28vh; }
 
-  .about-img img { width: 200px; height: 200px; }
+  .about-img > img { width: 200px; height: 200px; }
   .about-text { font-size: 0.95rem; }
 
   /* Reduce project image height to avoid long scrolls */
@@ -1828,7 +1884,7 @@ body {
   .typing-title { font-size: clamp(18px, 7vw, 30px); }
   .home-subtitle { font-size: 0.95rem; padding: 0 6px; }
 
-  .about-img img { width: 220px; height: 220px; }
+  .about-img > img { width: 220px; height: 220px; }
   .project-card img { height: 150px; }
 
   .section-title { font-size: 1.6rem; margin-bottom: 22px; }
@@ -1852,7 +1908,7 @@ body {
   .typing-title { font-size: clamp(16px, 8vw, 26px); }
   .home-subtitle { font-size: 0.9rem; line-height: 1.4; }
 
-  .about-img img { width: 180px; height: 180px; }
+  .about-img > img { width: 180px; height: 180px; }
   .project-card img { height: 110px; }
 
   .footer .social-icons a { width: 36px; height: 36px; }
@@ -4198,7 +4254,7 @@ body.loading {
 }
 
 /* --- Profile Photo: Liquid Glass Ring --- */
-.about-img img {
+.about-img > img {
   border: 2px solid rgba(255, 255, 255, 0.25) !important;
   box-shadow:
     0 0 0 6px rgba(0, 230, 255, 0.12),
@@ -4206,7 +4262,7 @@ body.loading {
     inset 0 1px 0 rgba(255,255,255,0.4) !important;
 }
 
-.about-img img:hover {
+.about-img > img:hover {
   transform: scale(1.05);
   box-shadow:
     0 0 0 8px rgba(0, 230, 255, 0.2),
@@ -5360,6 +5416,13 @@ section#home {
 
 /* Hero Hover Effects */
 .hero-greeting { transition: all 0.3s ease; display: inline-block; cursor: default; }
+/* ── 3D BOOT SCREEN (DISABLED FOR FAST INSTANT ACCESS) ─────────────────────── */
+#boot-screen {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 .typing-title { transition: all 0.3s ease; display: inline-block; cursor: default; }
 .typing-title:hover { color: #00E6FF !important; transform: scale(1.02); text-shadow: 0 0 20px rgba(0, 230, 255, 0.6), 0 0 40px rgba(0, 230, 255, 0.4); }
 .home-subtitle { transition: all 0.3s ease; cursor: default; }
@@ -7419,110 +7482,11 @@ body.light-mode .browser-header {
 }
 
 
-/* ==========================================================
-   ULTIMATE STICKY UNBLOCKER
-   ========================================================== */
-html, body, main, .main-content, .portfolio-stack-section, .portfolio-stack-container {
-  /* ANY overflow value other than visible completely breaks position: sticky */
-  overflow: visible !important;
-  overflow-x: visible !important;
-  overflow-y: visible !important;
-  
-  /* Any transform on an ancestor breaks position: sticky */
-  transform: none !important;
-  will-change: auto !important;
-  perspective: none !important;
-  filter: none !important;
-  backdrop-filter: none !important;
-  contain: none !important;
-}
-
-/* Ensure the sticky card itself is perfectly set up */
-.portfolio-stack-container {
-  display: block !important;
-  height: auto !important;
-  /* 4 cards × ~550px card height worth of scroll room.
-     This keeps all cards pinned until the user fully scrolls the section. */
-  padding-bottom: 80vh !important;
-}
-
-.sticky-card {
-  position: -webkit-sticky !important; /* Safari fallback */
-  position: sticky !important;
-  top: 100px !important;           /* Distance from navbar to first stacked card */
-  display: block !important;
-  /* Scale margin so each successive card sits slightly lower,
-     creating the true stacking depth effect */
-  margin-bottom: 30px !important;
-  z-index: 1 !important;
-}
-
-/* Each successive card stacks ABOVE the previous — ascending z-index */
-.sticky-card:nth-child(1) { top: 100px !important; z-index: 10 !important; }
-.sticky-card:nth-child(2) { top: 115px !important; z-index: 20 !important; }
-.sticky-card:nth-child(3) { top: 130px !important; z-index: 30 !important; }
-.sticky-card:nth-child(4) { top: 145px !important; z-index: 40 !important; }
-
-
-/* ==========================================================
-   MAC BROWSER HEADER & LIGHT MODE NAVBAR FIX
-   ========================================================== */
-
-/* Fix Mac Browser Mockup */
-.browser-header {
-  position: relative;
-  z-index: 10;
-  background: rgba(15, 15, 20, 0.98) !important; /* Solid dark background */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-body.light-mode .browser-header {
-  background: rgba(245, 245, 250, 0.98) !important; /* Solid light background */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
 /* Ensure image stays under the header without overflowing the card */
 .browser-mockup {
   position: relative;
   overflow: hidden;
 }
-
-/* Fix Light Mode Navbar text visibility */
-body.light-mode .navbar {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-}
-body.light-mode .nav-links a, 
-body.light-mode .logo {
-  color: #1a1a1a !important; /* Dark text for light mode */
-}
-body.light-mode .nav-links a:hover {
-  color: var(--accent) !important;
-}
-
-
-/* ==========================================================
-   NAVBAR LIGHT MODE FIXES
-   ========================================================== */
-body.light-mode .nav-glass-container {
-  background: rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(25px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-body.light-mode .nav-links-pill a {
-  color: #333333 !important;
-}
-
-body.light-mode .nav-links-pill a:hover,
-body.light-mode .nav-links-pill a.active {
-  color: #000000 !important;
-  background: rgba(0, 0, 0, 0.05) !important;
-  text-shadow: none !important;
-  box-shadow: none !important;
-}
-
 
 /* Hide text-reveal elements initially to prevent Flash of Unstyled Content (FOUC) */
 .text-reveal:not(.revealed-init) {
@@ -7532,47 +7496,318 @@ body.light-mode .nav-links-pill a.active {
 
 
 /* ==========================================================
-   SPOTLIGHT REVEAL EFFECT (ABOUT PAGE)
+   HOVER REVEAL EFFECT (ABOUT PAGE - FULL UNCROPPED IMAGE)
    ========================================================== */
-.profile-photo-wrap {
+.about-img {
   position: relative;
-  width: 100%;
-  max-width: 450px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: none; /* Removed the box shadow per user request */
-  cursor: crosshair;
-  aspect-ratio: 1 / 1.1;
-  margin-top: 85px; /* Pushed lower per request */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.photo-base, .photo-reveal {
+/* Ambient glow behind image */
+.about-img::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(circle at center, rgba(120, 20, 40, 0.2) 0%, rgba(0, 230, 255, 0.08) 50%, transparent 75%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.light-mode .about-img::before {
+  display: none !important;
+}
+
+.profile-photo-wrap {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  max-width: 1050px;
+  aspect-ratio: auto !important;
+  margin: 0 auto;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  overflow: hidden !important;
+  /* 360° Radial Vignette Mask: Melts all 4 rectangular outer edges smoothly into background */
+  -webkit-mask-image: radial-gradient(ellipse 82% 82% at 50% 48%, #000 35%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.2) 82%, transparent 98%);
+  mask-image: radial-gradient(ellipse 82% 82% at 50% 48%, #000 35%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.2) 82%, transparent 98%);
+  transition: transform 0.4s ease;
+}
+
+body.light-mode .profile-photo-wrap {
+  border-radius: 0 !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%) !important;
+  mask-image: linear-gradient(to bottom, #000 85%, transparent 100%) !important;
+}
+
+/* Light mode multiply blend so white studio background dissolves 100% into webpage grid */
+body.light-mode .profile-photo-wrap .photo-base,
+body.light-mode .profile-photo-wrap .photo-reveal {
+  mix-blend-mode: multiply !important;
+}
+
+.profile-photo-wrap:hover {
+  transform: scale(1.02);
+}
+
+.profile-photo-wrap .photo-base,
+.profile-photo-wrap .photo-reveal {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+
+/* ==========================================================
+   HOVER REVEAL EFFECT (ABOUT PAGE)
+   ========================================================== */
+.about-img {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ambient glow behind image */
+.about-img::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(circle at center, rgba(120, 20, 40, 0.2) 0%, rgba(0, 230, 255, 0.08) 50%, transparent 75%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.light-mode .about-img::before {
+  display: none !important;
+}
+
+.profile-photo-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 4 / 5;
+  margin: 0 auto;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  overflow: hidden;
+  /* Clean linear bottom fade: Face, hair, glasses, and suit remain 100% crisp and vibrant with zero dark grey fog */
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+  transition: transform 0.4s ease;
+}
+
+body.light-mode .profile-photo-wrap {
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%) !important;
+  mask-image: linear-gradient(to bottom, #000 82%, transparent 100%) !important;
+}
+
+.profile-photo-wrap:hover {
+  transform: scale(1.02);
+}
+
+.profile-photo-wrap .photo-base,
+.profile-photo-wrap .photo-reveal {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  display: block !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
 }
 
 .photo-reveal {
-  position: absolute;
-  top: 0;
-  left: 0;
-  clip-path: circle(0px at 50% 50%);
-  pointer-events: none; /* Let mouse events pass to wrap */
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  opacity: 0;
+  pointer-events: none;
   z-index: 2;
+  transition: opacity 0.25s ease;
 }
 
-.spotlight-ring {
-  position: absolute;
-  top: 0; left: 0;
-  width: 0px; height: 0px;
+/* ==========================================================
+   ABOUT TEXT PREMIUM TYPOGRAPHY & STATS GRID
+   ========================================================== */
+.about-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: rgba(0, 230, 255, 0.08);
+  border: 1px solid rgba(0, 230, 255, 0.25);
+  color: #00e6ff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  border: 2px solid rgba(0, 230, 255, 0.8);
-  box-shadow: 0 0 20px rgba(0, 230, 255, 0.5), inset 0 0 15px rgba(0, 230, 255, 0.3);
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0; /* Hidden by default */
-  transform: translate(-50%, -50%); /* Centers the ring on the X/Y coords */
+  background: #00e6ff;
+  box-shadow: 0 0 10px #00e6ff;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.about-heading.gradient-title {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.25;
+  background: linear-gradient(135deg, #ffffff 30%, #00e6ff 70%, #9d4edd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 18px;
+}
+
+.about-description {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: rgba(230, 235, 245, 0.88);
+}
+
+.about-description strong {
+  color: #00e6ff;
+}
+
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.stat-card {
+  background: rgba(20, 25, 40, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 230, 255, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 230, 255, 0.15);
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #00e6ff, #9d4edd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(200, 210, 230, 0.7);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.about-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.primary-glow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #00e6ff 0%, #7000ff 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 230, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.soft-skills-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px !important;
+}
+
+.soft-skill-item {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 16px 20px !important;
+  border-radius: 16px !important;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px !important;
+  transition: all 0.3s ease;
+}
+
+.primary-glow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 230, 255, 0.5);
+}
+
+.btn-secondary-glow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary-glow:hover {
+  background: rgba(0, 230, 255, 0.1);
+  border-color: rgba(0, 230, 255, 0.4);
+  transform: translateY(-2px);
 }
 
 
@@ -7658,27 +7893,35 @@ body.light-mode .desktop-navbar .nav-glass-container {
 
 /* Active & Hover States */
 .nav-links-pill .nav-icon:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+  color: #00e6ff !important;
+  background: rgba(0, 230, 255, 0.15) !important;
+  box-shadow: 0 0 15px rgba(0, 230, 255, 0.3) !important;
+  transform: translateY(-2px) scale(1.08) !important;
 }
 
 .nav-links-pill .nav-icon.active {
-  color: var(--text-primary) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  color: #00e6ff !important;
+  background: linear-gradient(135deg, rgba(0, 230, 255, 0.22), rgba(112, 0, 255, 0.22)) !important;
+  border: 1px solid rgba(0, 230, 255, 0.45) !important;
+  box-shadow: 0 0 15px rgba(0, 230, 255, 0.3) !important;
 }
 
 body.light-mode .nav-links-pill .nav-icon {
-  color: #555;
+  color: #4a5568 !important;
 }
 
 body.light-mode .nav-links-pill .nav-icon:hover {
-  color: #000;
-  background: rgba(0, 0, 0, 0.05);
+  color: #0066ff !important;
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.12), rgba(112, 0, 255, 0.12)) !important;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2) !important;
+  transform: translateY(-2px) scale(1.08) !important;
 }
 
 body.light-mode .nav-links-pill .nav-icon.active {
-  color: #000 !important;
-  background: rgba(0, 0, 0, 0.08) !important;
+  color: #0066ff !important;
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.18), rgba(112, 0, 255, 0.18)) !important;
+  border: 1px solid rgba(0, 102, 255, 0.35) !important;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2) !important;
 }
 
 /* Vertical Divider */
@@ -8026,11 +8269,11 @@ body.light-mode .cta-btn {
 .page-transition-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #050505; /* Deep dark mode background */
-  z-index: 9999999; /* Stay on top of everything */
+  background-color: #0d1117;
+  z-index: 9999999;
   opacity: 1;
   pointer-events: none;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.2s cubic-bezier(0.2, 1, 0.3, 1) !important;
 }
 
 body.light-mode .page-transition-overlay {
@@ -8101,45 +8344,76 @@ body.light-mode .page-transition-overlay {
    Covers: index, projects, about, skills, experience, contact
    ========================================================== */
 
-/* ── Projects page: CRITICAL card-inner override for mobile ── */
+/* ── Projects page: Mobile Sticky Stack UI & Tight Spacing ── */
 @media (max-width: 900px) {
-  /* Override the !important grid from Fixed Desktop Grid block */
+  .portfolio-stack-container {
+    padding-bottom: 20px !important;
+  }
+
+  .sticky-card {
+    position: sticky !important;
+    margin-bottom: 20px !important;
+    border-radius: 20px !important;
+  }
+
+  .sticky-card:nth-child(1) { top: 80px !important; z-index: 10 !important; }
+  .sticky-card:nth-child(2) { top: 90px !important; z-index: 20 !important; }
+  .sticky-card:nth-child(3) { top: 100px !important; z-index: 30 !important; }
+  .sticky-card:nth-child(4) { top: 110px !important; z-index: 40 !important; }
+
   .sticky-card .card-inner {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    padding: 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 20px 16px !important;
   }
 
   .browser-mockup {
-    height: 220px !important;
+    height: 190px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .browser-mockup img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
 
   .sticky-card h3 {
-    font-size: 1.6rem !important;
+    font-size: 1.45rem !important;
+    margin-bottom: 6px !important;
   }
 
   .sticky-card .desc-line {
-    font-size: 0.95rem !important;
-    margin-bottom: 16px !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 12px !important;
+    line-height: 1.4 !important;
   }
 
   .project-features {
-    margin-bottom: 18px !important;
+    margin-bottom: 12px !important;
   }
 
   .project-features li {
-    font-size: 0.88rem !important;
-    margin-bottom: 8px !important;
+    font-size: 0.82rem !important;
+    margin-bottom: 5px !important;
   }
 
   .outline-badges {
-    margin-bottom: 20px !important;
+    margin-bottom: 14px !important;
   }
 
-  /* keep cards sticky on mobile for the stack animation */
-  .sticky-card {
-    margin-bottom: 24px !important; /* Slightly tighter spacing for mobile */
+  .project-actions {
+    display: flex !important;
+    gap: 10px !important;
+  }
+
+  .project-actions .btn {
+    flex: 1 !important;
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+    justify-content: center !important;
   }
 }
 
@@ -8402,15 +8676,15 @@ body.light-mode .page-transition-overlay {
   }
 
   /* About section photo sizing */
-  .about-img img {
+  .about-img > img {
     width: 160px !important;
     height: 160px !important;
   }
 
   /* profile-photo-wrap responsive */
   .profile-photo-wrap {
-    max-width: 280px !important;
-    margin-top: 40px !important;
+    max-width: 360px !important;
+    margin-top: 15px !important;
   }
 }
 
@@ -8680,6 +8954,264 @@ body.light-mode .highlight-interactive {
 
 body.light-mode .highlight-delightful {
   color: #8c19c2;
+}
+
+/* ==========================================================
+   TECH SKILL CARDS - SIMPLE SUBTLE WHITE LINE HIGHLIGHT
+   ========================================================== */
+.skill-card,
+.skills-container .skill-card {
+  position: relative !important;
+  background-image: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease !important;
+}
+
+/* Subtle top white line highlight */
+.skill-card::after,
+.skills-container .skill-card::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 12% !important;
+  right: 12% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.skill-card:hover,
+.skills-container .skill-card:hover {
+  transform: translateY(-4px) !important;
+  border-top-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+/* ==========================================================
+   BLENDED FOOTER & CTA SECTION BACKGROUND
+   ========================================================== */
+.footer,
+.cta-section {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================
+   LIGHT MODE FIX: ABOUT PAGE & METRICS
+   ========================================================== */
+body.light-mode #about,
+body.light-mode .about-section {
+  background: transparent !important;
+}
+
+body.light-mode .about-tag-badge {
+  background: rgba(0, 102, 255, 0.08) !important;
+  border: 1px solid rgba(0, 102, 255, 0.25) !important;
+  color: #0066ff !important;
+}
+
+body.light-mode .pulse-dot {
+  background: #0066ff !important;
+  box-shadow: 0 0 10px #0066ff !important;
+}
+
+body.light-mode .about-heading.gradient-title {
+  background: linear-gradient(135deg, #1a202c 30%, #0066ff 70%, #7000ff 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+body.light-mode .about-description {
+  color: #2d3748 !important;
+}
+
+body.light-mode .about-description strong {
+  color: #0066ff !important;
+}
+
+body.light-mode .stat-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light-mode .stat-card:hover {
+  border-color: rgba(0, 102, 255, 0.4) !important;
+  box-shadow: 0 10px 25px rgba(0, 102, 255, 0.15) !important;
+}
+
+body.light-mode .stat-number {
+  background: linear-gradient(135deg, #0066ff, #7000ff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+body.light-mode .stat-label {
+  color: #4a5568 !important;
+}
+
+body.light-mode .primary-glow-btn {
+  background: linear-gradient(135deg, #0066ff 0%, #7000ff 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.3) !important;
+}
+
+body.light-mode .btn-secondary-glow {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  color: #1a202c !important;
+}
+
+body.light-mode .btn-secondary-glow:hover {
+  background: rgba(0, 102, 255, 0.08) !important;
+  border-color: rgba(0, 102, 255, 0.35) !important;
+  color: #0066ff !important;
+}
+
+/* ==========================================================
+   LIGHT MODE FIX: CONTACT PAGE, CARDS & FORM
+   ========================================================== */
+body.light-mode #contact,
+body.light-mode .contact {
+  background: transparent !important;
+}
+
+body.light-mode .touch-item {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .touch-item:hover {
+  border-color: rgba(0, 102, 255, 0.3) !important;
+  box-shadow: 0 8px 25px rgba(0, 102, 255, 0.12) !important;
+}
+
+body.light-mode .touch-item a,
+body.light-mode .touch-item span {
+  color: #1a202c !important;
+  font-weight: 500 !important;
+}
+
+body.light-mode .touch-item svg {
+  color: #0066ff !important;
+}
+
+body.light-mode #copy-email-btn {
+  border-color: rgba(0, 102, 255, 0.3) !important;
+  color: #0066ff !important;
+  background: rgba(0, 102, 255, 0.06) !important;
+}
+
+body.light-mode #copy-email-btn:hover {
+  background: rgba(0, 102, 255, 0.15) !important;
+}
+
+/* Recruiter Card */
+body.light-mode .recruiter-card {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .recruiter-card h3 {
+  color: #0066ff !important;
+}
+
+body.light-mode .recruiter-card p {
+  color: #4a5568 !important;
+}
+
+body.light-mode .btn-calendly {
+  background: linear-gradient(135deg, #0066ff, #7000ff) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.25) !important;
+}
+
+body.light-mode .btn-call {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  color: #1a202c !important;
+}
+
+body.light-mode .btn-call:hover {
+  background: rgba(0, 102, 255, 0.08) !important;
+  border-color: rgba(0, 102, 255, 0.35) !important;
+  color: #0066ff !important;
+}
+
+/* Contact Divider */
+body.light-mode .contact-divider .divider-line {
+  background: rgba(0, 0, 0, 0.12) !important;
+}
+
+body.light-mode .contact-divider span {
+  color: #718096 !important;
+}
+
+/* Contact Form (IOS Form) */
+body.light-mode .contact-form.ios-form,
+body.light-mode .contact-form {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .contact-form.ios-form .form-label {
+  color: #1a202c !important;
+  font-weight: 600 !important;
+}
+
+body.light-mode .contact-form.ios-form input,
+body.light-mode .contact-form.ios-form textarea,
+body.light-mode .contact-form input,
+body.light-mode .contact-form textarea {
+  background: rgba(240, 244, 250, 0.85) !important;
+  color: #1a202c !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+body.light-mode .contact-form.ios-form input::placeholder,
+body.light-mode .contact-form.ios-form textarea::placeholder,
+body.light-mode .contact-form input::placeholder,
+body.light-mode .contact-form textarea::placeholder {
+  color: #718096 !important;
+}
+
+body.light-mode .contact-form.ios-form input:focus,
+body.light-mode .contact-form.ios-form textarea:focus,
+body.light-mode .contact-form input:focus,
+body.light-mode .contact-form textarea:focus {
+  background: #ffffff !important;
+  border-color: #0066ff !important;
+  box-shadow: 0 0 15px rgba(0, 102, 255, 0.25) !important;
+}
+
+body.light-mode .contact-form.ios-form .btn-primary,
+body.light-mode .contact-form .btn-primary {
+  background: linear-gradient(135deg, #0066ff 0%, #7000ff 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.3) !important;
+}
+
+/* ==========================================================
+   CUSTOM CURSOR MAXIMUM Z-INDEX OVERRIDE
+   ========================================================== */
+.magic-trail-dot {
+  z-index: 2147483647 !important;
 }
 
 

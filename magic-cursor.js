@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
         backgroundColor: 'white',
         borderRadius: '50%',
         pointerEvents: 'none',
-        zIndex: '99999',
+        zIndex: '2147483647',
         mixBlendMode: 'difference',
         opacity: opacity,
         willChange: 'transform'
@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded', () => {
         backgroundColor: 'white',
         borderRadius: '50%',
         pointerEvents: 'none',
-        zIndex: '99998',
+        zIndex: '2147483646',
         mixBlendMode: 'difference',
         opacity: opacity,
         willChange: 'transform'
