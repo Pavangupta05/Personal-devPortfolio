@@ -99,6 +99,7 @@
 </head>
 
 <body>
+  <div class="noise-overlay" aria-hidden="true"></div>
   <div class="page-transition-overlay"></div>
   <script>if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');</script>
 
@@ -118,8 +119,8 @@
   </div>
 
   <!-- Custom Cursor -->
-  
-
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
   <!-- ===== LIQUID GLASS SVG FILTER ===== -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
     <defs>
@@ -254,8 +255,12 @@
         
         <div class="nav-divider"></div>
 
-        <button id="themeToggleDesktop" class="theme-toggle nav-icon" aria-label="Toggle Theme" onclick="toggleTheme()">
-          <i id="themeIconDesktop" class="fa-solid fa-moon"></i>
+        <button id="themeToggleDesktop" class="theme-slider-toggle" aria-label="Toggle Theme" onclick="toggleTheme()">
+          <span class="theme-slider-track">
+            <span class="theme-slider-knob">
+              <i id="themeIconDesktop" class="fa-solid fa-moon"></i>
+            </span>
+          </span>
           <span class="nav-tooltip">Theme</span>
         </button>
       </div>
@@ -366,47 +371,47 @@
     <h2 class="section-title text-reveal">Certificates</h2>
     <div class="certificates-container">
       <!-- Java Certificate -->
-      <div class="certificate-card scroll-reveal" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
-        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 25px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-          <img src="/JAVA.jpg" alt="Java Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+      <div class="certificate-card" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
+        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openPortfolioLightbox('./JAVA.jpg', 'Java Programming Certificate')">
+          <img src="./JAVA.jpg" alt="Java Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 190px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         </div>
         <div class="content" style="padding: 22px;">
-          <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: var(--text-primary);">Java Programming</h3>
-          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 20px;">Infosys Springboard</p>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px; color: var(--text-primary);">Java Programming</h3>
+          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 18px;">Infosys Springboard</p>
           <div>
-            <a href="/JAVA.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
+            <a href="./JAVA.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
               <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px; font-size: 0.85rem;"></i> View Certificate
             </a>
           </div>
         </div>
       </div>
 
-      <!-- Kaizen -->
-      <div class="certificate-card scroll-reveal" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
-        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 25px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-          <img src="/Python.jpg" alt="Python Certificate" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+      <!-- Python Certificate -->
+      <div class="certificate-card" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
+        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openPortfolioLightbox('./Python.jpg', 'Python Programming Certificate')">
+          <img src="./Python.jpg" alt="Python Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 190px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         </div>
         <div class="content" style="padding: 22px;">
-          <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: var(--text-primary);">Python Programming</h3>
-          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 20px;">Kaizen innovations</p>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px; color: var(--text-primary);">Python Programming</h3>
+          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 18px;">Kaizen Innovations</p>
           <div>
-            <a href="/Python.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
+            <a href="./Python.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
               <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px; font-size: 0.85rem;"></i> View Certificate
             </a>
           </div>
         </div>
       </div>
 
-      <!-- Upflairs -->
-      <div class="certificate-card scroll-reveal" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
-        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 25px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-          <img src="/Upflairs.jpg" alt="Full Stack Certificate" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+      <!-- Upflairs Full Stack Certificate -->
+      <div class="certificate-card" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
+        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openPortfolioLightbox('./Upflairs.jpg', 'Full Stack Web Developer Certificate')">
+          <img src="./Upflairs.jpg" alt="Full Stack Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 190px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         </div>
         <div class="content" style="padding: 22px;">
-          <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: var(--text-primary);">Full Stack Web Developer</h3>
-          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 20px;">Upflairs Pvt. Ltd.</p>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px; color: var(--text-primary);">Full Stack Web Developer</h3>
+          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 18px;">Upflairs Pvt. Ltd.</p>
           <div>
-            <a href="/Upflairs.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
+            <a href="./Upflairs.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
               <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px; font-size: 0.85rem;"></i> View Certificate
             </a>
           </div>
@@ -482,14 +487,6 @@
   </div>
 
   <!-- Matrix Easter Egg -->
-  <canvas id="matrixCanvas" style="position:fixed;inset:0;z-index:99990;pointer-events:none;display:none;"></canvas>
-
-  <!-- Ctrl+J Hint Toast -->
-  <div id="termHint" style="position:fixed;bottom:24px;right:24px;background:rgba(30,30,40,0.95);color:#e0e0e0;padding:11px 18px;border-radius:50px;font-size:0.85rem;font-weight:500;z-index:9500;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUpHint 0.5s ease 3s both;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);">
-    ⌘ Try pressing <strong>Ctrl + J</strong>!
-    <button onclick="document.getElementById('termHint').remove()" style="background:none;border:none;font-size:1rem;cursor:pointer;opacity:0.5;color:inherit;">✕</button>
-  </div>
-
   <script>
   // ====================================================================
   // TERMINAL
@@ -639,34 +636,6 @@
       addTermLine(`<span class="term-red">command not found: ${cmd}</span> — try <span class="term-green">"help"</span>`);
     }
   });
-
-  // ─── MATRIX EASTER EGG ───────────────────────────────────────────────────
-  function startMatrix() {
-    const mc = document.getElementById('matrixCanvas');
-    mc.style.display = 'block';
-    mc.width  = window.innerWidth;
-    mc.height = window.innerHeight;
-    const mctx  = mc.getContext('2d');
-    const cols  = Math.floor(mc.width / 16);
-    const drops = Array(cols).fill(1);
-    const tick = setInterval(() => {
-      mctx.fillStyle = 'rgba(0,0,0,0.05)';
-      mctx.fillRect(0, 0, mc.width, mc.height);
-      mctx.fillStyle = '#00ff88';
-      mctx.font = '14px monospace';
-      drops.forEach((y, i) => {
-        mctx.fillText(String.fromCharCode(0x30A0 + Math.random() * 96), i * 16, y * 16);
-        if (y * 16 > mc.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      });
-    }, 40);
-    const stop = () => {
-      clearInterval(tick);
-      mc.style.display = 'none';
-      document.removeEventListener('keydown', stop);
-    };
-    setTimeout(() => document.addEventListener('keydown', stop), 500);
-  }
 
   // ─── KEYBOARD SHORTCUT ───────────────────────────────────────────────────
   window.addEventListener('keydown', e => {
@@ -1066,7 +1035,7 @@
   <div id="skill-tooltip" class="skill-tooltip"></div>
 
   <!-- AI Voice Assistant & Chatbot UI -->
-  <button id="ai-chat-toggle" class="ai-floating-btn" aria-label="Open AI Assistant">
+  <button id="ai-chat-toggle" class="ai-floating-btn" aria-label="Open AI Assistant" onclick="toggleAIChatWindow(event)">
     <i class="fa-solid fa-robot"></i>
   </button>
 
@@ -1096,9 +1065,9 @@
       </button>
     </div>
   </div>
-  <script src="magic-cursor.js"></script>
   <script src="theme.js"></script>
 
   <script src="text-reveal.js"></script>
+  <script src="magic-cursor.js"></script>
 </body>
 </html>

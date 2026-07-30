@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 - Lost in Deep Space | Pavan Kumar Gupta</title>
+  <link rel="icon" type="image/png" href="/app-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body style="background: #0a0b0e; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; text-align: center; font-family: 'Space Grotesk', sans-serif;">
+  
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <div style="position: relative; z-index: 10; max-width: 600px; padding: 0 20px;">
+    <div style="font-size: clamp(6rem, 15vw, 11rem); font-weight: 800; letter-spacing: -4px; line-height: 1; background: linear-gradient(135deg, #00e6ff, #ffffff, #7000ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 50px rgba(0,230,255,0.3);">
+      404
+    </div>
+    
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-top: 10px; color: #e2e8f0;">
+      SYSTEM ERROR: PAGE LOST IN DEEP SPACE
+    </h1>
+    
+    <p style="color: #94a3b8; font-size: 1rem; margin-top: 15px; margin-bottom: 35px; line-height: 1.6; font-family: 'Inter', sans-serif;">
+      The coordinate vector you requested does not exist or has drifted out of orbit into the unknown sector.
+    </p>
+
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+      <a href="index.html" class="btn btn-primary" style="padding: 12px 28px; background: #00e6ff; color: #0a0b0e; font-weight: 700; border-radius: 30px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 25px rgba(0,230,255,0.4); transition: transform 0.3s ease;">
+        <i class="fa-solid fa-house"></i> Return to Universe
+      </a>
+      <a href="projects.html" class="btn btn-outline" style="padding: 12px 28px; border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 30px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+        <i class="fa-solid fa-folder-open"></i> View Projects
+      </a>
+    </div>
+  </div>
+
+  <script src="magic-cursor.js"></script>
+</body>
+</html>

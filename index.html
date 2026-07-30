@@ -99,6 +99,7 @@
 </head>
 
 <body>
+  <div class="noise-overlay" aria-hidden="true"></div>
   <div class="page-transition-overlay"></div>
   <script>if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');</script>
 
@@ -118,8 +119,8 @@
   </div>
 
   <!-- Custom Cursor -->
-  
-
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
   <!-- ===== LIQUID GLASS SVG FILTER ===== -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
     <defs>
@@ -254,8 +255,12 @@
         
         <div class="nav-divider"></div>
 
-        <button id="themeToggleDesktop" class="theme-toggle nav-icon" aria-label="Toggle Theme" onclick="toggleTheme()">
-          <i id="themeIconDesktop" class="fa-solid fa-moon"></i>
+        <button id="themeToggleDesktop" class="theme-slider-toggle" aria-label="Toggle Theme" onclick="toggleTheme()">
+          <span class="theme-slider-track">
+            <span class="theme-slider-knob">
+              <i id="themeIconDesktop" class="fa-solid fa-moon"></i>
+            </span>
+          </span>
           <span class="nav-tooltip">Theme</span>
         </button>
       </div>
@@ -323,13 +328,69 @@
       <p class="hero-greeting text-reveal">Hi, I'm</p>
       <div class="typing-hero">
         <h1 class="typing-title">
-          <span id="typingText" class="typing-text"></span><span class="caret" aria-hidden="true"></span>
+          <span id="typingText" class="typing-text">Pavan Kumar Gupta</span>
         </h1>
       </div>
       <p class="home-subtitle shine-animation">Full Stack Developer who builds <span class="highlight-interactive">interactive</span> &amp; <span class="highlight-delightful">delightful</span> web experiences</p>
       <div class="home-cta">
         <a href="projects.html" class="btn btn-primary">View Projects</a>
         <a href="contact.html" class="btn btn-secondary">Contact Me</a>
+      </div>
+
+      <!-- ===== ABOUT ME TERMINAL MAC CARD ===== -->
+      <div class="mac-terminal-card" id="macAboutMeCard">
+        <div class="mac-terminal-header">
+          <div class="mac-window-dots">
+            <span class="mac-dot dot-close"></span>
+            <span class="mac-dot dot-min"></span>
+            <span class="mac-dot dot-max"></span>
+          </div>
+          <div class="mac-terminal-title">About Me</div>
+          <div class="mac-header-actions">
+            <button class="mac-copy-btn" id="macCopyBtn" title="Copy About Me JSON">
+              <i class="fa-regular fa-copy"></i>
+              <span id="macCopyText">Copy Info</span>
+            </button>
+          </div>
+        </div>
+        <div class="mac-terminal-content" id="macTermContent">
+          <div class="term-block">
+            <p class="term-cmd"><span class="prompt-arrow">&gt;</span> Pavan.currentLocation</p>
+            <p class="term-output string-val">"Jaipur, Rajasthan, India"</p>
+          </div>
+
+          <div class="term-block">
+            <p class="term-cmd"><span class="prompt-arrow">&gt;</span> Pavan.contactInfo</p>
+            <p class="term-output array-val">[<a href="mailto:pavangupta150605@gmail.com" target="_blank" class="term-link">"pavangupta150605@gmail.com"</a>, <a href="https://www.linkedin.com/in/pavan-kumar-gupta-837089290/" target="_blank" class="term-link">"LinkedIn"</a>, <a href="https://github.com/Pavangupta05" target="_blank" class="term-link">"GitHub"</a>, <a href="https://leetcode.com/" target="_blank" class="term-link">"LeetCode"</a>]</p>
+          </div>
+
+          <div class="term-block">
+            <p class="term-cmd"><span class="prompt-arrow">&gt;</span> Pavan.CV</p>
+            <p class="term-output string-val"><a href="https://drive.google.com/file/d/1lHUpTwmB_lh70vVUDstkVhUbc4LURoE6/view?usp=drive_link" target="_blank" class="term-link">"Pavan_Kumar_Gupta_CV.pdf"</a></p>
+          </div>
+
+          <div class="term-block">
+            <p class="term-cmd"><span class="prompt-arrow">&gt;</span> Pavan.interests</p>
+            <p class="term-output array-val">["Full-Stack Development", "UI/UX Design", "AI Integration", "Problem Solving"]</p>
+          </div>
+
+          <div class="term-block">
+            <p class="term-cmd"><span class="prompt-arrow">&gt;</span> Pavan.education</p>
+            <p class="term-output string-val">"B.Tech in Information Technology, Jaipur Engineering College And Research Center (JECRC), Jaipur"</p>
+          </div>
+
+          <div class="term-block">
+            <p class="term-cmd"><span class="prompt-arrow">&gt;</span> Pavan.skills</p>
+            <p class="term-output array-val">["React.js", "Node.js", "MongoDB", "Express.js", "JavaScript", "Python", "TailwindCSS", "Git", "GitHub"]</p>
+          </div>
+
+          <div class="term-block term-interactive-line">
+            <p class="term-cmd" style="display: flex; align-items: center; width: 100%;">
+              <span class="prompt-arrow">&gt;</span>
+              <input type="text" id="macTermInput" class="term-interactive-input" placeholder="Type 'help', 'skills', 'clear'..." autocomplete="off" />
+            </p>
+          </div>
+        </div>
       </div>
     </div>
     </div>
@@ -402,14 +463,6 @@
   </div>
 
   <!-- Matrix Easter Egg -->
-  <canvas id="matrixCanvas" style="position:fixed;inset:0;z-index:99990;pointer-events:none;display:none;"></canvas>
-
-  <!-- Ctrl+J Hint Toast -->
-  <div id="termHint" style="position:fixed;bottom:24px;right:24px;background:rgba(30,30,40,0.95);color:#e0e0e0;padding:11px 18px;border-radius:50px;font-size:0.85rem;font-weight:500;z-index:9500;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUpHint 0.5s ease 3s both;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);">
-    ⌘ Try pressing <strong>Ctrl + J</strong>!
-    <button onclick="document.getElementById('termHint').remove()" style="background:none;border:none;font-size:1rem;cursor:pointer;opacity:0.5;color:inherit;">✕</button>
-  </div>
-
   <script>
   // ====================================================================
   // TERMINAL
@@ -559,34 +612,6 @@
       addTermLine(`<span class="term-red">command not found: ${cmd}</span> — try <span class="term-green">"help"</span>`);
     }
   });
-
-  // ─── MATRIX EASTER EGG ───────────────────────────────────────────────────
-  function startMatrix() {
-    const mc = document.getElementById('matrixCanvas');
-    mc.style.display = 'block';
-    mc.width  = window.innerWidth;
-    mc.height = window.innerHeight;
-    const mctx  = mc.getContext('2d');
-    const cols  = Math.floor(mc.width / 16);
-    const drops = Array(cols).fill(1);
-    const tick = setInterval(() => {
-      mctx.fillStyle = 'rgba(0,0,0,0.05)';
-      mctx.fillRect(0, 0, mc.width, mc.height);
-      mctx.fillStyle = '#00ff88';
-      mctx.font = '14px monospace';
-      drops.forEach((y, i) => {
-        mctx.fillText(String.fromCharCode(0x30A0 + Math.random() * 96), i * 16, y * 16);
-        if (y * 16 > mc.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      });
-    }, 40);
-    const stop = () => {
-      clearInterval(tick);
-      mc.style.display = 'none';
-      document.removeEventListener('keydown', stop);
-    };
-    setTimeout(() => document.addEventListener('keydown', stop), 500);
-  }
 
   // ─── KEYBOARD SHORTCUT ───────────────────────────────────────────────────
   window.addEventListener('keydown', e => {
@@ -986,7 +1011,7 @@
   <div id="skill-tooltip" class="skill-tooltip"></div>
 
   <!-- AI Voice Assistant & Chatbot UI -->
-  <button id="ai-chat-toggle" class="ai-floating-btn" aria-label="Open AI Assistant">
+  <button id="ai-chat-toggle" class="ai-floating-btn" aria-label="Open AI Assistant" onclick="toggleAIChatWindow(event)">
     <i class="fa-solid fa-robot"></i>
   </button>
 
@@ -997,6 +1022,13 @@
         <span>Pavan AI Assistant</span>
       </div>
       <button id="ai-chat-close" class="ai-close-btn" aria-label="Close AI Chat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <div class="ai-chip-container">
+      <button class="ai-chip-btn" data-prompt="Show me Pavan's featured projects">⚡ Projects</button>
+      <button class="ai-chip-btn" data-prompt="What is Pavan's tech stack?">🛠️ Tech Stack</button>
+      <button class="ai-chip-btn" data-prompt="Tell me about Pavan's experience">💼 Experience</button>
+      <button class="ai-chip-btn" data-prompt="How can I contact Pavan?">📩 Contact</button>
     </div>
     
     <div id="ai-chat-messages" class="ai-chat-messages">
@@ -1016,9 +1048,9 @@
       </button>
     </div>
   </div>
-  <script src="magic-cursor.js"></script>
   <script src="theme.js"></script>
 
   <script src="text-reveal.js"></script>
+  <script src="magic-cursor.js"></script>
 </body>
 </html>

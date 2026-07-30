@@ -23,14 +23,15 @@ function toggleTheme() {
 
 function updateThemeIcons() {
   const isLight = document.body.classList.contains('light-mode');
-  const desktopIcon = document.getElementById('themeIconDesktop');
-  const mobileIcon = document.getElementById('themeIconMobile');
-  if (desktopIcon) {
-    desktopIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
-  if (mobileIcon) {
-    mobileIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
+  const desktopIcons = document.querySelectorAll('#themeIconDesktop, .theme-icon-desktop');
+  const mobileIcons = document.querySelectorAll('#themeIconMobile, .theme-icon-mobile');
+  
+  desktopIcons.forEach(icon => {
+    icon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  });
+  mobileIcons.forEach(icon => {
+    icon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  });
 }
 
 // Initialize on load

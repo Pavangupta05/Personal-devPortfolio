@@ -1,37 +1,37 @@
-// MAGIC CURSOR TRAIL INTERACTION LAYER
+// GIANT AWWWARDS DIFFERENCE CIRCLE LENS (220px SUPER-SIZE OVER NAME)
+document.addEventListener("DOMContentLoaded", () => {
+  // Clean up any existing cursor elements
+  document.querySelectorAll('.cursor, .cursor-follower, #magic-cursor, .magic-trail-dot, .cuberto-cursor, .smooth-cursor-dot, .smooth-cursor-ring, .mc-ring').forEach(el => el.remove());
 
-window.addEventListener('DOMContentLoaded', () => {
-  // 1. HIDE NATIVE CURSOR & BAIL ON TOUCH / REDUCED MOTION
-  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
-  if (!isFinePointer || prefersReducedMotion) return;
+  // Hide native browser cursor across interactive elements
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (pointer: fine) {
+      html, body, a, button, input, textarea, select, .project-card, .skill-card, .nav-links-pill a, .social-icon-btn, .theme-toggle, .typing-title, .typing-text, .typing-hero, .section-title, h1, h2, h3, .stat-card, .experience-card, .browser-mockup {
+        cursor: none !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 
-  // Remove any old cursors
-  document.querySelectorAll('.cursor, .cursor-follower, #magic-cursor, .magic-trail-dot').forEach(el => el.remove());
-
-  // 2. TRAIL DOTS SETUP
-  const NUM_DOTS = 15; 
-  const SPACING = 2;   
+  const NUM_DOTS = 15;
+  const SPACING = 2;
   const dots = [];
 
   let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-  const history = Array(NUM_DOTS * SPACING).fill({ x: mouse.x, y: mouse.y });
+  const history = Array(NUM_DOTS * SPACING).fill(null).map(() => ({ x: mouse.x, y: mouse.y }));
 
   window.addEventListener("mousemove", (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
-  });
+  }, { passive: true });
 
   for (let i = 0; i < NUM_DOTS; i++) {
     const dot = document.createElement('div');
     dot.className = 'magic-trail-dot';
     
-    const size = 16 - (i * (13 / (NUM_DOTS - 1))); 
-    const opacity = 0.9 - (i * (0.8 / (NUM_DOTS - 1))); 
-    
     if (i === 0) {
-      // HEAD DOT: Natively massive (400px) so scaling it up remains razor-sharp and avoids browser pixelation.
+      // HEAD DOT (Natively 400px so scaling to 0.55 creates a colossal 220px difference lens)
       Object.assign(dot.style, {
         position: 'fixed',
         top: '0',
@@ -43,16 +43,13 @@ window.addEventListener('DOMContentLoaded', () => {
         pointerEvents: 'none',
         zIndex: '2147483647',
         mixBlendMode: 'difference',
-        opacity: opacity,
+        opacity: '0.95',
+        transform: 'translate(-50%, -50%) scale(0.045)',
         willChange: 'transform'
       });
-      document.body.appendChild(dot);
-      dots.push(dot);
-      
-      // Default state: scale down to 16px (16 / 400 = 0.04)
-      gsap.set(dot, { xPercent: -50, yPercent: -50, scale: 0.04 });
     } else {
-      // TAIL DOTS: Natively small
+      const size = 16 - (i * (13 / (NUM_DOTS - 1)));
+      const opacity = 0.9 - (i * (0.8 / (NUM_DOTS - 1)));
       Object.assign(dot.style, {
         position: 'fixed',
         top: '0',
@@ -62,93 +59,95 @@ window.addEventListener('DOMContentLoaded', () => {
         backgroundColor: 'white',
         borderRadius: '50%',
         pointerEvents: 'none',
-        zIndex: '2147483646',
+        zIndex: (2147483646 - i).toString(),
         mixBlendMode: 'difference',
-        opacity: opacity,
+        opacity: opacity.toString(),
+        transform: 'translate(-50%, -50%)',
         willChange: 'transform'
       });
-      document.body.appendChild(dot);
-      dots.push(dot);
-      gsap.set(dot, { xPercent: -50, yPercent: -50 });
     }
+    document.body.appendChild(dot);
+    dots.push(dot);
   }
 
-  const style = document.createElement('style');
-  style.textContent = `
-    @media (pointer: fine) {
-      html, body, a, button, input, textarea, select, .project-card, .skill-card, .nav-links-pill a, .social-icon-btn, .theme-toggle, .typing-title {
-        cursor: none !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-
-  // 3. CONTINUOUS HISTORY BUFFER PHYSICS
-  gsap.ticker.add(() => {
-    const head = history[0];
-    
-    const newX = head.x + (mouse.x - head.x) * 0.45;
-    const newY = head.y + (mouse.y - head.y) * 0.45;
-    
-    history.unshift({ x: newX, y: newY });
+  function animate() {
+    history.unshift({ x: mouse.x, y: mouse.y });
     history.pop();
 
-    for (let i = 0; i < NUM_DOTS; i++) {
-      const p = history[i * SPACING];
-      gsap.set(dots[i], { x: p.x, y: p.y });
-    }
-  });
-
-  // 4. DYNAMIC HOVER STATE
-  const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .project-card, .skill-card, .social-icon-btn, .theme-toggle');
-  
-  interactiveElements.forEach(el => {
-    el.addEventListener('mouseenter', (e) => {
-      // Exclude the hero title from generic hover rules
-      if (e.target.closest('.typing-title')) return;
-
-      const computedStyle = window.getComputedStyle(e.target);
-      const fontSize = parseFloat(computedStyle.fontSize);
+    dots.forEach((dot, index) => {
+      const historyIndex = index * SPACING;
+      const point = history[historyIndex] || mouse;
       
-      let dynamicScale = 2.2; 
-      
-      if (!isNaN(fontSize) && fontSize > 0) {
-        dynamicScale = Math.max(1.5, Math.min(5, (fontSize / 12) + 0.5));
-      }
-      
-      
-
-      // Base scale of head dot is 0.04
-      gsap.to(dots[0], { scale: 0.04 * dynamicScale, duration: 0.3, ease: 'power2.out' });
-    });
-    
-    el.addEventListener('mouseleave', (e) => {
-      if (e.target.closest('.typing-title')) return;
-      // Return to base 16px size
-      gsap.to(dots[0], { scale: 0.04, duration: 0.3, ease: 'power2.out' });
-    });
-  });
-
-  // 5. HERO TITLE SPOTLIGHT REVEAL EFFECT
-  const heroTitle = document.querySelector('.typing-title');
-  if (heroTitle) {
-    heroTitle.addEventListener('mouseenter', () => {
-      // Scale up to full native 400px size for a perfectly crisp circle
-      gsap.to(dots[0], { scale: 1, duration: 0.4, ease: 'power3.out' });
-      
-      for (let i = 1; i < NUM_DOTS; i++) {
-        gsap.to(dots[i], { opacity: 0, duration: 0.2, ease: 'power1.out' });
+      if (index === 0) {
+        const currentTransform = dot.style.transform || '';
+        const scaleMatch = currentTransform.match(/scale\(([^)]+)\)/);
+        const currentScale = scaleMatch ? scaleMatch[1] : '0.045';
+        dot.style.transform = `translate(${point.x - 200}px, ${point.y - 200}px) scale(${currentScale})`;
+      } else {
+        const size = 16 - (index * (13 / (NUM_DOTS - 1)));
+        dot.style.transform = `translate(${point.x - (size / 2)}px, ${point.y - (size / 2)}px)`;
       }
     });
 
-    heroTitle.addEventListener('mouseleave', () => {
-      // Shrink back to 16px
-      gsap.to(dots[0], { scale: 0.04, duration: 0.4, ease: 'power3.out' });
-      
-      for (let i = 1; i < NUM_DOTS; i++) {
-        const originalOpacity = 0.9 - (i * (0.8 / (NUM_DOTS - 1)));
-        gsap.to(dots[i], { opacity: originalOpacity, duration: 0.4, ease: 'power1.out' });
-      }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // HIGH-IMPACT MULTI-ELEMENT DIFFERENCE CIRCLE LENS
+  function initHoverListeners() {
+    // 1. COLOSSAL LENS (220px - scale 0.55) WITH ELASTIC SPRING POP ON NAME
+    document.querySelectorAll('.typing-title, .typing-text, .typing-hero, .hero-greeting').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.55, duration: 0.4, ease: 'back.out(2)' });
+      });
+      el.addEventListener('mouseleave', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.045, duration: 0.35, ease: 'power3.out' });
+      });
+    });
+
+    // 2. LARGE LENS (130px - scale 0.325) for Section Titles, H1, H2, H3
+    document.querySelectorAll('h1, h2, h3, .section-title, .coming-soon-text').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.325, duration: 0.35, ease: 'back.out(1.5)' });
+      });
+      el.addEventListener('mouseleave', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.045, duration: 0.3, ease: 'power3.out' });
+      });
+    });
+
+    // 3. MEDIUM-LARGE LENS (115px - scale 0.29) for Project Cards, Browser Mockups, Terminal Cards & Experience Cards
+    document.querySelectorAll('.project-card, .browser-mockup, .stack-project-card, .experience-card, .github-activity-card, .mac-terminal-card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.29, duration: 0.35, ease: 'power2.out' });
+      });
+      el.addEventListener('mouseleave', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.045, duration: 0.3, ease: 'power3.out' });
+      });
+    });
+
+    // 4. MEDIUM LENS (100px - scale 0.25) for Skill Cards & Stat Numbers
+    document.querySelectorAll('.skill-card, .stat-card, .stat-number, .available-badge').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.25, duration: 0.3, ease: 'power2.out' });
+      });
+      el.addEventListener('mouseleave', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.045, duration: 0.3, ease: 'power3.out' });
+      });
+    });
+
+    // 5. STANDARD BUTTON & LINK LENS (90px - scale 0.225) for Buttons, Nav Links & Social Icons
+    document.querySelectorAll('a, button, .btn, .nav-links-pill a, .social-icon-btn, .theme-toggle').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.225, duration: 0.25, ease: 'power2.out' });
+      });
+      el.addEventListener('mouseleave', () => {
+        if (window.gsap) gsap.to(dots[0], { scale: 0.045, duration: 0.25, ease: 'power3.out' });
+      });
     });
   }
+
+  initHoverListeners();
+
+  // Re-bind listeners when dynamic content renders
+  setTimeout(initHoverListeners, 1000);
 });

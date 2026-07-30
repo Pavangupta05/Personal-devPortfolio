@@ -10,5 +10,5 @@ dists.forEach(d => {
   const sp = getSpForDist(d);
   const eased = sp < 0.5 ? 2*sp*sp : -1+(4-2*sp)*sp;
   const rad = lerp(580, 18, eased);
-  console.log(Dist: , sp: , radius check: );
+  console.log(`Dist: ${d}, sp: ${sp}, radius check: ${rad}`);
 });
