@@ -7712,7 +7712,7 @@ body.light-mode .browser-header {
   content: "";
   position: absolute;
   inset: -30px;
-  background: radial-gradient(circle at center, rgba(120, 20, 40, 0.2) 0%, rgba(0, 230, 255, 0.08) 50%, transparent 75%);
+  background: radial-gradient(circle at center, rgba(0, 230, 255, 0.12) 0%, rgba(10, 15, 25, 0.4) 50%, transparent 75%);
   filter: blur(40px);
   pointer-events: none;
   z-index: 0;
@@ -7786,7 +7786,7 @@ body.light-mode .profile-photo-wrap .photo-reveal {
   content: "";
   position: absolute;
   inset: -30px;
-  background: radial-gradient(circle at center, rgba(120, 20, 40, 0.2) 0%, rgba(0, 230, 255, 0.08) 50%, transparent 75%);
+  background: radial-gradient(circle at center, rgba(0, 230, 255, 0.12) 0%, rgba(10, 15, 25, 0.4) 50%, transparent 75%);
   filter: blur(40px);
   pointer-events: none;
   z-index: 0;
