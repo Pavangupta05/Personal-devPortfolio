@@ -1090,7 +1090,7 @@ function initAIChat() {
   const REPLIES = {
     greet:      { text: "Hey! 👋 I'm Pavan's AI assistant. Ask about his **projects**, **skills**, or type **\"contact\"** to connect!", action: null },
     about:      { text: "**Pavan Kumar Gupta** — MERN Stack Developer from Jaipur 🇮🇳. Pursuing B.Tech IT at JECRC (2023–2027), specializing in AI-powered web apps.", action: '#about' },
-    projects:   { text: "Pavan built 3 projects:\n\n🌟 **StarNote AI** — AI study platform\n💬 **TalkNow** — Real-time chat\n🏙️ **Smart Civic Eye** — Civic reporting\n\nScrolling to Projects... 🚀", action: '#projects' },
+    projects:   { text: "Pavan built featured projects:\n\n🌟 **StarNote AI** — AI study platform\n💬 **TalkNow** — Real-time chat\n🏙️ **Smart Civic Eye** — Civic reporting\n🎨 **ArtSpace** — Canvas & Web Drawing App\n⏱️ **Pomodoro Timer** — Focus & Time Management\n\nScrolling to Projects... 🚀", action: '#projects' },
     skills:     { text: "Pavan's tech arsenal:\n\n⚛️ **Frontend**: React, JS, HTML5, CSS3\n🔧 **Backend**: Node.js, Express, Python\n🍃 **DB**: MongoDB\n🛠️ **Tools**: Figma, Git, Postman, n8n\n\nScrolling to Skills... ✨", action: '#skills' },
     contact:    { text: "Reach Pavan:\n\n📧 pavangupta150605@gmail.com\n📱 +91-8005872338\n📍 Jaipur, Rajasthan\n\nScrolling to Contact... 📞", action: '#contact' },
     experience: { text: "Pavan's journey:\n\n💼 **Upflairs Pvt. Ltd.** — Full Stack Intern (Jul-Aug 2025)\n🚀 **Freelance** — Web Dev (2024–Present)\n\nScrolling to Experience... 🗓️", action: '#experience' },
@@ -1732,7 +1732,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const responses = {
     greetings: ["Hello!", "Hi there! I'm Pavan's AI Assistant.", "Hey! How can I help you explore Pavan's portfolio?"],
     skills: ["Pavan is highly skilled in React.js, Node.js, Express, MongoDB, Python, and C++. Shall I scroll down to the skills section?"],
-    projects: ["Pavan has built incredible platforms like StarNote AI, TalkNow Chat, and Civic Eye. Want me to take you there?"],
+    projects: ["Pavan has built incredible platforms like StarNote AI, TalkNow Chat, Civic Eye, ArtSpace Drawing App, Weather App, and Pomodoro Timer. Want me to take you there?"],
     contact: ["You can reach Pavan at vinodguptamertiya05@gmail.com, or check his LinkedIn/GitHub in the contact section!"],
     experience: ["Pavan has worked as a Web Developer Intern at Internshala, building modern UIs and optimizing backend services."],
     default: ["I'm a simple AI! You can ask me about Pavan's skills, projects, contact info, or experience."]
@@ -2078,56 +2078,41 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.registerPlugin(ScrollTrigger);
 
   ScrollTrigger.matchMedia({
-    // Desktop only
-    "all": function() {
+    // Desktop only — Advanced GSAP entrance animations & scrub scale
+    "(min-width: 769px)": function() {
       const cards = gsap.utils.toArray('.sticky-card');
       if (!cards.length) return;
 
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       cards.forEach((card, i) => {
-        // Enforce DOM z-index so lower cards sit on top of earlier cards
         card.style.zIndex = (i + 1) * 10;
-
-        // DOM Elements
         const overlay = card.querySelector('.sticky-card-overlay');
         const cardLeft = card.querySelector('.card-left');
         const img = card.querySelector('.browser-mockup img');
         const dots = card.querySelectorAll('.browser-header .dot');
         const mockupContainer = card.querySelector('.browser-mockup');
 
-        // ==========================================
-        // 1. ENTRY & PARALLAX ANIMATIONS (All Cards)
-        // ==========================================
         if (!prefersReducedMotion && img && cardLeft) {
-          
-          // Set initial will-change for performance
           gsap.set(img, { willChange: "transform, clip-path", clipPath: "inset(100% 0 0 0)", scale: 1.08 });
           gsap.set(dots, { scale: 0, opacity: 0 });
           gsap.set(cardLeft, { opacity: 0, y: 30 });
 
-          // Create the Entry Timeline
           const entryTl = gsap.timeline({
             scrollTrigger: {
               trigger: card,
-              start: "top top+=170", // Triggers just as it pins
+              start: "top top+=170",
               toggleActions: "play none none reverse"
             },
             onComplete: () => {
-              // Clean up GPU flags after entry
               gsap.set(img, { willChange: "auto" });
             }
           });
 
-          // Left Column Entry
           entryTl.to(cardLeft, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0);
-          
-          // Mockup Dots Boot-up
           if (dots.length) {
             entryTl.to(dots, { scale: 1, opacity: 1, duration: 0.4, stagger: 0.08, ease: "back.out(1.5)" }, 0.15);
           }
-          
-          // Image Reveal & Settle
           entryTl.to(img, {
             clipPath: "inset(0% 0 0 0)",
             scale: 1,
@@ -2135,7 +2120,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ease: "power3.out"
           }, 0.2);
 
-          // Hover Micro-interaction
           if (mockupContainer) {
             mockupContainer.addEventListener('mouseenter', () => {
               gsap.to(img, { scale: 1.03, duration: 0.4, ease: "power2.out", overwrite: "auto" });
@@ -2146,7 +2130,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
         } else if (img && cardLeft) {
-          // Reduced Motion Fallback
           gsap.set(img, { clipPath: "inset(0% 0 0 0)", scale: 1, opacity: 0 });
           gsap.to([cardLeft, img], {
             opacity: 1,
@@ -2155,18 +2138,13 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         }
 
-
-        // ==========================================
-        // 2. DIMMING STACK ANIMATION (Skipped for last card)
-        // ==========================================
         if (i !== cards.length - 1) {
           const cardInner = card.querySelector('.card-inner');
-          
           if (cardInner) {
             gsap.to(cardInner, {
               scale: 0.94,
               scrollTrigger: {
-                trigger: card, // trigger is the sticky wrapper (static size)
+                trigger: card,
                 start: "top top+=160",
                 end: () => "+=" + card.offsetHeight, 
                 scrub: true,
@@ -2188,6 +2166,23 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           }
         }
+      });
+    },
+
+    // Mobile only — Native CSS sticky stacking with 100% visible elements
+    "(max-width: 768px)": function() {
+      const cards = gsap.utils.toArray('.sticky-card');
+      cards.forEach((card, i) => {
+        card.style.zIndex = (i + 1) * 10;
+        const cardLeft = card.querySelector('.card-left');
+        const img = card.querySelector('.browser-mockup img');
+        const dots = card.querySelectorAll('.browser-header .dot');
+        const cardInner = card.querySelector('.card-inner');
+
+        if (img) gsap.set(img, { clipPath: "none", opacity: 1, scale: 1, willChange: "auto" });
+        if (cardLeft) gsap.set(cardLeft, { opacity: 1, y: 0 });
+        if (dots.length) gsap.set(dots, { scale: 1, opacity: 1 });
+        if (cardInner) gsap.set(cardInner, { scale: 1 });
       });
     }
   });
@@ -2685,7 +2680,7 @@ document.addEventListener('DOMContentLoaded', () => {
             outputHtml = `<p class="term-output array-val">Email: pavangupta150605@gmail.com | Phone: +91 8005872338</p>`;
             break;
           case 'projects':
-            outputHtml = `<p class="term-output string-val">Featured Projects: Real-time Video Stream, Portfolio OS, AI Chatbot. <a href="projects.html" class="term-link">View All Projects &rarr;</a></p>`;
+            outputHtml = `<p class="term-output string-val">Featured Projects: StarNote AI, TalkNow Chat, Smart Civic Eye, ArtSpace Drawing App, Weather App, Pomodoro Timer. <a href="projects.html" class="term-link">View All Projects &rarr;</a></p>`;
             break;
           case 'cv':
           case 'resume':

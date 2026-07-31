@@ -1,6 +1,6 @@
 
 function updateAboutPhotos() {
-  const isLight = document.body.classList.contains('light-mode');
+  const isLight = document.body ? document.body.classList.contains('light-mode') : document.documentElement.classList.contains('light-mode');
   const spotlightWrap = document.getElementById('spotlightWrap');
   if (spotlightWrap) {
     const baseImg = spotlightWrap.querySelector('.photo-base');
@@ -16,13 +16,14 @@ function updateAboutPhotos() {
 
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light-mode');
+  document.documentElement.classList.toggle('light-mode', isLight);
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
   updateThemeIcons();
   updateAboutPhotos();
 }
 
 function updateThemeIcons() {
-  const isLight = document.body.classList.contains('light-mode');
+  const isLight = document.body ? document.body.classList.contains('light-mode') : document.documentElement.classList.contains('light-mode');
   const desktopIcons = document.querySelectorAll('#themeIconDesktop, .theme-icon-desktop');
   const mobileIcons = document.querySelectorAll('#themeIconMobile, .theme-icon-mobile');
   
@@ -34,12 +35,21 @@ function updateThemeIcons() {
   });
 }
 
+// Early theme check before DOM fully loads
+(function applyThemeEarly() {
+  if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.add('light-mode');
+  }
+})();
+
 // Initialize on load
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light-mode');
+    document.documentElement.classList.add('light-mode');
+    if (document.body) document.body.classList.add('light-mode');
   } else {
-    document.body.classList.remove('light-mode');
+    document.documentElement.classList.remove('light-mode');
+    if (document.body) document.body.classList.remove('light-mode');
   }
   updateThemeIcons();
   updateAboutPhotos();

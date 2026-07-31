@@ -6718,51 +6718,19 @@ body.mobile-space-fallback::after {
 
 @media (max-width: 768px) {
   body {
-    background: radial-gradient(ellipse at bottom, #0a0d14 0%, #010103 100%) !important;
-    background-attachment: fixed !important;
-    background-size: cover !important;
+    background-attachment: scroll !important;
   }
   
-  #bg-canvas {
-    display: none !important;
-  }
-  
+  #bg-canvas,
   .mobile-nebula {
-    display: block !important;
+    display: none !important;
   }
 
   body::before,
   body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: -2;
-    pointer-events: none;
-  }
-
-  body::before {
-    background-image: 
-      radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-      radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
-      radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
-      radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
-      radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
-      radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
-    background-repeat: repeat;
-    background-size: 200px 200px;
-    animation: starsTwinkle 4s infinite alternate;
-  }
-
-  body::after {
-    background-image: 
-      radial-gradient(3px 3px at 50px 50px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-      radial-gradient(3px 3px at 100px 150px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-      radial-gradient(3px 3px at 180px 80px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-      radial-gradient(3px 3px at 250px 250px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-      radial-gradient(3px 3px at 300px 100px, rgba(255,255,255,0.8), rgba(0,0,0,0));
-    background-repeat: repeat;
-    background-size: 400px 400px;
-    animation: starsTwinkleSlow 6s infinite alternate;
+    display: none !important;
+    content: none !important;
+    animation: none !important;
   }
 }
 
@@ -7143,11 +7111,45 @@ body.light-mode .typing-text {
 
 
 /* FINAL OVERRIDE FOR DOT BACKGROUND */
+html {
+  background-color: #080808;
+}
+html.light-mode {
+  background-color: #fdfbf7;
+}
+
 body {
   background-color: var(--bg-primary-from) !important;
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 1px) !important;
   background-size: 26px 26px !important;
-  background-attachment: fixed !important;
+  background-attachment: fixed;
+}
+
+/* Mobile UI Background Fix — Instant Rendering & 120 FPS Smooth Scrolling */
+@media (max-width: 768px), (pointer: coarse) {
+  html, body {
+    background-attachment: scroll !important;
+    background-color: var(--bg-primary-from, #080808) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  body {
+    background-attachment: scroll !important;
+  }
+  body::before,
+  body::after {
+    display: none !important;
+    content: none !important;
+    animation: none !important;
+  }
+  .mobile-nebula, .ambient-blob, .page-transition-overlay {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .project-card, .experience-card, .certificate-card, .stack-project-card, .glass-card, .nav-links-pill, .mac-terminal-card {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
 }
 
 
@@ -7387,6 +7389,10 @@ body.light-mode .social-icon-btn:hover i {
 .sticky-card:nth-child(2) { top: 130px !important; z-index: 20 !important; }
 .sticky-card:nth-child(3) { top: 150px !important; z-index: 30 !important; }
 .sticky-card:nth-child(4) { top: 170px !important; z-index: 40 !important; }
+.sticky-card:nth-child(5) { top: 190px !important; z-index: 50 !important; }
+.sticky-card:nth-child(6) { top: 210px !important; z-index: 60 !important; }
+.sticky-card:nth-child(7) { top: 230px !important; z-index: 70 !important; }
+.sticky-card:nth-child(8) { top: 250px !important; z-index: 80 !important; }
 
 body.light-mode .sticky-card {
   background: #ffffff !important; /* 100% opaque solid white background */
@@ -7586,17 +7592,26 @@ body.light-mode .browser-header {
 }
 @media (max-width: 767px) {
   .portfolio-stack-container {
-    padding-bottom: 150px;
+    padding-bottom: 240px !important;
     overflow: visible !important;
   }
   .sticky-card {
     position: sticky !important;
-    margin-bottom: 40px;
+    margin-bottom: 30px !important;
+    background: #0d1117 !important;
+    border-radius: 20px !important;
   }
-  .sticky-card:nth-child(1) { top: 90px !important; }
-  .sticky-card:nth-child(2) { top: 105px !important; }
-  .sticky-card:nth-child(3) { top: 120px !important; }
-  .sticky-card:nth-child(4) { top: 135px !important; }
+  body.light-mode .sticky-card {
+    background: #ffffff !important;
+  }
+  .sticky-card:nth-child(1) { top: 75px !important; z-index: 10 !important; }
+  .sticky-card:nth-child(2) { top: 95px !important; z-index: 20 !important; }
+  .sticky-card:nth-child(3) { top: 115px !important; z-index: 30 !important; }
+  .sticky-card:nth-child(4) { top: 135px !important; z-index: 40 !important; }
+  .sticky-card:nth-child(5) { top: 155px !important; z-index: 50 !important; }
+  .sticky-card:nth-child(6) { top: 175px !important; z-index: 60 !important; }
+  .sticky-card:nth-child(7) { top: 195px !important; z-index: 70 !important; }
+  .sticky-card:nth-child(8) { top: 215px !important; z-index: 80 !important; }
 }
 
 
@@ -8510,19 +8525,30 @@ body.light-mode .page-transition-overlay {
 /* ── Projects page: Mobile Sticky Stack UI & Tight Spacing ── */
 @media (max-width: 900px) {
   .portfolio-stack-container {
-    padding-bottom: 20px !important;
+    padding-bottom: 240px !important;
+    overflow: visible !important;
   }
 
   .sticky-card {
     position: sticky !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 30px !important;
     border-radius: 20px !important;
+    background: #0d1117 !important;
+    overflow: hidden !important;
   }
 
-  .sticky-card:nth-child(1) { top: 80px !important; z-index: 10 !important; }
-  .sticky-card:nth-child(2) { top: 90px !important; z-index: 20 !important; }
-  .sticky-card:nth-child(3) { top: 100px !important; z-index: 30 !important; }
-  .sticky-card:nth-child(4) { top: 110px !important; z-index: 40 !important; }
+  body.light-mode .sticky-card {
+    background: #ffffff !important;
+  }
+
+  .sticky-card:nth-child(1) { top: 75px !important; z-index: 10 !important; }
+  .sticky-card:nth-child(2) { top: 95px !important; z-index: 20 !important; }
+  .sticky-card:nth-child(3) { top: 115px !important; z-index: 30 !important; }
+  .sticky-card:nth-child(4) { top: 135px !important; z-index: 40 !important; }
+  .sticky-card:nth-child(5) { top: 155px !important; z-index: 50 !important; }
+  .sticky-card:nth-child(6) { top: 175px !important; z-index: 60 !important; }
+  .sticky-card:nth-child(7) { top: 195px !important; z-index: 70 !important; }
+  .sticky-card:nth-child(8) { top: 215px !important; z-index: 80 !important; }
 
   .sticky-card .card-inner {
     display: flex !important;

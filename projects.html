@@ -26,6 +26,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Pavan's Portfolio" />
   <link rel="apple-touch-icon" href="/app-icon.png" />
+  <script>(function(){if(localStorage.getItem('theme')==='light'){document.documentElement.classList.add('light-mode');}})();</script>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -366,7 +367,7 @@
               <div class="browser-header">
                 <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
               </div>
-              <img src="Screenshot%202025-08-29%20162918.png" alt="StarNote AI">
+              <img src="StarNote.png" alt="StarNote AI">
             </div>
           </div>
         </div>
@@ -407,7 +408,7 @@
               <div class="browser-header">
                 <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
               </div>
-              <img src="Screenshot%202025-08-29%20162948.png" alt="TalkNow Chat">
+              <img src="ChatApp.png" alt="TalkNow Chat">
             </div>
           </div>
         </div>
@@ -446,14 +447,54 @@
               <div class="browser-header">
                 <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
               </div>
-              <img src="Screenshot%202025-08-29%20163807.png" alt="Smart Civic Eye">
+              <img src="SmartCivicEye.png" alt="Smart Civic Eye">
             </div>
           </div>
         </div>
       </div>
       
+      <!-- Project - ArtSpace Drawing App -->
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+        <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/ArtSpace-Drawing-App">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">ArtSpace-Drawing-App</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>ArtSpace Drawing App</h3>
+            <p class="desc-line">An interactive web drawing and canvas application built with React and HTML5 Canvas.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Freehand drawing tools with brush size, eraser, and color picker</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Canvas undo/redo state management and instant clear canvas</li>
+              <li><i class="fa-solid fa-chevron-right"></i> High-resolution artwork export and image download</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-paintbrush"></i> HTML5 Canvas</span>
+              <span class="badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+              <span class="badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://artspacedrawing.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05/ArtSpace-Drawing-App" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="ArtSpace.png" alt="ArtSpace Drawing App">
+            </div>
+          </div>
+        </div>
+      </div>
     
-      <!-- Project 4 -->
+      <!-- Project 5 -->
       <div class="stack-project-card sticky-card" data-category="react mern">
         <div class="card-inner">
         <div class="sticky-card-overlay"></div>
@@ -465,6 +506,7 @@
               <span style="opacity: 0.4;">|</span>
               <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
             </div>
+            <h3>Portfolio OS</h3>
             <p class="desc-line">A cinematic, interactive portfolio featuring advanced GSAP scroll mechanics.</p>
             <ul class="project-features">
               <li><i class="fa-solid fa-chevron-right"></i> Custom 3D DOM stacking physics and parallax</li>
@@ -477,7 +519,7 @@
               <span class="badge"><i class="fa-solid fa-bolt"></i> GSAP ScrollTrigger</span>
             </div>
             <div class="project-actions">
-              <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> Repository</a>
+              <a href="https://github.com/Pavangupta05/portfolio" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
             </div>
           </div>
           <div class="card-right">
@@ -485,7 +527,89 @@
               <div class="browser-header">
                 <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
               </div>
-              <img src="Screenshot%202025-10-05%20204623.png" alt="Portfolio Preview" onerror="this.src='https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=1000&auto=format&fit=crop'">
+              <img src="Portfolio.png" alt="Portfolio OS">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Project 6: Weather App -->
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+        <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/weather-app">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">weather-app</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>Weather App</h3>
+            <p class="desc-line">Real-time weather forecasting and meteorological data dashboard built with React.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Live location-based weather tracking and city search</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Detailed metrics including humidity, wind speed, pressure, and visibility</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Responsive visual themes responding to real-time weather conditions</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-cloud-sun"></i> Weather API</span>
+              <span class="badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+              <span class="badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://weather-app-snowy-sigma-22.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05/weather-app" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="WeatherApp.png" alt="Weather App">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 7: Pomodoro Timer -->
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+        <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/Pomodoro-timer-">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">Pomodoro-timer-</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>Pomodoro Timer</h3>
+            <p class="desc-line">A sleek, productive Pomodoro timer web application designed for peak focus and time management.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Customizable work & short/long break timer intervals</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Audio alerts and visual countdown progress indicators</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Session stats tracking and distraction-free responsive design</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-stopwatch"></i> Timer API</span>
+              <span class="badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+              <span class="badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://pomodoro-timer-ten-ashen.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05/Pomodoro-timer-" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="Pomodoro.png" alt="Pomodoro Timer">
             </div>
           </div>
         </div>
@@ -684,7 +808,15 @@
 <div>&nbsp; 2. <span class="term-blue">TalkNow Chat</span>   — Real-Time Chat App (Socket.io)</div>
 <div>&nbsp;    <span class="term-gray">→ chat-app-frontend-kappa-tan.vercel.app</span></div>
 <div>&nbsp; 3. <span class="term-blue">Smart Civic Eye</span> — AI Civic Issue Reporting System</div>
-<div>&nbsp;    <span class="term-gray">→ smart-civic-eye.vercel.app</span></div>`,
+<div>&nbsp;    <span class="term-gray">→ smart-civic-eye.vercel.app</span></div>
+<div>&nbsp; 4. <span class="term-blue">ArtSpace</span>        — Interactive Canvas & Web Drawing App</div>
+<div>&nbsp;    <span class="term-gray">→ artspaceddrawing.vercel.app</span></div>
+<div>&nbsp; 5. <span class="term-blue">Portfolio OS</span>    — Interactive 3D Developer Portfolio</div>
+<div>&nbsp;    <span class="term-gray">→ github.com/Pavangupta05/portfolio</span></div>
+<div>&nbsp; 6. <span class="term-blue">Weather App</span>     — Real-Time Weather Forecast Dashboard</div>
+<div>&nbsp;    <span class="term-gray">→ weather-app-snowy-sigma-22.vercel.app</span></div>
+<div>&nbsp; 7. <span class="term-blue">Pomodoro Timer</span>  — Productivity & Focus Time Management App</div>
+<div>&nbsp;    <span class="term-gray">→ pomodoro-timer-ten-ashen.vercel.app</span></div>`,
 
     contact: () => `
 <div class="term-green">Get In Touch:</div>
