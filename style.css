@@ -7590,28 +7590,37 @@ body.light-mode .browser-header {
     height: 250px;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 768px) {
+  .portfolio-stack-section,
+  #portfolio-grid {
+    overflow: visible !important;
+    clip-path: none !important;
+  }
   .portfolio-stack-container {
     padding-bottom: 240px !important;
     overflow: visible !important;
   }
   .sticky-card {
+    position: -webkit-sticky !important;
     position: sticky !important;
     margin-bottom: 30px !important;
     background: #0d1117 !important;
     border-radius: 20px !important;
+    will-change: transform, top;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
   }
   body.light-mode .sticky-card {
     background: #ffffff !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08) !important;
   }
-  .sticky-card:nth-child(1) { top: 75px !important; z-index: 10 !important; }
-  .sticky-card:nth-child(2) { top: 95px !important; z-index: 20 !important; }
-  .sticky-card:nth-child(3) { top: 115px !important; z-index: 30 !important; }
-  .sticky-card:nth-child(4) { top: 135px !important; z-index: 40 !important; }
-  .sticky-card:nth-child(5) { top: 155px !important; z-index: 50 !important; }
-  .sticky-card:nth-child(6) { top: 175px !important; z-index: 60 !important; }
-  .sticky-card:nth-child(7) { top: 195px !important; z-index: 70 !important; }
-  .sticky-card:nth-child(8) { top: 215px !important; z-index: 80 !important; }
+  .sticky-card:nth-child(1) { top: 85px !important; z-index: 10 !important; }
+  .sticky-card:nth-child(2) { top: 105px !important; z-index: 20 !important; }
+  .sticky-card:nth-child(3) { top: 125px !important; z-index: 30 !important; }
+  .sticky-card:nth-child(4) { top: 145px !important; z-index: 40 !important; }
+  .sticky-card:nth-child(5) { top: 165px !important; z-index: 50 !important; }
+  .sticky-card:nth-child(6) { top: 185px !important; z-index: 60 !important; }
+  .sticky-card:nth-child(7) { top: 205px !important; z-index: 70 !important; }
+  .sticky-card:nth-child(8) { top: 225px !important; z-index: 80 !important; }
 }
 
 
@@ -8925,11 +8934,16 @@ body.light-mode .page-transition-overlay {
     overflow-x: hidden !important;
   }
 
-  .section,
-  .portfolio-stack-section,
+  .section:not(.portfolio-stack-section),
   .cta-section {
     max-width: 100vw !important;
     overflow-x: hidden !important;
+  }
+
+  .portfolio-stack-section,
+  #portfolio-grid {
+    overflow: visible !important;
+    clip-path: none !important;
   }
 
   /* Retain body dot grid on small screens as requested */
