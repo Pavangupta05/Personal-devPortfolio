@@ -2355,6 +2355,30 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   box-shadow: var(--shadow-sm);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* GPU Hardware Acceleration & Mobile 60 FPS Optimizations */
+.project-card,
+.stack-project-card,
+.sticky-card,
+.experience-card,
+.skill-card,
+.github-activity-card,
+.mac-terminal-card,
+.desktop-navbar,
+.mobile-dynamic-nav {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .project-card, .experience-card, .certificate-card, .mac-terminal-card, .category-card, .sticky-card {
+    backdrop-filter: blur(10px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  }
 }
 
 .project-card:hover, .experience-card:hover, .certificate-card:hover {

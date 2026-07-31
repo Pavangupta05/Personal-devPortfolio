@@ -155,12 +155,10 @@ window.addEventListener("DOMContentLoaded", () => {
           uniform float uDistortion;
           varying vec2 vUv;
           
-          float rand(vec2 co){ return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453); }
-          
           void main() {
             vec2 uv = vUv;
             vec2 d = uv - 0.5;
-            float dist = length(d);
+            float dist = dot(d, d);
             
             // Chromatic Aberration
             vec2 offset = d * dist * uDistortion;
@@ -168,13 +166,10 @@ window.addEventListener("DOMContentLoaded", () => {
             float g = texture2D(tDiffuse, uv).g;
             float b = texture2D(tDiffuse, uv - offset).b;
             
-            // Film Grain
-            float noise = (rand(uv + uTime) - 0.5) * 0.05;
+            // Fast Vignette
+            float vignette = clamp(1.2 - dist * 1.4, 0.0, 1.0);
             
-            // Vignette
-            float vignette = smoothstep(1.1, 0.4, dist);
-            
-            gl_FragColor = vec4(vec3(r, g, b) + noise, 1.0) * vignette;
+            gl_FragColor = vec4(r, g, b, 1.0) * vignette;
           }
         `
       };
@@ -525,11 +520,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // ── MOUSE PARALLAX & RAYCASTING ───────────────────────────────────────────
-    let mouseX = 0, mouseY = 0, tMX = 0, tMY = 0;
+    let mouseX = 0, mouseY = 0, tMX = 0, tMY = 0, mouseMovedThisFrame = false;
     const heroRaycaster = new THREE.Raycaster();
     const heroMouse = new THREE.Vector2();
 
     window.addEventListener('mousemove', e => {
+      mouseMovedThisFrame = true;
       tMX = (e.clientX / window.innerWidth  - 0.5) * 2;
       tMY = (e.clientY / window.innerHeight - 0.5) * 2;
       heroMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -608,7 +604,8 @@ window.addEventListener("DOMContentLoaded", () => {
          window.galleryGroup.rotation.y += 0.001; // Slowly orbit the sun
       }
       
-      if (typeof window.raycaster !== 'undefined' && window.galleryPanels && window.galleryPanels.length > 0) {
+      if (mouseMovedThisFrame && typeof window.raycaster !== 'undefined' && window.galleryPanels && window.galleryPanels.length > 0) {
+        mouseMovedThisFrame = false;
         const galleryHits = window.raycaster.intersectObjects(window.galleryPanels);
         if (galleryHits.length > 0) {
           document.body.style.cursor = 'pointer';
