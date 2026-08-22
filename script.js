@@ -1365,34 +1365,52 @@ function initDesktopOS() {
     initAIChat();
     initDesktopOS();
     
-    // Staggered Scroll Reveal
-    const revealElements = document.querySelectorAll('.scroll-reveal');
-    let revealQueue = [];
-    let revealTimeout = null;
+    // Enhanced Universal Scroll Reveal System
+    const revealSelectors = [
+      '.scroll-reveal',
+      '.scroll-reveal-left',
+      '.scroll-reveal-right',
+      '.scroll-reveal-scale',
+      '.text-reveal',
+      '.section-title',
+      '.skill-card',
+      '.soft-skill-item',
+      '.timeline-item',
+      '.certificate-card',
+      '.touch-item',
+      '.mac-terminal-card',
+      '.recruiter-card'
+    ];
+
+    const revealElements = document.querySelectorAll(revealSelectors.join(', '));
 
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          revealQueue.push(entry.target);
+          entry.target.classList.add('revealed');
           revealObserver.unobserve(entry.target);
         }
       });
+    }, {
+      threshold: 0.1,
+      rootMargin: "0px 0px -40px 0px"
+    });
 
-      if (revealQueue.length > 0 && !revealTimeout) {
-        revealTimeout = setTimeout(() => {
-          revealQueue.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
-          revealQueue.forEach((el, index) => {
-            setTimeout(() => {
-              el.classList.add('revealed');
-            }, index * 120);
-          });
-          revealQueue = [];
-          revealTimeout = null;
-        }, 30);
+    revealElements.forEach((el, idx) => {
+      if (el.classList.contains('sticky-card') || el.classList.contains('stack-project-card')) {
+        el.classList.add('revealed');
+        return;
       }
-    }, { threshold: 0.1 });
-
-    revealElements.forEach(el => revealObserver.observe(el));
+      if (!el.classList.contains('scroll-reveal') &&
+          !el.classList.contains('scroll-reveal-left') &&
+          !el.classList.contains('scroll-reveal-right') &&
+          !el.classList.contains('scroll-reveal-scale') &&
+          !el.classList.contains('text-reveal')) {
+        el.classList.add('scroll-reveal');
+      }
+      el.style.transitionDelay = `${(idx % 4) * 90}ms`;
+      revealObserver.observe(el);
+    });
   }
   if (document.readyState !== 'loading') run();
   else document.addEventListener('DOMContentLoaded', run, { once: true });
@@ -2074,6 +2092,21 @@ document.addEventListener("DOMContentLoaded", () => {
   
   gsap.registerPlugin(ScrollTrigger);
 
+  // Pre-reset: force all sticky card inner elements visible before GSAP sets them
+  document.querySelectorAll('.sticky-card').forEach(card => {
+    const cardLeft = card.querySelector('.card-left');
+    const img = card.querySelector('.browser-mockup img');
+    const dots = card.querySelectorAll('.browser-header .dot');
+    const cardInner = card.querySelector('.card-inner');
+    if (cardLeft) { cardLeft.style.opacity = ''; cardLeft.style.transform = ''; }
+    if (img) { img.style.clipPath = ''; img.style.opacity = ''; img.style.transform = ''; }
+    dots.forEach(d => { d.style.opacity = ''; d.style.transform = ''; });
+    if (cardInner) { cardInner.style.transform = ''; }
+    card.classList.add('revealed');
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+  });
+
   ScrollTrigger.matchMedia({
     // Desktop only — Advanced GSAP entrance animations & scrub scale
     "(min-width: 769px)": function() {
@@ -2091,15 +2124,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const mockupContainer = card.querySelector('.browser-mockup');
 
         if (!prefersReducedMotion && img && cardLeft) {
-          gsap.set(img, { willChange: "transform, clip-path", clipPath: "inset(100% 0 0 0)", scale: 1.08 });
+          gsap.set(img, { willChange: "transform, clip-path", clipPath: "inset(100% 0 0 0)", scale: 1.05 });
           gsap.set(dots, { scale: 0, opacity: 0 });
-          gsap.set(cardLeft, { opacity: 0, y: 30 });
+          gsap.set(cardLeft, { opacity: 0, y: 25 });
 
           const entryTl = gsap.timeline({
             scrollTrigger: {
               trigger: card,
-              start: "top top+=170",
-              toggleActions: "play none none reverse"
+              start: "top 85%",
+              toggleActions: "play none none none"
             },
             onComplete: () => {
               gsap.set(img, { willChange: "auto" });
@@ -2113,9 +2146,9 @@ document.addEventListener("DOMContentLoaded", () => {
           entryTl.to(img, {
             clipPath: "inset(0% 0 0 0)",
             scale: 1,
-            duration: 0.9,
+            duration: 0.8,
             ease: "power3.out"
-          }, 0.2);
+          }, 0.15);
 
           if (mockupContainer) {
             mockupContainer.addEventListener('mouseenter', () => {
@@ -2127,12 +2160,8 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
         } else if (img && cardLeft) {
-          gsap.set(img, { clipPath: "inset(0% 0 0 0)", scale: 1, opacity: 0 });
-          gsap.to([cardLeft, img], {
-            opacity: 1,
-            duration: 0.5,
-            scrollTrigger: { trigger: card, start: "top top+=170", toggleActions: "play none none reverse" }
-          });
+          gsap.set(img, { clipPath: "inset(0% 0 0 0)", scale: 1, opacity: 1 });
+          gsap.set(cardLeft, { opacity: 1, y: 0 });
         }
 
         if (i !== cards.length - 1) {
@@ -2142,8 +2171,8 @@ document.addEventListener("DOMContentLoaded", () => {
               scale: 0.94,
               scrollTrigger: {
                 trigger: card,
-                start: "top top+=160",
-                end: () => "+=" + card.offsetHeight, 
+                start: "top 120px",
+                end: "bottom 120px",
                 scrub: true,
                 invalidateOnRefresh: true 
               }
@@ -2152,11 +2181,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (overlay) {
             gsap.to(overlay, {
-              opacity: 0.7,
+              opacity: 0.75,
               scrollTrigger: {
                 trigger: card,
-                start: "top top+=160",
-                end: () => "+=" + card.offsetHeight,
+                start: "top 120px",
+                end: "bottom 120px",
                 scrub: true,
                 invalidateOnRefresh: true
               }
@@ -2246,23 +2275,13 @@ document.addEventListener('DOMContentLoaded', () => {
     bootScr.classList.add('hidden');
   }
 
-  // Intercept internal page links for instant smooth SPA transitions
   document.querySelectorAll('a[href]').forEach(link => {
     const href = link.getAttribute('href');
     if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && href.endsWith('.html')) {
       link.addEventListener('click', (e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey) return;
         e.preventDefault();
-        
-        if (transitionOverlay) {
-          transitionOverlay.style.transition = 'opacity 0.15s ease';
-          transitionOverlay.style.opacity = '1';
-          setTimeout(() => {
-            window.location.href = href;
-          }, 150);
-        } else {
-          window.location.href = href;
-        }
+        window.location.href = href;
       });
     }
   });
@@ -2621,6 +2640,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (starsEl) starsEl.textContent = data.stargazers_count ?? 0;
         if (forksEl) forksEl.textContent = data.forks_count ?? 0;
       })
+      .catch(err => console.debug('GitHub API notice:', err));
+  });
+
   // 8. macOS About Me Terminal Card (Copy Button & Interactive Command Engine)
   const macCopyBtn = document.getElementById('macCopyBtn');
   const macCopyText = document.getElementById('macCopyText');
@@ -2716,7 +2738,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-});
 
+/* ==========================================================
+   1-PAGE SMOOTH SCROLL NAVIGATION & ACTIVE SECTION OBSERVER
+   ========================================================== */
+(function() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('href');
+      if (targetId && targetId !== '#') {
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          e.preventDefault();
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
 
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.desktop-navbar .nav-links-pill a[href^="#"]');
+
+  if (sections.length && navLinks.length) {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const currentId = entry.target.getAttribute('id');
+          navLinks.forEach(link => {
+            if (link.getAttribute('href') === `#${currentId}`) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(sec => sectionObserver.observe(sec));
+  }
+})();
 

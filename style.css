@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400..700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +13,28 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: clip !important;
+}
+
+body {
+  position: relative;
+  overflow-x: clip !important;
+}
+
+/* Hide all scrollbars completely while maintaining full smooth scrolling */
+::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+html, body, * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* 120 FPS Hardware Acceleration Helper Classes */
@@ -75,28 +99,7 @@ html.lenis, html.lenis body {
 }
 
 
-/* Neon Glass Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
 
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(5px);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 230, 255, 0.2);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(0, 230, 255, 0.3);
-  box-shadow: 0 0 10px rgba(0, 230, 255, 0.2);
-  transition: all 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 230, 255, 0.4);
-  box-shadow: 0 0 15px rgba(0, 230, 255, 0.6);
-}
 
 #scroll-progress {
   position: fixed;
@@ -2856,14 +2859,9 @@ body.loading {
 }
 
 #loader-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 999999;
-  background: #050812;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 #loader-overlay.fade-out {
@@ -4323,20 +4321,20 @@ body.light-mode .recruiter-card p {
     inset 0 1px 0 rgba(255,255,255,0.5) !important;
 }
 
-/* --- Section Titles: Shimmer Text --- */
+/* --- Section Titles: Clean Pure White & Centered --- */
 .section-title {
-  background: linear-gradient(135deg, #00E6FF 0%, #5E5CE6 40%, #BF5AF2 70%, #00E6FF 100%);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: titleShimmer 5s ease infinite;
-}
-
-@keyframes titleShimmer {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-clip: unset !important;
+  animation: none !important;
+  color: #ffffff !important;
+  text-align: center !important;
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 40px !important;
 }
 
 /* --- Experience / Education Cards --- */
@@ -7409,6 +7407,30 @@ body.light-mode .social-icon-btn:hover i {
   will-change: transform;
 }
 
+/* Ensure sticky cards and ALL their children stay 100% visible for GSAP 3D stacking physics */
+.sticky-card,
+.sticky-card.scroll-reveal,
+.stack-project-card,
+.stack-project-card.scroll-reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* Only the inner elements that GSAP manually controls should be pre-hidden (by GSAP inline styles) */
+/* Never let global scroll-reveal hide sticky card children */
+.sticky-card .card-left,
+.sticky-card .card-inner,
+.sticky-card h3,
+.sticky-card .desc-line,
+.sticky-card .section-title,
+.sticky-card.scroll-reveal .card-left,
+.sticky-card.scroll-reveal .section-title {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 .sticky-card:nth-child(1) { top: 110px !important; z-index: 10 !important; }
 .sticky-card:nth-child(2) { top: 130px !important; z-index: 20 !important; }
 .sticky-card:nth-child(3) { top: 150px !important; z-index: 30 !important; }
@@ -8478,13 +8500,9 @@ body.light-mode .cta-btn {
    SMOOTH PAGE TRANSITIONS
    ========================================================== */
 .page-transition-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #0d1117;
-  z-index: 9999999;
-  opacity: 1;
-  pointer-events: none;
-  transition: opacity 0.2s cubic-bezier(0.2, 1, 0.3, 1) !important;
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 body.light-mode .page-transition-overlay {
@@ -10653,3 +10671,440 @@ body.light-mode .ai-chip-btn:hover {
   border-color: rgba(0, 102, 255, 0.3) !important;
   color: #0066ff !important;
 }
+
+/* ==========================================================================
+   SCROLL-DRIVEN KINETIC HERO TEXT ANIMATION (#kinetic-hero)
+   ========================================================================== */
+.kinetic-hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: transparent !important;
+  background-image: none !important;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  z-index: 5;
+}
+
+.kinetic-hero-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.kinetic-text-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: 11vw;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  padding-left: 50vw; /* Starts in the MIDDLE of the screen */
+  user-select: none;
+  will-change: transform;
+}
+
+.kinetic-letter-wrapper {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  margin: 0 0.015em;
+}
+
+.kinetic-space-wrapper {
+  display: inline-block;
+  width: 0.35em;
+  flex-shrink: 0;
+}
+
+.kinetic-letter-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(8px, 12px);
+  color: #000000;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 1;
+  user-select: none;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.04);
+}
+
+.kinetic-letter-front {
+  position: relative;
+  display: inline-block;
+  z-index: 2;
+  transform-origin: center center;
+  color: #ffffff;
+  will-change: transform, opacity, color;
+}
+
+/* ==========================================================================
+   REF-BASED PREMIUM MINIMALIST TYPOGRAPHY & DESIGN SYSTEM
+   ========================================================================== */
+.say-hi-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 22px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+}
+
+.say-hi-pill:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+
+.hero-giant-title {
+  font-family: 'Space Grotesk', 'Inter', sans-serif !important;
+  font-size: clamp(2.8rem, 10.5vw, 8.5rem) !important;
+  font-weight: 900 !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.04em !important;
+  color: #ffffff !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  margin-bottom: 24px !important;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+}
+
+.hero-impact-subhead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.subhead-caps {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(0.75rem, 1.8vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+
+.serif-italic-highlight {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem) !important;
+  color: #ffffff !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.1 !important;
+  text-transform: lowercase !important;
+}
+
+.section-title .serif-italic {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  text-transform: lowercase !important;
+  letter-spacing: 0em !important;
+}
+  user-select: none;
+}
+
+.kinetic-scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.kinetic-scroll-hint i {
+  animation: bounceDown 1.8s infinite;
+}
+
+/* ==========================================================================
+   AUTO-MOVABLE RED TICKER MARQUEE STRIP (BELOW PROJECTS)
+   ========================================================================== */
+.ticker-marquee-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #e50914;
+  padding: 16px 0;
+  margin: 50px 0;
+  transform: rotate(-1.2deg) scaleX(1.04);
+  box-shadow: 0 10px 30px rgba(229, 9, 20, 0.25);
+  z-index: 10;
+  user-select: none;
+}
+
+.ticker-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 22s linear infinite;
+  will-change: transform;
+}
+
+.ticker-marquee-wrapper:hover .ticker-marquee-track {
+  animation-play-state: paused;
+}
+
+.ticker-group {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding-right: 36px;
+  white-space: nowrap;
+}
+
+.ticker-group span {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.ticker-star {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ==========================================================================
+   UNIFIED CONSISTENT SECTION SPACING SYSTEM
+   ========================================================================== */
+.section,
+#home,
+#projects,
+#skills,
+#experience,
+#certificates,
+#contact,
+.portfolio-stack-section,
+.timeline-section {
+  padding-top: 100px !important;
+  padding-bottom: 100px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.section-title {
+  margin-top: 0 !important;
+  margin-bottom: 48px !important;
+}
+
+.ticker-marquee-wrapper {
+  margin-top: 20px !important;
+  margin-bottom: 60px !important;
+}
+
+@media (max-width: 768px) {
+  .section,
+  #home,
+  #projects,
+  #skills,
+  #experience,
+  #certificates,
+  #contact,
+  .portfolio-stack-section,
+  .timeline-section {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+
+  .section-title {
+    margin-bottom: 32px !important;
+  }
+}
+
+/* ==========================================================================
+   ULTRA-BOLD TYPOGRAPHY & LIGHT MODE PURE BLACK HEADINGS
+   ========================================================================== */
+.hero-giant-title {
+  font-weight: 900 !important;
+}
+
+.subhead-caps {
+  font-weight: 800 !important;
+}
+
+.serif-italic-highlight {
+  font-weight: 700 !important;
+}
+
+.section-title {
+  font-weight: 900 !important;
+}
+
+.section-title .serif-italic {
+  font-weight: 700 !important;
+}
+
+.card-left h3,
+.category-header h3,
+.timeline-content h3,
+.certificate-card h3,
+.soft-skill-info h4 {
+  font-weight: 800 !important;
+}
+
+/* Light Mode Pure Black Headings & High Contrast Text */
+html.light-mode body,
+body.light-mode {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+}
+
+html.light-mode h1, 
+html.light-mode h2, 
+html.light-mode h3, 
+html.light-mode h4, 
+html.light-mode h5, 
+html.light-mode h6,
+body.light-mode h1, 
+body.light-mode h2, 
+body.light-mode h3, 
+body.light-mode h4, 
+body.light-mode h5, 
+body.light-mode h6,
+html.light-mode .hero-giant-title,
+body.light-mode .hero-giant-title,
+html.light-mode .section-title,
+body.light-mode .section-title,
+html.light-mode .serif-italic-highlight,
+body.light-mode .serif-italic-highlight,
+html.light-mode .section-title .serif-italic,
+body.light-mode .section-title .serif-italic,
+html.light-mode .kinetic-letter-front,
+body.light-mode .kinetic-letter-front {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+}
+
+html.light-mode .subhead-caps,
+body.light-mode .subhead-caps {
+  color: #333333 !important;
+  font-weight: 800 !important;
+}
+
+html.light-mode .say-hi-pill,
+body.light-mode .say-hi-pill {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
+  color: #000000 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light-mode .say-hi-pill:hover,
+body.light-mode .say-hi-pill:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(0, 0, 0, 0.45) !important;
+  color: #000000 !important;
+}
+
+html.light-mode .kinetic-letter-shadow,
+body.light-mode .kinetic-letter-shadow {
+  color: rgba(0, 0, 0, 0.18) !important;
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light-mode .kinetic-scroll-hint,
+body.light-mode .kinetic-scroll-hint {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+html.light-mode .ticker-marquee-wrapper,
+body.light-mode .ticker-marquee-wrapper {
+  background: #e50914 !important;
+  box-shadow: 0 10px 30px rgba(229, 9, 20, 0.2) !important;
+}
+
+html.light-mode .ticker-group span,
+body.light-mode .ticker-group span {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   ENHANCED STAGGERED SCROLL REVEAL SYSTEM
+   ========================================================================== */
+.scroll-reveal,
+.scroll-reveal-left,
+.scroll-reveal-right,
+.scroll-reveal-scale,
+.text-reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.scroll-reveal {
+  transform: translateY(45px);
+}
+
+.scroll-reveal-left {
+  transform: translateX(-45px);
+}
+
+.scroll-reveal-right {
+  transform: translateX(45px);
+}
+
+.scroll-reveal-scale {
+  transform: scale(0.92);
+}
+
+.text-reveal {
+  transform: translateY(30px);
+}
+
+/* Revealed Active State */
+.scroll-reveal.revealed,
+.scroll-reveal-left.revealed,
+.scroll-reveal-right.revealed,
+.scroll-reveal-scale.revealed,
+.text-reveal.revealed {
+  opacity: 1 !important;
+  transform: translate(0, 0) scale(1) !important;
+}
+

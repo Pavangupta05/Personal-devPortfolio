@@ -139,38 +139,10 @@
   </svg>
 
 
-  <!-- ===== MINIMAL LOADING SCREEN ===== -->
-  <div id="loader-overlay" style="background-color: var(--bg-primary-from); position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease;">
-    <div class="loader-logo" style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; letter-spacing: 2px;">PG</div>
-    <div style="width: 180px; height: 2px; background: var(--lg-border); overflow: hidden; border-radius: 2px;">
-      <div id="loaderBarFill" style="width: 0%; height: 100%; background: var(--text-primary); transition: width 0.1s linear;"></div>
-    </div>
-    <div id="loaderPercent" style="margin-top: 15px; font-family: 'Space Grotesk', monospace; font-size: 0.85rem; color: var(--text-secondary); letter-spacing: 1px;">0%</div>
-  </div>
+  <!-- ===== MINIMAL LOADING SCREEN (DISABLED) ===== -->
+  <div id="loader-overlay" style="display: none !important;"></div>
   <script>
-  (function() {
-    var overlay = document.getElementById('loader-overlay');
-    var barFill = document.getElementById('loaderBarFill');
-    var pctEl   = document.getElementById('loaderPercent');
-    if (!overlay || !barFill || !pctEl) return;
-    document.body.classList.add('loading');
-    var pct = 0;
-    var intv = setInterval(function() {
-      pct += Math.floor(Math.random() * 12) + 4;
-      if (pct >= 100) { pct = 100; clearInterval(intv); }
-      barFill.style.width = pct + '%';
-      pctEl.textContent = pct + '%';
-      if (pct === 100) {
-        setTimeout(function() {
-          overlay.style.opacity = '0';
-          setTimeout(function() {
-            overlay.style.display = 'none';
-            document.body.classList.remove('loading');
-          }, 600);
-        }, 400);
-      }
-    }, 45);
-  })();
+  document.body.classList.remove('loading');
   </script>
 
 
@@ -220,28 +192,31 @@
   <nav class="desktop-navbar">
     <div class="nav-glass-container">
       <div class="nav-links-pill">
-        <a href="index.html" class="nav-icon" data-page="index">
+        <a href="#home" class="nav-icon" data-page="index">
           <i class="fa-solid fa-house"></i>
           <span class="nav-tooltip">Home</span>
         </a>
-        <a href="about.html" class="nav-icon" data-page="about">
-          <i class="fa-regular fa-user"></i>
+        <a href="#about" class="nav-icon" data-page="about">
+          <i class="fa-solid fa-user"></i>
           <span class="nav-tooltip">About</span>
         </a>
-        <a href="skills.html" class="nav-icon" data-page="skills">
-          <i class="fa-solid fa-code"></i>
-          <span class="nav-tooltip">Skills</span>
-        </a>
-        <a href="experience.html" class="nav-icon" data-page="experience">
-          <i class="fa-solid fa-briefcase"></i>
-          <span class="nav-tooltip">Experience</span>
-        </a>
-        <a href="projects.html" class="nav-icon" data-page="projects">
+        <a href="#projects" class="nav-icon" data-page="projects">
           <i class="fa-regular fa-folder-open"></i>
           <span class="nav-tooltip">Projects</span>
         </a>
-
-        <a href="contact.html" class="nav-icon" data-page="contact">
+        <a href="#skills" class="nav-icon" data-page="skills">
+          <i class="fa-solid fa-code"></i>
+          <span class="nav-tooltip">Skills</span>
+        </a>
+        <a href="#experience" class="nav-icon" data-page="experience">
+          <i class="fa-solid fa-briefcase"></i>
+          <span class="nav-tooltip">Experience</span>
+        </a>
+        <a href="#certificates" class="nav-icon" data-page="certificates">
+          <i class="fa-solid fa-certificate"></i>
+          <span class="nav-tooltip">Certificates</span>
+        </a>
+        <a href="#contact" class="nav-icon" data-page="contact">
           <i class="fa-solid fa-envelope"></i>
           <span class="nav-tooltip">Contact</span>
         </a>
@@ -279,11 +254,11 @@
       <span class="mdn-brand" id="mdnBrand">Pavan.</span>
       
       <div class="mdn-links" id="mdnLinks">
-        
-        <a href="skills.html" onclick="toggleMdn()">Skills.</a>
-        <a href="experience.html" onclick="toggleMdn()">Work.</a>
-        <a href="projects.html" onclick="toggleMdn()">Projects.</a>
-        <a href="contact.html" onclick="toggleMdn()">Contact.</a>
+        <a href="#projects" onclick="toggleMdn()">Projects.</a>
+        <a href="#skills" onclick="toggleMdn()">Skills.</a>
+        <a href="#experience" onclick="toggleMdn()">Experience.</a>
+        <a href="#certificates" onclick="toggleMdn()">Certificates.</a>
+        <a href="#contact" onclick="toggleMdn()">Contact.</a>
       </div>
     </div>
 
@@ -319,23 +294,25 @@
     <!-- Text content sits on top -->
     <div class="hero-container">
       <div class="home-content">
-      <!-- Available for Work Badge -->
-      <div class="available-badge" id="availableBadge">
-        <span class="badge-dot"></span>
-        <span class="badge-text">Available for Work</span>
-        <span class="badge-divider">|</span>
-        <span class="badge-time" id="jaipur-time">IST</span>
+      <!-- SAY HI GLASS PILL BADGE -->
+      <a href="https://github.com/Pavangupta05" target="_blank" rel="noopener" class="say-hi-pill">
+        SAY HI ON &nbsp;<i class="fa-brands fa-github"></i> &nbsp;&mdash;
+      </a>
+
+      <!-- GIANT HERO DISPLAY TITLE -->
+      <h1 class="hero-giant-title">
+        PAVAN KUMAR GUPTA
+      </h1>
+
+      <!-- IMPACT DUAL TYPOGRAPHY TAGLINE -->
+      <div class="hero-impact-subhead">
+        <span class="subhead-caps">I DESIGN AND BUILD PRODUCTS THAT</span>
+        <span class="serif-italic-highlight">make real impact.</span>
       </div>
-      <p class="hero-greeting text-reveal">Hi, I'm</p>
-      <div class="typing-hero">
-        <h1 class="typing-title">
-          <span id="typingText" class="typing-text">Pavan Kumar Gupta</span>
-        </h1>
-      </div>
-      <p class="home-subtitle shine-animation">Full Stack Developer who builds <span class="highlight-interactive">interactive</span> &amp; <span class="highlight-delightful">delightful</span> web experiences</p>
+
       <div class="home-cta">
-        <a href="projects.html" class="btn btn-primary">View Projects</a>
-        <a href="contact.html" class="btn btn-secondary">Contact Me</a>
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="#contact" class="btn btn-secondary">Contact Me</a>
       </div>
 
       <!-- ===== ABOUT ME TERMINAL MAC CARD ===== -->
@@ -397,6 +374,772 @@
     </div>
   </section>
 
+  <!-- ===== DEDICATED ABOUT ME SECTION ===== -->
+  <section id="about" class="section">
+    <h2 class="section-title text-reveal">About <span class="serif-italic">me.</span></h2>
+    <div class="about-container">
+      <div class="about-img">
+        <div class="profile-photo-wrap" id="spotlightWrap">
+          <img src="Base_image.png" alt="Pavan's Profile Base Photo" class="photo-base">
+          <img src="Reaveal_image.png" alt="Pavan's Profile Reveal Photo" class="photo-reveal" aria-hidden="true">
+        </div>
+      </div>
+      <div class="about-text">
+        <div class="about-tag-badge">
+          <span class="pulse-dot"></span> ABOUT ME
+        </div>
+        <h3 class="about-heading" style="font-size: 1.8rem; font-weight: 800; color: var(--text-primary); margin-bottom: 18px;">Building Scalable Applications &amp; Modern Digital Experiences</h3>
+        
+        <p class="text-reveal about-description">
+          I am a passionate <strong>Full Stack MERN Developer</strong> specializing in architecting high-performance, visually captivating, and user-centric web applications. Currently pursuing my B.Tech in IT at <strong>JECRC, Jaipur (2023–2027)</strong>, I combine technical rigor with intuitive UI design to bring ideas to life.
+        </p>
+        <p class="text-reveal about-description" style="margin-top: 14px;">
+          My focus is on engineering production-grade solutions that solve real problems. From real-time communication platforms like <strong>TalkNow</strong> to intelligent AI tools like <strong>StarNote</strong>, I write clean, modular, and scalable code built for speed and reliability.
+        </p>
+
+        <!-- Quick Stats Grid -->
+        <div class="about-stats-grid">
+          <div class="stat-card">
+            <span class="stat-number">10+</span>
+            <span class="stat-label">Full Stack Projects</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">MERN + AI</span>
+            <span class="stat-label">Core Tech Stack</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Production Focus</span>
+          </div>
+        </div>
+
+        <div class="about-actions" style="margin-top: 24px; display: flex; gap: 16px; flex-wrap: wrap;">
+          <a class="btn btn-primary" href="https://drive.google.com/file/d/1lHUpTwmB_lh70vVUDstkVhUbc4LURoE6/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-download"></i> Download Resume
+          </a>
+          <a class="btn btn-secondary" href="#contact">
+            <i class="fa-solid fa-paper-plane"></i> Let's Talk
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCROLL-DRIVEN KINETIC HERO TEXT SECTION (BELOW ABOUT ME) -->
+  <section id="kinetic-hero" class="kinetic-hero-section">
+    <div class="kinetic-hero-viewport">
+      <div class="kinetic-text-row" id="kineticTextRow"></div>
+    </div>
+    <div class="kinetic-scroll-hint">
+      <span>Scroll</span>
+      <i class="fa-solid fa-arrow-down"></i>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS SECTION (HIGHEST PRIORITY FOR FRESHER) ===== -->
+  <section id="projects" class="section portfolio-stack-section">
+    <h2 class="section-title text-reveal">Featured <span class="serif-italic">projects.</span></h2>
+    
+    <div class="project-filter-container">
+      <button class="project-filter-pill active" data-filter="all">All Projects</button>
+      <button class="project-filter-pill" data-filter="mern">MERN Stack</button>
+      <button class="project-filter-pill" data-filter="ai">AI / ML</button>
+      <button class="project-filter-pill" data-filter="react">React.js</button>
+      <button class="project-filter-pill" data-filter="sockets">WebSockets</button>
+    </div>
+    
+    <div class="portfolio-stack-container">
+      <div class="stack-project-card sticky-card" data-category="mern ai react">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/StarNote">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">StarNote</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>StarNote AI</h3>
+            <p class="desc-line">AI-powered Smart Study Platform that transforms the way you learn.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Generates comprehensive summaries from uploaded materials</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Interactive quizzes to test your knowledge</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Automated flashcard creation for spaced repetition</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-brands fa-node-js"></i> Node.js</span>
+              <span class="badge"><i class="fa-solid fa-brain"></i> Gemini API</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://starnote-ai.vercel.app" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05?tab=repositories" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="StarNote.png" alt="StarNote AI">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-project-card sticky-card" data-category="mern sockets react">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/ChatApp">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">TalkNow</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>TalkNow Chat</h3>
+            <p class="desc-line">A high-performance Real-Time Chat Application featuring instant messaging.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> WebSockets for zero-latency communication</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Online user presence tracking in real-time</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Dynamic group chats with role-based access</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-bolt"></i> Socket.io</span>
+              <span class="badge"><i class="fa-brands fa-node"></i> Express</span>
+              <span class="badge"><i class="fa-solid fa-database"></i> MongoDB</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://chat-app-frontend-kappa-tan.vercel.app" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05?tab=repositories" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="ChatApp.png" alt="TalkNow Chat">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-project-card sticky-card" data-category="mern ai">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/CivicEye">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">CivicEye</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>Smart Civic Eye</h3>
+            <p class="desc-line">An AI-driven Civic Issue Reporting System that empowers citizens.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Automated AI categorization for fast routing</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Geolocation tracking for precise issue mapping</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Dashboard for municipal authorities to track resolution</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> MERN Stack</span>
+              <span class="badge"><i class="fa-solid fa-brain"></i> AI Classification</span>
+              <span class="badge"><i class="fa-solid fa-map-location-dot"></i> Geolocation</span>
+            </div>
+            <div class="project-actions">
+              <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> Repository</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="SmartCivicEye.png" alt="Smart Civic Eye">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/ArtSpace-Drawing-App">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">ArtSpace-Drawing-App</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>ArtSpace Drawing App</h3>
+            <p class="desc-line">An interactive web drawing and canvas application built with React and HTML5 Canvas.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Freehand drawing tools with brush size, eraser, and color picker</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Canvas undo/redo state management and instant clear canvas</li>
+              <li><i class="fa-solid fa-chevron-right"></i> High-resolution artwork export and image download</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-paintbrush"></i> HTML5 Canvas</span>
+              <span class="badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://art-space-drawing-app.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05/ArtSpace-Drawing-App" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="ArtSpace.png" alt="ArtSpace Drawing App">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 5: Portfolio OS -->
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/portfolio">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">Portfolio</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>Portfolio OS</h3>
+            <p class="desc-line">A cinematic, interactive portfolio featuring advanced GSAP scroll mechanics.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Custom 3D DOM stacking physics and parallax</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Dynamic theme injection with glassmorphism</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Fully responsive grid architectures</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-js"></i> Vanilla JS</span>
+              <span class="badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+              <span class="badge"><i class="fa-solid fa-bolt"></i> GSAP ScrollTrigger</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://github.com/Pavangupta05/portfolio" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="Portfolio.png" alt="Portfolio OS">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 6: Weather App -->
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/weather-app">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">weather-app</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>Weather App</h3>
+            <p class="desc-line">Real-time weather forecasting and meteorological data dashboard built with React.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Live location-based weather tracking and city search</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Detailed metrics including humidity, wind speed, pressure, and visibility</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Responsive visual themes responding to real-time weather conditions</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-cloud-sun"></i> Weather API</span>
+              <span class="badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+              <span class="badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://weather-app-snowy-sigma-22.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05/weather-app" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="WeatherApp.png" alt="Weather App">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 7: Pomodoro Timer -->
+      <div class="stack-project-card sticky-card" data-category="react mern">
+        <div class="card-inner">
+          <div class="sticky-card-overlay"></div>
+          <div class="card-left">
+            <div class="github-repo-badge" data-repo="Pavangupta05/Pomodoro-timer-">
+              <i class="fa-brands fa-github"></i> <span class="repo-name">Pomodoro-timer-</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-star" style="color: #eac54f;"></i> <span class="repo-stars">--</span>
+              <span style="opacity: 0.4;">|</span>
+              <i class="fa-solid fa-code-fork" style="color: #00e6ff;"></i> <span class="repo-forks">--</span>
+            </div>
+            <h3>Pomodoro Timer</h3>
+            <p class="desc-line">A sleek, productive Pomodoro timer web application designed for peak focus and time management.</p>
+            <ul class="project-features">
+              <li><i class="fa-solid fa-chevron-right"></i> Customizable work &amp; short/long break timer intervals</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Audio alerts and visual countdown progress indicators</li>
+              <li><i class="fa-solid fa-chevron-right"></i> Session stats tracking and distraction-free responsive design</li>
+            </ul>
+            <div class="badge-list outline-badges">
+              <span class="badge"><i class="fa-brands fa-react"></i> React</span>
+              <span class="badge"><i class="fa-solid fa-stopwatch"></i> Timer API</span>
+              <span class="badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+              <span class="badge"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://pomodoro-timer-ten-ashen.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site</a>
+              <a href="https://github.com/Pavangupta05/Pomodoro-timer-" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="browser-mockup">
+              <div class="browser-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <img src="Pomodoro.png" alt="Pomodoro Timer">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AUTO-MOVABLE RED TICKER MARQUEE STRIP (BELOW PROJECTS) ===== -->
+  <div class="ticker-marquee-wrapper">
+    <div class="ticker-marquee-track">
+      <!-- Group 1 -->
+      <div class="ticker-group">
+        <span>FUTURE-PROOF</span> <span class="ticker-star">✦</span>
+        <span>SEO-READY</span> <span class="ticker-star">✦</span>
+        <span>IMMERSIVE</span> <span class="ticker-star">✦</span>
+        <span>USER-FRIENDLY</span> <span class="ticker-star">✦</span>
+        <span>ADAPTIVE</span> <span class="ticker-star">✦</span>
+        <span>FLUID</span> <span class="ticker-star">✦</span>
+        <span>HIGH PERFORMANCE</span> <span class="ticker-star">✦</span>
+        <span>ACCESSIBLE</span> <span class="ticker-star">✦</span>
+      </div>
+      <!-- Group 2 (Duplicate for 100% Seamless Infinite Loop) -->
+      <div class="ticker-group" aria-hidden="true">
+        <span>FUTURE-PROOF</span> <span class="ticker-star">✦</span>
+        <span>SEO-READY</span> <span class="ticker-star">✦</span>
+        <span>IMMERSIVE</span> <span class="ticker-star">✦</span>
+        <span>USER-FRIENDLY</span> <span class="ticker-star">✦</span>
+        <span>ADAPTIVE</span> <span class="ticker-star">✦</span>
+        <span>FLUID</span> <span class="ticker-star">✦</span>
+        <span>HIGH PERFORMANCE</span> <span class="ticker-star">✦</span>
+        <span>ACCESSIBLE</span> <span class="ticker-star">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SKILLS SECTION ===== -->
+  <section id="skills" class="section">
+    <div class="skills-split-layout">
+      <!-- LEFT COLUMN: TECH SKILLS -->
+      <div class="tech-skills-column">
+        <h2 class="section-title text-reveal" style="text-align: left; margin-bottom: 20px;">Tech <span class="serif-italic">skills.</span></h2>
+        
+        <!-- Live Skill Search Bar -->
+        <div class="skill-search-wrapper" style="margin-bottom: 16px; position: relative;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.9rem;"></i>
+          <input type="text" id="skillSearchInput" placeholder="Search skills (e.g. React, Node, Python, MongoDB)..." style="width: 100%; padding: 12px 16px 12px 42px; border-radius: 50px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--text-primary); font-size: 0.95rem; font-family: inherit; transition: all 0.3s ease; outline: none;">
+        </div>
+
+        <!-- Category Deck -->
+        <div class="skill-category-deck" id="skillsGrid">
+          <!-- 1. Frontend Card -->
+          <div class="category-card" data-category="frontend">
+            <div class="category-header">
+              <div class="category-icon-badge">
+                <i class="fa-solid fa-desktop"></i>
+              </div>
+              <h3>Frontend</h3>
+            </div>
+            <div class="category-skills-grid">
+              <div class="skill-pill-item" data-category="frontend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5">
+                </div>
+                <span class="skill-label">HTML5</span>
+              </div>
+              <div class="skill-pill-item" data-category="frontend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3">
+                </div>
+                <span class="skill-label">CSS3</span>
+              </div>
+              <div class="skill-pill-item" data-category="frontend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
+                </div>
+                <span class="skill-label">JavaScript</span>
+              </div>
+              <div class="skill-pill-item" data-category="frontend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React">
+                </div>
+                <span class="skill-label">React</span>
+              </div>
+              <div class="skill-pill-item" data-category="frontend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" alt="Bootstrap">
+                </div>
+                <span class="skill-label">Bootstrap</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Backend Card -->
+          <div class="category-card" data-category="backend">
+            <div class="category-header">
+              <div class="category-icon-badge" style="color: #32d74b; background: rgba(50, 215, 75, 0.1); border-color: rgba(50, 215, 75, 0.2);">
+                <i class="fa-solid fa-server"></i>
+              </div>
+              <h3>Backend</h3>
+            </div>
+            <div class="category-skills-grid">
+              <div class="skill-pill-item" data-category="backend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js">
+                </div>
+                <span class="skill-label">Node.js</span>
+              </div>
+              <div class="skill-pill-item" data-category="backend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express.js" style="background: white; border-radius: 50%; padding: 3px;">
+                </div>
+                <span class="skill-label">Express</span>
+              </div>
+              <div class="skill-pill-item" data-category="backend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB">
+                </div>
+                <span class="skill-label">MongoDB</span>
+              </div>
+              <div class="skill-pill-item" data-category="backend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
+                </div>
+                <span class="skill-label">Python</span>
+              </div>
+              <div class="skill-pill-item" data-category="backend">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++">
+                </div>
+                <span class="skill-label">C++</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Tools & DevOps Card -->
+          <div class="category-card" data-category="tools">
+            <div class="category-header">
+              <div class="category-icon-badge" style="color: #bf5af2; background: rgba(191, 90, 242, 0.1); border-color: rgba(191, 90, 242, 0.2);">
+                <i class="fa-solid fa-wrench"></i>
+              </div>
+              <h3>Tools & DevOps</h3>
+            </div>
+            <div class="category-skills-grid">
+              <div class="skill-pill-item" data-category="tools">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VS Code">
+                </div>
+                <span class="skill-label">VS Code</span>
+              </div>
+              <div class="skill-pill-item" data-category="tools">
+                <div class="pill-squircle">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma">
+                </div>
+                <span class="skill-label">Figma</span>
+              </div>
+              <div class="skill-pill-item" data-category="tools">
+                <div class="pill-squircle">
+                  <svg viewBox="0 0 32 32" width="28" height="28"><circle cx="16" cy="16" r="16" fill="#FF6C37"/><path d="M21.3 11.8l-9.5 5.5v-11l9.5 5.5z" fill="#fff"/></svg>
+                </div>
+                <span class="skill-label">Postman</span>
+              </div>
+              <div class="skill-pill-item" data-category="tools">
+                <div class="pill-squircle">
+                  <svg viewBox="0 0 100 100" width="28" height="28"><rect width="100" height="100" rx="20" fill="#1A1A1A"/><text y="68" x="50" text-anchor="middle" font-size="56" fill="#00D4FF">⌘</text></svg>
+                </div>
+                <span class="skill-label">Cursor AI</span>
+              </div>
+              <div class="skill-pill-item" data-category="tools">
+                <div class="pill-squircle">
+                  <svg viewBox="0 0 100 100" width="28" height="28"><rect width="100" height="100" rx="20" fill="#EA4B71"/><text y="72" x="50" text-anchor="middle" font-size="60" font-weight="bold" fill="white" font-family="monospace">n8n</text></svg>
+                </div>
+                <span class="skill-label">n8n</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: SOFT SKILLS -->
+      <div class="soft-skills-column">
+        <h2 class="section-title text-reveal" style="text-align: left; margin-bottom: 20px;">Soft <span class="serif-italic">skills.</span></h2>
+        <div class="soft-skills-container">
+          <div class="soft-skill-item">
+            <div class="soft-skill-icon" style="background: rgba(10, 132, 255,0.12);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#0A84FF"><path d="M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14l4 4V4a2 2 0 0 0-2-2z"/></svg>
+            </div>
+            <div class="soft-skill-info">
+              <h4>Communication</h4>
+              <p>Clear, effective collaboration with teams.</p>
+            </div>
+          </div>
+
+          <div class="soft-skill-item">
+            <div class="soft-skill-icon" style="background: rgba(255,159,10,0.12);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#FF9F0A"><path d="M17.5 12a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zM4 7h7v2H4zm0 4h7v2H4zM2 3h20v2H2z"/></svg>
+            </div>
+            <div class="soft-skill-info">
+              <h4>Problem Solving</h4>
+              <p>Analytical approach to debugging architecture.</p>
+            </div>
+          </div>
+
+          <div class="soft-skill-item">
+            <div class="soft-skill-icon" style="background: rgba(48,209,88,0.12);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#30D158"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm.5 14H11v-5.5h2V16zm0-7H11V7h2v2z"/></svg>
+            </div>
+            <div class="soft-skill-info">
+              <h4>Time Management</h4>
+              <p>Meeting tight deadlines with efficiency.</p>
+            </div>
+          </div>
+
+          <div class="soft-skill-item">
+            <div class="soft-skill-icon" style="background: rgba(191, 90, 242,0.12);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#BF5AF2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93V18a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 13H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 19.93z"/></svg>
+            </div>
+            <div class="soft-skill-info">
+              <h4>Adaptability</h4>
+              <p>Quickly learning new stacks and pivoting.</p>
+            </div>
+          </div>
+
+          <div class="soft-skill-item">
+            <div class="soft-skill-icon" style="background: rgba(255,55,95,0.12);">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#FF375F"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+            <div class="soft-skill-info">
+              <h4>Teamwork</h4>
+              <p>Thriving in agile pair-programming.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===== EXPERIENCE & JOURNEY SECTION ===== -->
+  <section id="experience" class="section timeline-section">
+    <h2 class="section-title text-reveal">Career &amp; <span class="serif-italic">experience.</span></h2>
+    <div class="timeline">
+      <div class="timeline-item scroll-reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>Full Stack Development Intern</h3>
+          <p class="meta"><span>Upflairs Pvt. Ltd.</span> &bull; <span>July 2025 &ndash; Aug 2025</span></p>
+          <p>Building scalable MERN stack applications and working with RESTful APIs.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item scroll-reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>Freelance Web Developer</h3>
+          <p class="meta"><span>Self-employed</span> &bull; <span>2024 &ndash; Present</span></p>
+          <p>Engineered client-facing web solutions with React, JavaScript, HTML, and CSS &mdash; optimizing for performance, responsiveness, and maintainability.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item scroll-reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>B.Tech in Information Technology</h3>
+          <p class="meta"><span>JECRC, Jaipur</span> &bull; <span>2023 &ndash; 2027</span></p>
+        </div>
+      </div>
+
+      <div class="timeline-item scroll-reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>Class XII (Science - PCM)</h3>
+          <p class="meta"><span>Vivekanand Sanskar Sr. Sec. School</span> &bull; <span>2021 &ndash; 2022</span></p>
+        </div>
+      </div>
+
+      <div class="timeline-item scroll-reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>Class X</h3>
+          <p class="meta"><span>Vivekanand Sanskar Sr. Sec. School</span> &bull; <span>2019 &ndash; 2020</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CERTIFICATES SECTION ===== -->
+  <section id="certificates" class="section">
+    <h2 class="section-title text-reveal">Verified <span class="serif-italic">certifications.</span></h2>
+    <div class="certificates-container">
+      <div class="certificate-card" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
+        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openPortfolioLightbox('./JAVA.jpg', 'Java Programming Certificate')">
+          <img src="./JAVA.jpg" alt="Java Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 190px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        </div>
+        <div class="content" style="padding: 22px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px; color: var(--text-primary);">Java Programming</h3>
+          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 18px;">Infosys Springboard</p>
+          <div>
+            <a href="./JAVA.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
+              <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px; font-size: 0.85rem;"></i> View Certificate
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="certificate-card" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
+        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openPortfolioLightbox('./Python.jpg', 'Python Programming Certificate')">
+          <img src="./Python.jpg" alt="Python Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 190px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        </div>
+        <div class="content" style="padding: 22px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px; color: var(--text-primary);">Python Programming</h3>
+          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 18px;">Kaizen Innovations</p>
+          <div>
+            <a href="./Python.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
+              <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px; font-size: 0.85rem;"></i> View Certificate
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="certificate-card" style="padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left;">
+        <div class="cert-img-wrapper" style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-top-left-radius: inherit; border-top-right-radius: inherit; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openPortfolioLightbox('./Upflairs.jpg', 'Full Stack Web Developer Certificate')">
+          <img src="./Upflairs.jpg" alt="Full Stack Certificate" loading="lazy" class="img-skeleton" onload="this.classList.remove('img-skeleton')" style="width: 100%; height: 190px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        </div>
+        <div class="content" style="padding: 22px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px; color: var(--text-primary);">Full Stack Web Developer</h3>
+          <p class="meta" style="color: #a0a5cc; font-size: 0.9rem; margin-bottom: 18px;">Upflairs Pvt. Ltd.</p>
+          <div>
+            <a href="./Upflairs.jpg" target="_blank" rel="noopener noreferrer" class="cert-link" style="color: var(--text-primary); font-size: 0.95rem; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: color 0.3s ease;">
+              <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px; font-size: 0.85rem;"></i> View Certificate
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT SECTION ===== -->
+  <section id="contact" class="contact">
+    <h2 class="section-title text-reveal">Let's build <span class="serif-italic">together.</span></h2>
+    <div class="get-in-touch">
+      <div class="touch-item">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+        </svg>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=pavangupta150605@gmail.com" target="_blank" rel="noopener noreferrer">pavangupta150605@gmail.com</a>
+        <button id="copy-email-btn" onclick="copyEmail()" title="Copy email address" style="background: none; border: 1px solid rgba(0,230,255,0.3); color: #00e6ff; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; margin-left: 8px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="fa-regular fa-copy"></i>
+        </button>
+      </div>
+      <div class="touch-item">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8zm0 10.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
+        </svg>
+        <span>Jaipur, Rajasthan, India</span>
+      </div>
+      <div class="touch-item">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.1.37 2.29.57 3.58.57a1 1 0 0 1 1 1V21a1 1 0 0 1-1 1C10.85 22 2 13.15 2 2a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.29.2 2.48.57 3.58a1 1 0 0 1-.24 1.01l-2.21 2.2z" />
+        </svg>
+        <span>+91-8005872338 (Available for Freelance Projects & Internship Opportunities)</span>
+      </div>
+    </div>
+
+    <!-- Calendly Integration for HR/Recruiters -->
+    <div class="recruiter-section">
+      <div class="recruiter-card">
+        <h3 style="margin-bottom: 12px; color: var(--accent); font-size: 1.4rem;">Get in Touch</h3>
+        <p style="margin-bottom: 24px; color: #d2d7e5; font-size: 1.05rem;">Let's Start the Conversation</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://calendly.com/pavangupta150605/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-calendly">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+            Schedule via Calendly
+          </a>
+          <a href="tel:+918005872338" class="btn btn-secondary btn-call">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+            Call Now
+          </a>
+          <a href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AN:Gupta;Pavan%0AFN:Pavan Kumar Gupta%0ATITLE:Full Stack Developer%0AEMAIL:pavangupta150605@gmail.com%0ATEL:+918005872338%0AURL:https://github.com/Pavangupta05%0AEND:VCARD" download="Pavan_Kumar_Gupta.vcf" class="btn btn-secondary" style="border-color: rgba(48,209,88,0.3); color: #30D158;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 8px;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm5 12H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V18z"/></svg>
+            Save Contact
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-divider scroll-reveal">
+      <div class="divider-line"></div>
+      <span>OR SEND A MESSAGE</span>
+      <div class="divider-line"></div>
+    </div>
+    <form class="contact-form ios-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="86f640ca-e776-49de-8471-917bc6cb8fd4">
+      <div class="form-group">
+        <label for="nameInput" class="form-label">Full Name</label>
+        <input type="text" name="name" id="nameInput" placeholder="Enter your full name" required minlength="2" />
+        <span class="form-error" id="nameError"></span>
+      </div>
+      <div class="form-group">
+        <label for="emailInput" class="form-label">Email Address</label>
+        <input type="email" name="email" id="emailInput" placeholder="Enter your email" required />
+        <span class="form-error" id="emailError"></span>
+      </div>
+      <div class="form-group">
+        <label for="phoneInput" class="form-label">Phone Number</label>
+        <input type="tel" name="phone" id="phoneInput" placeholder="Enter your phone number" required />
+        <span class="form-error" id="phoneError"></span>
+      </div>
+      <div class="form-group">
+        <label for="messageInput" class="form-label">Message</label>
+        <textarea name="message" id="messageInput" rows="5" placeholder="Share your query or message here..." required minlength="10"></textarea>
+        <span class="form-error" id="messageError"></span>
+      </div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">
+        <span class="btn-text">Send Message</span>
+        <i class="fa-solid fa-circle-notch fa-spin spinner" style="display: none;"></i>
+      </button>
+    </form>
+  </section>
+
 
   <button id="scrollTopBtn" title="Go to top">▲</button>
 
@@ -426,6 +1169,7 @@
   </div>
 
   <script type="module" src="./script.js"></script>
+  <script src="./kinetic-hero.js"></script>
 
   <!-- ===== TERMINAL OVERLAY ===== -->
   <div class="terminal-overlay" id="terminalOverlay">

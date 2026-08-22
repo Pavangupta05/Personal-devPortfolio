@@ -139,38 +139,10 @@
   </svg>
 
 
-  <!-- ===== MINIMAL LOADING SCREEN ===== -->
-  <div id="loader-overlay" style="background-color: var(--bg-primary-from); position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease;">
-    <div class="loader-logo" style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; letter-spacing: 2px;">PG</div>
-    <div style="width: 180px; height: 2px; background: var(--lg-border); overflow: hidden; border-radius: 2px;">
-      <div id="loaderBarFill" style="width: 0%; height: 100%; background: var(--text-primary); transition: width 0.1s linear;"></div>
-    </div>
-    <div id="loaderPercent" style="margin-top: 15px; font-family: 'Space Grotesk', monospace; font-size: 0.85rem; color: var(--text-secondary); letter-spacing: 1px;">0%</div>
-  </div>
+  <!-- ===== MINIMAL LOADING SCREEN (DISABLED) ===== -->
+  <div id="loader-overlay" style="display: none !important;"></div>
   <script>
-  (function() {
-    var overlay = document.getElementById('loader-overlay');
-    var barFill = document.getElementById('loaderBarFill');
-    var pctEl   = document.getElementById('loaderPercent');
-    if (!overlay || !barFill || !pctEl) return;
-    document.body.classList.add('loading');
-    var pct = 0;
-    var intv = setInterval(function() {
-      pct += Math.floor(Math.random() * 12) + 4;
-      if (pct >= 100) { pct = 100; clearInterval(intv); }
-      barFill.style.width = pct + '%';
-      pctEl.textContent = pct + '%';
-      if (pct === 100) {
-        setTimeout(function() {
-          overlay.style.opacity = '0';
-          setTimeout(function() {
-            overlay.style.display = 'none';
-            document.body.classList.remove('loading');
-          }, 600);
-        }, 400);
-      }
-    }, 45);
-  })();
+  document.body.classList.remove('loading');
   </script>
 
 
