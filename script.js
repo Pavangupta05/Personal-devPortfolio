@@ -3,6 +3,38 @@ window.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("dark-mode");
   document.body.style.overflow = "auto";
 
+  // ── ULTRA-SMOOTH SCROLL ENGINE (LENIS + GSAP SCROLLTRIGGER) ───────────────
+  if (typeof Lenis !== 'undefined') {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+    window.lenis = lenis;
+
+    if (window.ScrollTrigger) {
+      lenis.on('scroll', ScrollTrigger.update);
+    }
+
+    if (window.gsap) {
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+    }
+  }
+
 
   // ── LIVE IST CLOCK ──────────────────────────────────────────────────────────
   function updateJaipurTime() {
@@ -2756,7 +2788,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
           e.preventDefault();
-          targetElement.scrollIntoView({ behavior: 'smooth' });
+          if (window.lenis) {
+            window.lenis.scrollTo(targetElement, { offset: -70, duration: 1.2 });
+          } else {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+          }
         }
       }
     });
