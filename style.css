@@ -8152,100 +8152,47 @@ body.light-mode .profile-photo-wrap {
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  padding: 8px 18px !important;
+  padding: 6px 14px !important;
   border-radius: 9999px !important;
   pointer-events: all;
   z-index: 2;
 
-  /*
-   * iOS 26 Liquid Glass on Dark Background Recipe:
-   * Key insight: on dark page, glass must be LIGHTER than background.
-   * Use a semi-opaque white/gray tint so it visually separates from dark bg.
-   */
+  /* Genuine Apple visionOS / iOS 26 Liquid Frosted Crystal Glass */
+  background: rgba(14, 18, 30, 0.55) !important;
+  backdrop-filter: blur(28px) saturate(200%) brightness(1.15) contrast(1.05) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.15) contrast(1.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
 
-  /* Medium opacity gray — lighter than dark bg, frosted glass look */
-  background: linear-gradient(
-    175deg,
-    rgba(255,255,255,0.22) 0%,
-    rgba(200,205,220,0.14) 50%,
-    rgba(150,155,180,0.18) 100%
-  ) !important;
-
-  /* Chromatic blur — blurs + brightens what's behind */
-  backdrop-filter: blur(20px) saturate(160%) brightness(1.4) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.4) !important;
-
-  /* Crisp white glass rim — very important for glass illusion */
-  border: 1px solid rgba(255,255,255,0.45) !important;
-
-  /* Deep outer shadow + crisp inner specular lines */
   box-shadow:
-    /* Outer atmospheric depth */
-    0 20px 50px rgba(0,0,0,0.5),
-    0 4px 14px rgba(0,0,0,0.3),
-    /* Top inner specular — the most important glass cue */
-    inset 0 1.5px 0 rgba(255,255,255,0.90),
-    /* Bottom inner refraction shadow */
-    inset 0 -1px 0 rgba(0,0,0,0.18),
-    /* Side inner edge lights */
-    inset 1px 0 0 rgba(255,255,255,0.20),
-    inset -1px 0 0 rgba(255,255,255,0.20) !important;
+    0 20px 50px -10px rgba(0, 0, 0, 0.55),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3) !important;
 
-  transition: box-shadow 0.35s cubic-bezier(0.25,1,0.5,1);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   overflow: visible;
-  /* NO isolation, NO filter, NO mix-blend-mode — all break backdrop-filter */
 }
 
-/* Dynamic mouse-follow specular highlight */
+/* Subtle mouse tracking highlight */
 .nav-glass-container::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 9999px;
   background: radial-gradient(
-    ellipse 75% 50% at var(--lg-mx, 50%) 0%,
-    rgba(255,255,255,0.25) 0%,
-    rgba(255,255,255,0.06) 45%,
-    transparent 75%
+    ellipse 70% 50% at var(--lg-mx, 50%) -10%,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 70%
   );
   pointer-events: none;
-  z-index: 3;
-  transition: opacity 0.12s ease;
+  z-index: 2;
+  transition: opacity 0.15s ease;
 }
 
-/* ── Specular Glass Dome (top crescent glare) ─────────────────── */
-.nav-glass-specular {
-  position: absolute;
-  top: 2px;
-  left: 10%;
-  right: 10%;
-  height: 40%;
-  border-radius: 9999px 9999px 60% 60%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.65) 0%,
-    rgba(255,255,255,0.15) 60%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 4;
-}
-
-/* ── Bottom Edge Refraction ───────────────────────────────────── */
+/* Clean specular reflections without milky overlays */
+.nav-glass-specular,
 .nav-glass-shadow {
-  position: absolute;
-  bottom: 2px;
-  left: 15%;
-  right: 15%;
-  height: 20%;
-  border-radius: 0 0 9999px 9999px;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.15) 0%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 4;
+  display: none !important;
 }
 
 /* ── Liquid Morph Lens (GSAP-animated, follows hover) ─────────── */
@@ -8263,43 +8210,35 @@ body.light-mode .profile-photo-wrap {
 
   background: radial-gradient(
     circle at 35% 25%,
-    rgba(255,255,255,0.50) 0%,
-    rgba(255,255,255,0.20) 50%,
-    rgba(100,180,255,0.08) 100%
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(0, 230, 255, 0.08) 100%
   );
-  backdrop-filter: blur(8px) brightness(1.3);
-  -webkit-backdrop-filter: blur(8px) brightness(1.3);
-  border: 1px solid rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px) brightness(1.25);
+  -webkit-backdrop-filter: blur(10px) brightness(1.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow:
-    inset 0 1.5px 1px rgba(255,255,255,0.85),
-    inset 0 -1px 2px rgba(0,0,0,0.20),
-    0 6px 20px rgba(0,0,0,0.35);
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 16px rgba(0, 230, 255, 0.2);
 }
 
 /* ── Light Mode ───────────────────────────────────────────────── */
 body.light-mode .nav-glass-container {
-  background: linear-gradient(
-    175deg,
-    rgba(255,255,255,0.80) 0%,
-    rgba(240,243,255,0.65) 100%
-  ) !important;
-  backdrop-filter: blur(20px) saturate(180%) brightness(1.04) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.04) !important;
-  border: 1px solid rgba(255,255,255,0.90) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(28px) saturate(190%) brightness(1.04) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
   box-shadow:
-    0 10px 35px rgba(0,0,0,0.10),
-    0 3px 10px rgba(0,0,0,0.07),
-    inset 0 1.5px 0 rgba(255,255,255,1),
-    inset 0 -1px 0 rgba(0,0,0,0.05) !important;
+    0 12px 35px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04) !important;
 }
 
-body.light-mode .nav-glass-specular {
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.95) 0%,
-    rgba(255,255,255,0.30) 55%,
-    transparent 100%
-  );
+body.light-mode .nav-liquid-lens {
+  background: rgba(0, 102, 255, 0.08);
+  border: 1px solid rgba(0, 102, 255, 0.2);
+  box-shadow: 0 0 14px rgba(0, 102, 255, 0.2);
 }
 
 /* ── Nav Links Row ───────────────────────────────────────────── */
@@ -8309,7 +8248,7 @@ body.light-mode .nav-glass-specular {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 2px !important;
+  gap: 3px !important;
 }
 
 /* ── Icon Buttons ────────────────────────────────────────────── */
@@ -8321,7 +8260,7 @@ body.light-mode .nav-glass-specular {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  color: rgba(255,255,255,0.80) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
   font-size: 1rem;
   text-decoration: none;
   background: transparent;
@@ -8329,7 +8268,7 @@ body.light-mode .nav-glass-specular {
   cursor: pointer;
   transition:
     color 0.2s ease,
-    transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
     background 0.2s ease;
   padding: 0 !important;
   margin: 0 !important;
@@ -8337,38 +8276,40 @@ body.light-mode .nav-glass-specular {
   outline: none;
 }
 
-/* Spring pop + glass button glow on hover */
+/* Spring pop on hover */
 .nav-links-pill .nav-icon:hover {
   color: #ffffff !important;
-  transform: translateY(-2px) scale(1.14) !important;
-  background: rgba(255,255,255,0.12) !important;
+  transform: translateY(-2px) scale(1.12) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .nav-links-pill .nav-icon.active {
-  color: #ffffff !important;
-  background: rgba(255,255,255,0.10) !important;
+  color: #00E6FF !important;
+  text-shadow: 0 0 12px rgba(0, 230, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 body.light-mode .nav-links-pill .nav-icon {
-  color: #1a1f36 !important;
+  color: #334155 !important;
 }
 
 body.light-mode .nav-links-pill .nav-icon:hover,
 body.light-mode .nav-links-pill .nav-icon.active {
-  color: #0055e5 !important;
-  background: rgba(0,85,229,0.08) !important;
+  color: #0066ff !important;
+  background: rgba(0, 102, 255, 0.08) !important;
+  text-shadow: none;
 }
 
 /* ── Divider ─────────────────────────────────────────────────── */
 .nav-divider {
   width: 1px;
   height: 22px;
-  background: rgba(255,255,255,0.22);
-  margin: 0 6px;
+  background: rgba(255, 255, 255, 0.18);
+  margin: 0 4px;
 }
 
 body.light-mode .nav-divider {
-  background: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 /* ── Tooltip ─────────────────────────────────────────────────── */
@@ -8377,8 +8318,8 @@ body.light-mode .nav-divider {
   top: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%) translateY(4px);
-  background: rgba(8,10,20,0.90);
-  backdrop-filter: blur(12px);
+  background: rgba(10, 14, 24, 0.92);
+  backdrop-filter: blur(14px);
   color: #fff;
   padding: 5px 11px;
   border-radius: 8px;
@@ -8388,9 +8329,9 @@ body.light-mode .nav-divider {
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.18s cubic-bezier(0.25,1,0.5,1);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.40);
+  transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   z-index: 1000001;
 }
 
