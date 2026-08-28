@@ -2124,9 +2124,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const mockupContainer = card.querySelector('.browser-mockup');
 
         if (!prefersReducedMotion && img && cardLeft) {
-          gsap.set(img, { willChange: "transform, clip-path", clipPath: "inset(100% 0 0 0)", scale: 1.05 });
+          gsap.set(img, { willChange: "transform, clip-path", clipPath: "inset(100% 0 0 0)", scale: 1.08 });
           gsap.set(dots, { scale: 0, opacity: 0 });
-          gsap.set(cardLeft, { opacity: 0, y: 25 });
+          gsap.set(cardLeft, { opacity: 0, y: 30 });
 
           const entryTl = gsap.timeline({
             scrollTrigger: {
@@ -2146,9 +2146,9 @@ document.addEventListener("DOMContentLoaded", () => {
           entryTl.to(img, {
             clipPath: "inset(0% 0 0 0)",
             scale: 1,
-            duration: 0.8,
+            duration: 0.9,
             ease: "power3.out"
-          }, 0.15);
+          }, 0.2);
 
           if (mockupContainer) {
             mockupContainer.addEventListener('mouseenter', () => {
@@ -2160,32 +2160,38 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
         } else if (img && cardLeft) {
-          gsap.set(img, { clipPath: "inset(0% 0 0 0)", scale: 1, opacity: 1 });
-          gsap.set(cardLeft, { opacity: 1, y: 0 });
+          gsap.set(img, { clipPath: "inset(0% 0 0 0)", scale: 1, opacity: 0 });
+          gsap.to([cardLeft, img], {
+            opacity: 1,
+            duration: 0.5,
+            scrollTrigger: { trigger: card, start: "top 85%", toggleActions: "play none none none" }
+          });
         }
 
         if (i !== cards.length - 1) {
+          const nextCard = cards[i + 1];
           const cardInner = card.querySelector('.card-inner');
-          if (cardInner) {
+          if (cardInner && nextCard) {
             gsap.to(cardInner, {
               scale: 0.94,
+              transformOrigin: "top center",
               scrollTrigger: {
-                trigger: card,
-                start: "top 120px",
-                end: "bottom 120px",
+                trigger: nextCard,
+                start: "top 85%",
+                end: "top 180px",
                 scrub: true,
                 invalidateOnRefresh: true 
               }
             });
           }
 
-          if (overlay) {
+          if (overlay && nextCard) {
             gsap.to(overlay, {
-              opacity: 0.75,
+              opacity: 0.7,
               scrollTrigger: {
-                trigger: card,
-                start: "top 120px",
-                end: "bottom 120px",
+                trigger: nextCard,
+                start: "top 85%",
+                end: "top 180px",
                 scrub: true,
                 invalidateOnRefresh: true
               }
@@ -2551,7 +2557,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (filter === 'all' || categories.includes(filter)) {
             card.style.display = 'block';
             if (window.gsap) {
-              gsap.fromTo(card, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" });
+              gsap.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out", clearProps: "transform" });
             }
           } else {
             card.style.display = 'none';

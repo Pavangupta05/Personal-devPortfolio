@@ -13,12 +13,10 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: clip !important;
 }
 
 body {
   position: relative;
-  overflow-x: clip !important;
 }
 
 /* Hide all scrollbars completely while maintaining full smooth scrolling */
@@ -2365,7 +2363,6 @@ body {
 /* GPU Hardware Acceleration & Mobile 60 FPS Optimizations */
 .project-card,
 .stack-project-card,
-.sticky-card,
 .experience-card,
 .skill-card,
 .github-activity-card,
@@ -7395,6 +7392,7 @@ body.light-mode .social-icon-btn:hover i {
 
 /* Card Structure */
 .sticky-card {
+  position: -webkit-sticky !important;
   position: sticky !important;
   margin-bottom: 60px;
   background: #0d1117 !important; /* 100% opaque solid dark background prevents text bleeding */
@@ -7404,7 +7402,6 @@ body.light-mode .social-icon-btn:hover i {
   height: auto !important;
   min-height: auto !important;
   box-shadow: 0 -15px 40px rgba(0,0,0,0.6) !important;
-  will-change: transform;
 }
 
 /* Ensure sticky cards and ALL their children stay 100% visible for GSAP 3D stacking physics */
@@ -7417,6 +7414,11 @@ body.light-mode .social-icon-btn:hover i {
   visibility: visible !important;
 }
 
+.sticky-card .card-inner {
+  transform-origin: top center !important;
+  will-change: transform, opacity;
+}
+
 /* Only the inner elements that GSAP manually controls should be pre-hidden (by GSAP inline styles) */
 /* Never let global scroll-reveal hide sticky card children */
 .sticky-card .card-left,
@@ -7427,7 +7429,6 @@ body.light-mode .social-icon-btn:hover i {
 .sticky-card.scroll-reveal .card-left,
 .sticky-card.scroll-reveal .section-title {
   opacity: 1;
-  transform: none;
   transition: none;
 }
 
@@ -8972,10 +8973,6 @@ body.light-mode .page-transition-overlay {
 
 /* ── Prevent horizontal overflow on all mobile viewports ── */
 @media (max-width: 768px) {
-  body {
-    overflow-x: hidden !important;
-  }
-
   .section:not(.portfolio-stack-section),
   .cta-section {
     max-width: 100vw !important;
@@ -11107,4 +11104,725 @@ body.light-mode .ticker-group span {
   opacity: 1 !important;
   transform: translate(0, 0) scale(1) !important;
 }
+
+/* ==========================================================================
+   MASTER MOBILE RESPONSIVE SYSTEM (TABLETS & PHONES: <= 768px and <= 480px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Prevent horizontal spill on all sections without breaking sticky on projects */
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .section:not(.portfolio-stack-section) {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* ── 1. UNIFIED SECTION SPACING & HEADINGS ── */
+  .section,
+  #home,
+  #about,
+  #skills,
+  #experience,
+  #certificates,
+  #contact,
+  .portfolio-stack-section,
+  .timeline-section {
+    padding-top: 80px !important;
+    padding-bottom: 60px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 7vw, 2.4rem) !important;
+    margin-bottom: 24px !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+  }
+
+  /* ── 2. MOBILE DYNAMIC NAVBAR ENHANCEMENTS ── */
+  .desktop-navbar {
+    display: none !important;
+  }
+
+  .mobile-dynamic-nav {
+    display: flex !important;
+    position: fixed !important;
+    top: 14px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 24px) !important;
+    max-width: 500px !important;
+    height: 52px !important;
+    z-index: 999999 !important;
+    border-radius: 26px !important;
+    padding: 0 10px !important;
+    background: rgba(13, 17, 23, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  body.light-mode .mobile-dynamic-nav {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .mdn-left, .mdn-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .mdn-toggle, .mdn-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-primary) !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+  }
+
+  body.light-mode .mdn-toggle,
+  body.light-mode .mdn-btn {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #111111 !important;
+  }
+
+  .mdn-brand {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    margin-left: 4px !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mobile-dynamic-nav.expanded .mdn-links {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    max-width: 200px !important;
+  }
+
+  .mobile-dynamic-nav.expanded .mdn-links a {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    color: var(--text-primary) !important;
+    text-decoration: none !important;
+    padding: 4px 6px !important;
+  }
+
+  /* ── 3. HERO SECTION MOBILE PERFECTION ── */
+  #home {
+    padding-top: 110px !important;
+    padding-bottom: 40px !important;
+  }
+
+  .hero-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .hero-giant-title {
+    font-size: clamp(2.2rem, 9.5vw, 3.8rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.03em !important;
+    margin-bottom: 16px !important;
+    word-break: break-word !important;
+  }
+
+  .say-hi-pill {
+    padding: 6px 14px !important;
+    font-size: 0.72rem !important;
+    margin-bottom: 16px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .hero-impact-subhead {
+    gap: 6px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .subhead-caps {
+    font-size: clamp(0.7rem, 2.6vw, 0.82rem) !important;
+    letter-spacing: 0.16em !important;
+  }
+
+  .serif-italic-highlight {
+    font-size: clamp(1.8rem, 7.5vw, 2.5rem) !important;
+    line-height: 1.15 !important;
+  }
+
+  .home-cta {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+  }
+
+  .home-cta .btn {
+    flex: 1 !important;
+    max-width: 180px !important;
+    padding: 12px 18px !important;
+    font-size: 0.9rem !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── 4. MAC TERMINAL CARD MOBILE TIGHTENING ── */
+  .mac-terminal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 20px auto 0 !important;
+    border-radius: 14px !important;
+  }
+
+  .mac-terminal-header {
+    height: 38px !important;
+    padding: 0 12px !important;
+  }
+
+  .mac-terminal-title {
+    font-size: 0.8rem !important;
+  }
+
+  .mac-copy-btn {
+    padding: 3px 8px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .mac-terminal-content {
+    padding: 16px 14px !important;
+    font-size: 0.84rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .term-block {
+    margin-bottom: 12px !important;
+  }
+
+  .term-cmd {
+    font-size: 0.82rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .term-output {
+    padding-left: 10px !important;
+    font-size: 0.82rem !important;
+    word-break: break-all !important;
+  }
+
+  .term-interactive-input {
+    font-size: 16px !important; /* Prevents mobile Safari zoom */
+  }
+
+  /* ── 5. ABOUT ME MOBILE PHOTO & STATS GRID ── */
+  .about-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 28px !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .about-img {
+    width: 100% !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+  }
+
+  .profile-photo-wrap {
+    width: 100% !important;
+    max-width: 320px !important;
+    aspect-ratio: 4 / 5 !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  .about-text {
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .about-heading {
+    font-size: clamp(1.3rem, 5vw, 1.65rem) !important;
+    margin-bottom: 14px !important;
+    line-height: 1.3 !important;
+  }
+
+  .about-description {
+    font-size: 0.92rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .about-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    margin-top: 20px !important;
+  }
+
+  .stat-card {
+    padding: 12px 6px !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+  }
+
+  .stat-number {
+    font-size: 1.2rem !important;
+    font-weight: 900 !important;
+    display: block !important;
+  }
+
+  .stat-label {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    margin-top: 4px !important;
+  }
+
+  .about-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+
+  .about-actions .btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 12px 14px !important;
+    font-size: 0.85rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── 6. KINETIC HERO ROW MOBILE ── */
+  .kinetic-hero-section {
+    min-height: 180px !important;
+    height: 30vh !important;
+  }
+
+  /* ── 7. FEATURED PROJECTS MOBILE STACK & FILTERS ── */
+  .project-filter-container {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 8px !important;
+    padding: 4px 4px 14px 4px !important;
+    margin-bottom: 24px !important;
+    width: 100% !important;
+  }
+
+  .project-filter-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .project-filter-pill {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding: 8px 14px !important;
+    font-size: 0.8rem !important;
+    border-radius: 50px !important;
+    touch-action: manipulation !important;
+  }
+
+  .portfolio-stack-container {
+    padding-bottom: 120px !important;
+    width: 100% !important;
+  }
+
+  .sticky-card {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    margin-bottom: 24px !important;
+    border-radius: 18px !important;
+  }
+
+  .sticky-card .card-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 18px !important;
+    gap: 16px !important;
+  }
+
+  .sticky-card .card-left {
+    width: 100% !important;
+    order: 1 !important;
+  }
+
+  .sticky-card .card-right {
+    width: 100% !important;
+    order: 2 !important;
+  }
+
+  .browser-mockup {
+    height: 190px !important;
+    border-radius: 12px !important;
+  }
+
+  .browser-mockup img {
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .sticky-card h3 {
+    font-size: 1.3rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .desc-line {
+    font-size: 0.86rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .project-features {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .project-features li {
+    margin-bottom: 4px !important;
+  }
+
+  .outline-badges {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .outline-badges .badge {
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .project-actions {
+    display: flex !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .project-actions .btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 10px 12px !important;
+    font-size: 0.82rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* ── 8. TICKER MARQUEE MOBILE ── */
+  .ticker-marquee-wrapper {
+    margin: 30px 0 !important;
+    padding: 10px 0 !important;
+  }
+
+  .ticker-group span {
+    font-size: 0.95rem !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  /* ── 9. TECH SKILLS MOBILE SPLIT LAYOUT ── */
+  .skills-split-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 28px !important;
+    width: 100% !important;
+  }
+
+  .tech-skills-column,
+  .skills-interactive-column {
+    width: 100% !important;
+  }
+
+  #skillSearchInput {
+    font-size: 16px !important; /* Prevents auto-zoom */
+    padding: 12px 14px 12px 38px !important;
+    border-radius: 50px !important;
+  }
+
+  .skill-category-deck {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .category-card {
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .category-skills-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .skill-pill-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-align: center !important;
+  }
+
+  .pill-squircle {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+  }
+
+  .skill-label {
+    font-size: 0.72rem !important;
+    word-break: break-word !important;
+  }
+
+  /* ── 10. EXPERIENCE & TIMELINE MOBILE ── */
+  .timeline-container {
+    padding-left: 16px !important;
+  }
+
+  .timeline-line {
+    left: 6px !important;
+  }
+
+  .timeline-dot {
+    left: -2px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .timeline-item {
+    width: 100% !important;
+    margin-bottom: 24px !important;
+  }
+
+  .timeline-card {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .timeline-content h3 {
+    font-size: 1.15rem !important;
+  }
+
+  .timeline-role {
+    font-size: 0.85rem !important;
+  }
+
+  .timeline-points li {
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* ── 11. CERTIFICATES GRID MOBILE ── */
+  .certificates-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .certificate-card {
+    padding: 18px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .cert-verify-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* ── 12. CONTACT SECTION & FORMS MOBILE ── */
+  .contact-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  .contact-left,
+  .contact-right {
+    width: 100% !important;
+  }
+
+  .contact-form-wrapper {
+    padding: 20px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .contact-form input,
+  .contact-form textarea,
+  .contact-input,
+  .form-control {
+    font-size: 16px !important; /* Prevents iOS auto zoom */
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+  }
+
+  .contact-submit-btn,
+  .contact-form .btn-primary {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 14px !important;
+    font-size: 0.95rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── 13. AI CHAT WINDOW FULL MOBILE DRAWER ── */
+  .ai-floating-btn {
+    bottom: 18px !important;
+    right: 18px !important;
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.15rem !important;
+    z-index: 99999 !important;
+  }
+
+  .ai-chat-window {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    z-index: 1000000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #0d1117 !important;
+  }
+
+  .ai-chat-header {
+    height: 54px !important;
+    padding: 0 16px !important;
+  }
+
+  .ai-chip-container {
+    overflow-x: auto !important;
+    padding: 8px 12px !important;
+    scrollbar-width: none !important;
+  }
+
+  .ai-chip-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding: 6px 12px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .ai-chat-messages {
+    flex: 1 !important;
+    padding: 16px 14px !important;
+    overflow-y: auto !important;
+  }
+
+  .ai-chat-input-area {
+    padding: 12px 14px !important;
+    background: rgba(15, 23, 42, 0.98) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  #ai-chat-input {
+    font-size: 16px !important;
+    padding: 10px 14px !important;
+  }
+
+  /* ── 14. TERMINAL MODAL POPUP MOBILE ── */
+  .terminal-modal-content {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    height: 75vh !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* ── EXTRA SMALL PHONES (<= 480px) ── */
+@media (max-width: 480px) {
+  .hero-giant-title {
+    font-size: clamp(2rem, 11vw, 2.7rem) !important;
+  }
+
+  .home-cta {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .home-cta .btn {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .about-actions {
+    flex-direction: column !important;
+  }
+
+  .about-actions .btn {
+    width: 100% !important;
+  }
+
+  .about-stats-grid {
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  .stat-card {
+    padding: 10px 4px !important;
+  }
+
+  .stat-number {
+    font-size: 1.05rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.62rem !important;
+  }
+
+  .project-actions {
+    flex-direction: column !important;
+  }
+
+  .project-actions .btn {
+    width: 100% !important;
+  }
+}
+
+
+body.light-mode .spidey-glitch-title {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+body.light-mode .spidey-terminal-card {
+  border-color: rgba(230, 36, 41, 0.2) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 0 30px rgba(230, 36, 41, 0.06) !important;
+}
+
+
 
