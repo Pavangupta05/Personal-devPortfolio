@@ -5175,148 +5175,8 @@ section#home {
 .term-input-line { display: flex; align-items: center; gap: 4px; padding: 2px 0; margin-top: 4px; }
 .term-input { flex: 1; background: transparent; border: none; outline: none; font-family: inherit; font-size: inherit; color: #c8d3f5; caret-color: #00ff88; user-select: text; }
 
-/* --- Mobile Dynamic Pill Nav --- */
-.mobile-dynamic-nav {
-  display: none;
-}
-@media (max-width: 768px) {
-  .desktop-navbar { display: none !important; }
-  .mobile-top-dock { display: none !important; }
-  
-  .mobile-dynamic-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    z-index: 99999;
-    height: 52px;
-    pointer-events: none;
-  }
 
-  /* The actual pill background */
-  .mdn-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 125px; /* Enough for "= Pavan." */
-    background: rgba(255, 255, 255, 0.04) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 50px;
-    transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    pointer-events: auto;
-  }
 
-  .mobile-dynamic-nav.expanded .mdn-background {
-    width: 100%; /* Expands to encompass right buttons */
-  }
-
-  .mdn-left {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: 100%;
-    pointer-events: auto;
-    padding-left: 16px;
-    white-space: nowrap;
-    overflow: hidden;
-    flex: 1;
-  }
-
-  .mdn-toggle {
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    margin-right: 12px;
-  }
-
-  .mdn-brand {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text-primary);
-    transition: opacity 0.3s, transform 0.3s;
-  }
-
-  .mdn-links {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(15px);
-    transition: all 0.3s;
-    position: absolute;
-    left: 52px;
-  }
-
-  .mdn-links a {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .mdn-links a:hover { color: var(--text-primary); }
-
-  .mobile-dynamic-nav.expanded .mdn-brand {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(-15px);
-  }
-
-  .mobile-dynamic-nav.expanded .mdn-links {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(0);
-  }
-
-  .mdn-right {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    pointer-events: auto;
-    padding-right: 4px;
-  }
-
-  .mdn-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  /* When expanded, the background pill slides under them, so remove their individual backgrounds */
-  .mobile-dynamic-nav.expanded .mdn-btn {
-    background: transparent;
-    border-color: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
-  }
-}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PREMIUM FEATURES v2.0 — AI Chat · Desktop OS · Dashboard · Quest · Galaxy
@@ -8552,201 +8412,94 @@ body.light-mode .nav-divider {
    ========================================================== */
 
 /* Hide dock on desktop */
-.mobile-bottom-dock {
-  display: none;
-}
-
+/* ==========================================================
+   📱 MOBILE RESPONSIVE TOP LIQUID GLASS DOCK
+   ========================================================== */
 @media (max-width: 768px) {
-  /* ── Hide desktop navbar and old docks on mobile ── */
-  .desktop-navbar,
+  /* Disable old docks */
   .mobile-top-dock,
   .mobile-dynamic-nav,
-  .mobile-hamburger-btn {
+  .mobile-hamburger-btn,
+  .mobile-bottom-dock {
     display: none !important;
   }
 
-  /* ── Floating Liquid Glass Bottom Dock ── */
-  .mobile-bottom-dock {
+  /* Keep the sleek iOS 26 Liquid Glass pill anchored at the TOP */
+  .desktop-navbar {
     display: flex !important;
     position: fixed !important;
-    bottom: 16px !important;
+    top: 10px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    z-index: 999999 !important;
-    padding: 6px 12px !important;
-    gap: 4px !important;
-    align-items: center !important;
-    justify-content: space-around !important;
-    width: min(92vw, 390px) !important;
-    border-radius: 9999px !important;
-    overflow: visible !important;
-
-    /* iOS 26 Liquid Frosted Glass */
-    background: linear-gradient(
-      175deg,
-      rgba(255, 255, 255, 0.24) 0%,
-      rgba(200, 205, 220, 0.16) 50%,
-      rgba(150, 155, 180, 0.20) 100%
-    ) !important;
-    backdrop-filter: blur(24px) saturate(170%) brightness(1.35) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(170%) brightness(1.35) !important;
-    border: 1.2px solid rgba(255, 255, 255, 0.45) !important;
-    box-shadow:
-      0 20px 50px rgba(0, 0, 0, 0.5),
-      0 6px 18px rgba(0, 0, 0, 0.35),
-      inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
+    width: max-content !important;
+    max-width: calc(100vw - 16px) !important;
+    z-index: 1000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  /* Top specular crescent highlight */
-  .mbd-specular {
-    position: absolute;
-    top: 2px;
-    left: 10%;
-    right: 10%;
-    height: 40%;
-    border-radius: 9999px 9999px 60% 60%;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.65) 0%,
-      rgba(255, 255, 255, 0.12) 65%,
-      transparent 100%
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── Tab Item ── */
-  .mbd-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    min-width: 44px;
-    padding: 4px 2px 2px 2px;
-    gap: 2px;
-    text-decoration: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-    z-index: 1;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .mbd-item:active {
-    transform: scale(0.88);
-  }
-
-  /* ── Circular Icon Wrap ── */
-  .mbd-icon-wrap {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    color: rgba(255, 255, 255, 0.65);
-    background: transparent;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  /* Active item styling: pops up with luminous glass sheen */
-  .mbd-item.active .mbd-icon-wrap {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.8),
-      0 4px 14px rgba(0, 0, 0, 0.3);
-    transform: translateY(-4px) scale(1.1);
-  }
-
-  /* ── Label below icon ── */
-  .mbd-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.5);
-    letter-spacing: 0.02em;
-    transition: color 0.2s ease;
-    text-align: center;
-    white-space: nowrap;
-    line-height: 1;
-  }
-
-  .mbd-item.active .mbd-label {
-    color: #ffffff;
-    font-weight: 700;
-  }
-
-  /* ── Glowing Active Dot ── */
-  .mbd-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: transparent;
-    transition: all 0.25s ease;
-    margin-top: 1px;
-  }
-
-  .mbd-item.active .mbd-dot {
-    background: #00E6FF;
-    box-shadow: 0 0 8px #00E6FF;
-  }
-
-  /* ── Light Mode Mobile Dock ── */
-  body.light-mode .mobile-bottom-dock {
-    background: linear-gradient(
-      175deg,
-      rgba(255, 255, 255, 0.85) 0%,
-      rgba(240, 245, 255, 0.72) 100%
-    ) !important;
-    border: 1.2px solid rgba(255, 255, 255, 0.95) !important;
-    box-shadow:
-      0 12px 35px rgba(0, 0, 0, 0.1),
-      0 4px 12px rgba(0, 0, 0, 0.06),
-      inset 0 1.5px 0 rgba(255, 255, 255, 1),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.04) !important;
-  }
-
-  body.light-mode .mbd-icon-wrap {
-    color: #4b5563;
-  }
-
-  body.light-mode .mbd-item.active .mbd-icon-wrap {
-    color: #0066ff;
-    background: rgba(0, 102, 255, 0.1);
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.9),
-      0 4px 12px rgba(0, 102, 255, 0.2);
-  }
-
-  body.light-mode .mbd-label {
-    color: #6b7280;
-  }
-
-  body.light-mode .mbd-item.active .mbd-label {
-    color: #0066ff;
-  }
-
-  body.light-mode .mbd-item.active .mbd-dot {
-    background: #0066ff;
-    box-shadow: 0 0 8px rgba(0, 102, 255, 0.6);
-  }
-
-  /* Safe area padding for iPhones with home bar */
-  @supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .mobile-bottom-dock {
-      bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+  @supports (top: env(safe-area-inset-top)) {
+    .desktop-navbar {
+      top: calc(8px + env(safe-area-inset-top)) !important;
     }
   }
 
-  /* Add bottom padding to body so dock never obscures last section content */
+  .nav-glass-container {
+    padding: 4px 10px !important;
+    border-radius: 9999px !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .nav-glass-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .nav-links-pill {
+    gap: 3px !important;
+  }
+
+  .nav-links-pill .nav-icon {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .nav-divider {
+    height: 18px !important;
+    margin: 0 3px !important;
+  }
+
+  /* Disable hover tooltips on touch screens */
+  .nav-tooltip {
+    display: none !important;
+  }
+
+  /* Ample breathing room at the top for hero section */
+  #home {
+    padding-top: 85px !important;
+  }
+
   body {
-    padding-bottom: 90px !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-glass-container {
+    padding: 3px 6px !important;
+  }
+
+  .nav-links-pill {
+    gap: 1px !important;
+  }
+
+  .nav-links-pill .nav-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.82rem !important;
   }
 }
 
@@ -11614,174 +11367,8 @@ body.light-mode .ticker-group span {
     line-height: 1.2 !important;
   }
 
-  /* ── 2. MOBILE DYNAMIC NAVBAR — iOS 26 Liquid Glass ── */
-  .desktop-navbar {
-    display: none !important;
-  }
-
-  .mobile-dynamic-nav {
-    display: flex !important;
-    position: fixed !important;
-    top: 14px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: calc(100% - 24px) !important;
-    max-width: 500px !important;
-    height: 54px !important;
-    z-index: 999999 !important;
-    border-radius: 9999px !important;
-    padding: 0 12px !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    overflow: visible !important;
-
-    /* Same glass recipe as desktop — lighter than dark background */
-    background: linear-gradient(
-      175deg,
-      rgba(255,255,255,0.22) 0%,
-      rgba(200,205,220,0.14) 50%,
-      rgba(150,155,180,0.18) 100%
-    ) !important;
-    backdrop-filter: blur(20px) saturate(160%) brightness(1.4) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.4) !important;
-    border: 1px solid rgba(255,255,255,0.45) !important;
-    box-shadow:
-      0 16px 40px rgba(0,0,0,0.45),
-      0 4px 12px rgba(0,0,0,0.28),
-      inset 0 1.5px 0 rgba(255,255,255,0.88),
-      inset 0 -1px 0 rgba(0,0,0,0.15) !important;
-  }
-
-  /* Specular dome overlay on mobile nav */
-  .mobile-dynamic-nav::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 12%;
-    right: 12%;
-    height: 42%;
-    border-radius: 9999px 9999px 60% 60%;
-    background: linear-gradient(
-      to bottom,
-      rgba(255,255,255,0.60) 0%,
-      rgba(255,255,255,0.12) 65%,
-      transparent 100%
-    );
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  body.light-mode .mobile-dynamic-nav {
-    background: linear-gradient(
-      175deg,
-      rgba(255,255,255,0.82) 0%,
-      rgba(240,243,255,0.68) 100%
-    ) !important;
-    backdrop-filter: blur(20px) saturate(180%) brightness(1.04) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.04) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow:
-      0 10px 32px rgba(0,0,0,0.10),
-      0 3px 8px rgba(0,0,0,0.06),
-      inset 0 1.5px 0 rgba(255,255,255,1),
-      inset 0 -1px 0 rgba(0,0,0,0.04) !important;
-  }
 
 
-
-  .mdn-left, .mdn-right {
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    position: relative;
-    z-index: 2;
-  }
-
-  /* Glass icon buttons — match desktop nav-icon feel */
-  .mdn-toggle, .mdn-btn {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
-    border-radius: 50% !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: rgba(255,255,255,0.82) !important;
-    font-size: 0.92rem !important;
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-    transition: color 0.2s ease, background 0.2s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
-    -webkit-tap-highlight-color: transparent !important;
-    outline: none !important;
-  }
-
-  .mdn-toggle:active, .mdn-btn:active {
-    transform: scale(0.90) !important;
-    background: rgba(255,255,255,0.14) !important;
-    color: #fff !important;
-  }
-
-  body.light-mode .mdn-toggle,
-  body.light-mode .mdn-btn {
-    color: #1a1f36 !important;
-  }
-
-  body.light-mode .mdn-toggle:active,
-  body.light-mode .mdn-btn:active {
-    background: rgba(0,85,229,0.08) !important;
-    color: #0055e5 !important;
-  }
-
-  /* Brand name */
-  .mdn-brand {
-    font-size: 1.05rem !important;
-    font-weight: 800 !important;
-    margin-left: 2px !important;
-    color: rgba(255,255,255,0.90) !important;
-    letter-spacing: -0.02em !important;
-    position: relative;
-    z-index: 2;
-  }
-
-  body.light-mode .mdn-brand {
-    color: #0f1120 !important;
-  }
-
-  /* Expanded nav links */
-  .mobile-dynamic-nav.expanded .mdn-links {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 4px !important;
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-    max-width: 200px !important;
-  }
-
-  .mobile-dynamic-nav.expanded .mdn-links a {
-    font-size: 0.80rem !important;
-    font-weight: 700 !important;
-    white-space: nowrap !important;
-    color: rgba(255,255,255,0.85) !important;
-    text-decoration: none !important;
-    padding: 4px 8px !important;
-    border-radius: 9999px !important;
-    transition: background 0.2s ease, color 0.2s ease !important;
-  }
-
-  .mobile-dynamic-nav.expanded .mdn-links a:hover,
-  .mobile-dynamic-nav.expanded .mdn-links a:active {
-    background: rgba(255,255,255,0.12) !important;
-    color: #fff !important;
-  }
-
-  body.light-mode .mobile-dynamic-nav.expanded .mdn-links a {
-    color: #1a1f36 !important;
-  }
 
 
 
