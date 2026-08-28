@@ -146,30 +146,7 @@
   </script>
 
 
-  <!-- Left Social Sidebar -->
-  <div class="left-social-sidebar">
-    <div class="social-line top-line"></div>
-    <a href="https://github.com/Pavangupta05" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.35-1.76-1.35-1.76-1.1-.75.08-.74.08-.74 1.21.09 1.84 1.24 1.84 1.24 1.08 1.84 2.83 1.31 3.52 1 .11-.79.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12 12 0 0 0 12 .5z" /></svg>
-    </a>
-    <a href="https://www.linkedin.com/in/pavan-kumar-gupta-837089290/" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.84-2.05 3.79-2.05 4.05 0 4.8 2.67 4.8 6.14V23h-4v-5.8c0-1.38-.02-3.16-1.93-3.16-1.94 0-2.24 1.51-2.24 3.06V23h-4V8.5z" /></svg>
-    </a>
-    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=pavangupta150605@gmail.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Email">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" /></svg>
-    </a>
-    
-    <a href="https://wa.me/918005872338" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="WhatsApp">
-      <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i>
-    </a>
-    <a href="https://www.instagram.com/pavan.sync/?hl=en" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram">
-      <i class="fa-brands fa-instagram" style="font-size: 1.2rem;"></i>
-    </a>
-    <a href="https://drive.google.com/file/d/1lHUpTwmB_lh70vVUDstkVhUbc4LURoE6/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Download">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-    </a>
-    <div class="social-line bottom-line"></div>
-  </div>
+  <!-- Left Social Sidebar Removed (Replaced by 3D Isometric Social Deck) -->
 
   <div id="scroll-progress"></div>
   <div class="mobile-nebula">
@@ -188,9 +165,37 @@
   </div>
   <canvas id="bg-canvas"></canvas>
 
-  <!-- Desktop Pill Navbar -->
-  <nav class="desktop-navbar">
-    <div class="nav-glass-container">
+  <!-- iOS 26 Liquid Glass Navbar -->
+  <!-- Hidden SVG Filters for true liquid glass distortion -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <filter id="liquid-glass-filter" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.008" numOctaves="3" seed="5" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+        <feGaussianBlur in="displaced" stdDeviation="0.3" result="blurred"/>
+        <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
+      </filter>
+      <filter id="lg-hover-filter" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02 0.015" numOctaves="2" seed="8" result="noise">
+          <animate attributeName="seed" values="8;20;8" dur="4s" repeatCount="indefinite"/>
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <nav class="desktop-navbar" id="desktopNavbar">
+    <!-- Canvas for live content backdrop (true refraction) -->
+    <canvas id="navBackdropCanvas" class="nav-backdrop-canvas" aria-hidden="true"></canvas>
+    
+    <div class="nav-glass-container" id="navGlassCapsule">
+      <!-- Top specular highlight -->
+      <div class="nav-glass-specular"></div>
+      <!-- Bottom edge shadow -->
+      <div class="nav-glass-shadow"></div>
+      <!-- Liquid morph lens that follows cursor -->
+      <div class="nav-liquid-lens" id="navLiquidLens"></div>
+      
       <div class="nav-links-pill">
         <a href="#home" class="nav-icon" data-page="index">
           <i class="fa-solid fa-house"></i>
@@ -211,10 +216,6 @@
         <a href="#experience" class="nav-icon" data-page="experience">
           <i class="fa-solid fa-briefcase"></i>
           <span class="nav-tooltip">Experience</span>
-        </a>
-        <a href="#certificates" class="nav-icon" data-page="certificates">
-          <i class="fa-solid fa-certificate"></i>
-          <span class="nav-tooltip">Certificates</span>
         </a>
         <a href="#contact" class="nav-icon" data-page="contact">
           <i class="fa-solid fa-envelope"></i>
@@ -257,7 +258,6 @@
         <a href="#projects" onclick="toggleMdn()">Projects.</a>
         <a href="#skills" onclick="toggleMdn()">Skills.</a>
         <a href="#experience" onclick="toggleMdn()">Experience.</a>
-        <a href="#certificates" onclick="toggleMdn()">Certificates.</a>
         <a href="#contact" onclick="toggleMdn()">Contact.</a>
       </div>
     </div>
@@ -313,6 +313,51 @@
       <div class="home-cta">
         <a href="#projects" class="btn btn-primary">View Projects</a>
         <a href="#contact" class="btn btn-secondary">Contact Me</a>
+      </div>
+
+      <!-- ===== 3D ISOMETRIC SOCIAL PRESENCE DECK ===== -->
+      <div class="iso-social-container" aria-label="Social Profiles">
+        <div class="iso-social-track">
+          <!-- LinkedIn -->
+          <a href="https://www.linkedin.com/in/pavan-kumar-gupta-837089290/" target="_blank" rel="noopener noreferrer" class="iso-key-block iso-linkedin" aria-label="LinkedIn">
+            <div class="iso-content">
+              <i class="fa-brands fa-linkedin-in"></i>
+              <span class="iso-label">LinkedIn</span>
+            </div>
+          </a>
+
+          <!-- GitHub -->
+          <a href="https://github.com/Pavangupta05" target="_blank" rel="noopener noreferrer" class="iso-key-block iso-github" aria-label="GitHub">
+            <div class="iso-content">
+              <i class="fa-brands fa-github"></i>
+              <span class="iso-label">GitHub</span>
+            </div>
+          </a>
+
+          <!-- Instagram -->
+          <a href="https://www.instagram.com/pavan.sync/?hl=en" target="_blank" rel="noopener noreferrer" class="iso-key-block iso-instagram" aria-label="Instagram">
+            <div class="iso-content">
+              <i class="fa-brands fa-instagram"></i>
+              <span class="iso-label">Instagram</span>
+            </div>
+          </a>
+
+          <!-- Resume -->
+          <a href="https://drive.google.com/file/d/1lHUpTwmB_lh70vVUDstkVhUbc4LURoE6/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="iso-key-block iso-resume" aria-label="Resume">
+            <div class="iso-content">
+              <i class="fa-solid fa-file-arrow-down"></i>
+              <span class="iso-label">Resume</span>
+            </div>
+          </a>
+
+          <!-- WhatsApp -->
+          <a href="https://wa.me/918005872338" target="_blank" rel="noopener noreferrer" class="iso-key-block iso-whatsapp" aria-label="WhatsApp">
+            <div class="iso-content">
+              <i class="fa-brands fa-whatsapp"></i>
+              <span class="iso-label">WhatsApp</span>
+            </div>
+          </a>
+        </div>
       </div>
 
       <!-- ===== ABOUT ME TERMINAL MAC CARD ===== -->
