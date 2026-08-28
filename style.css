@@ -8078,11 +8078,11 @@ body.light-mode .profile-photo-wrap {
 
 
 /* ==========================================================
-   💧 iOS 26 TRUE LIQUID GLASS NAVBAR (Master Positioning)
+   💧 LIQUID GLASS REFRACTION CAPSULE (Icon-Only Reference Style)
    ========================================================== */
 .desktop-navbar {
   position: fixed !important;
-  top: 18px !important;
+  top: 22px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 1000000 !important;
@@ -8100,61 +8100,58 @@ body.light-mode .profile-photo-wrap {
   width: max-content !important;
 }
 
-/* The main pill capsule */
+/* The main liquid glass pill capsule */
 .nav-glass-container {
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  padding: 6px 14px !important;
+  padding: 8px 22px !important;
   border-radius: 9999px !important;
-  pointer-events: all;
+  pointer-events: all !important;
   z-index: 2;
 
-  /* Genuine Apple visionOS / iOS 26 Liquid Frosted Crystal Glass */
-  background: rgba(14, 18, 30, 0.55) !important;
-  backdrop-filter: blur(28px) saturate(200%) brightness(1.15) contrast(1.05) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.15) contrast(1.05) !important;
+  /* Optical Translucent Liquid Glass (Matches PATINHAS reference) */
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(8px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(150%) !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
 
   box-shadow:
-    0 20px 50px -10px rgba(0, 0, 0, 0.55),
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3) !important;
+    0 12px 35px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
 
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   overflow: visible;
 }
 
-/* Subtle mouse tracking highlight */
-.nav-glass-container::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: radial-gradient(
-    ellipse 70% 50% at var(--lg-mx, 50%) -10%,
-    rgba(255, 255, 255, 0.15) 0%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 2;
-  transition: opacity 0.15s ease;
+/* Light Mode Frosted Glass */
+body.light-mode .nav-glass-container {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(8px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
-/* Clean specular reflections without milky overlays */
-.nav-glass-specular,
-.nav-glass-shadow {
-  display: none !important;
+/* ── Nav Links Row ── */
+.nav-links-pill {
+  position: relative;
+  z-index: 4;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
 }
 
-/* ── Liquid Morph Lens (GSAP-animated, follows hover) ─────────── */
-.nav-liquid-lens {
+/* ── Dynamic Liquid Circle Lens that slides to active icon ── */
+.nav-liquid-circle {
   position: absolute;
-  top: 5px;
+  top: 0;
   left: 0;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
@@ -8163,97 +8160,71 @@ body.light-mode .profile-photo-wrap {
 
   background: radial-gradient(
     circle at 35% 25%,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(0, 230, 255, 0.08) 100%
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.10) 60%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   backdrop-filter: blur(10px) brightness(1.25);
   -webkit-backdrop-filter: blur(10px) brightness(1.25);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.5),
-    0 0 16px rgba(0, 230, 255, 0.2);
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    0 0 14px rgba(255, 255, 255, 0.15);
 }
 
-/* ── Light Mode ───────────────────────────────────────────────── */
-body.light-mode .nav-glass-container {
-  background: rgba(255, 255, 255, 0.72) !important;
-  backdrop-filter: blur(28px) saturate(190%) brightness(1.04) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+body.light-mode .nav-liquid-circle {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
   box-shadow:
-    0 12px 35px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.04) !important;
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
-body.light-mode .nav-liquid-lens {
-  background: rgba(0, 102, 255, 0.08);
-  border: 1px solid rgba(0, 102, 255, 0.2);
-  box-shadow: 0 0 14px rgba(0, 102, 255, 0.2);
-}
-
-/* ── Nav Links Row ───────────────────────────────────────────── */
-.nav-links-pill {
-  position: relative;
-  z-index: 4;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 3px !important;
-}
-
-/* ── Icon Buttons ────────────────────────────────────────────── */
-.nav-links-pill .nav-icon {
+/* ── Icon-Only Link Buttons ── */
+.nav-icon-link {
   position: relative;
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  color: rgba(255, 255, 255, 0.75) !important;
-  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 1.12rem;
   text-decoration: none;
   background: transparent;
   border: none;
   cursor: pointer;
-  transition:
-    color 0.2s ease,
-    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-    background 0.2s ease;
+  transition: color 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   padding: 0 !important;
   margin: 0 !important;
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
-/* Spring pop on hover */
-.nav-links-pill .nav-icon:hover {
+/* Hover: subtle float + glow */
+.nav-icon-link:hover {
   color: #ffffff !important;
-  transform: translateY(-2px) scale(1.12) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px) scale(1.1) !important;
 }
 
-.nav-links-pill .nav-icon.active {
-  color: #00E6FF !important;
-  text-shadow: 0 0 12px rgba(0, 230, 255, 0.6);
-  background: rgba(255, 255, 255, 0.08) !important;
+/* Active State */
+.nav-icon-link.active {
+  color: #ffffff !important;
 }
 
-body.light-mode .nav-links-pill .nav-icon {
+body.light-mode .nav-icon-link {
   color: #334155 !important;
 }
 
-body.light-mode .nav-links-pill .nav-icon:hover,
-body.light-mode .nav-links-pill .nav-icon.active {
-  color: #0066ff !important;
-  background: rgba(0, 102, 255, 0.08) !important;
-  text-shadow: none;
+body.light-mode .nav-icon-link:hover,
+body.light-mode .nav-icon-link.active {
+  color: #000000 !important;
 }
 
-/* ── Divider ─────────────────────────────────────────────────── */
+/* ── Divider ── */
 .nav-divider {
   width: 1px;
   height: 22px;
@@ -8265,71 +8236,44 @@ body.light-mode .nav-divider {
   background: rgba(0, 0, 0, 0.12);
 }
 
-/* ── Tooltip ─────────────────────────────────────────────────── */
-.nav-tooltip {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: rgba(10, 14, 24, 0.92);
-  backdrop-filter: blur(14px);
-  color: #fff;
-  padding: 5px 11px;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  z-index: 1000001;
-}
-
-.nav-links-pill .nav-icon:hover .nav-tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ── Theme Toggle ────────────────────────────────────────────── */
-#themeToggleDesktop {
+/* ── Circular Theme Button ── */
+.nav-theme-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   outline: none;
-  border: none !important;
-  background: transparent !important;
+  padding: 0 !important;
 }
 
-/* ==========================================================
-   📱 MOBILE BOTTOM GLASS DOCK — iOS 26 Liquid Tab Bar
-   ========================================================== */
+.nav-theme-circle-btn:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  transform: scale(1.08) !important;
+}
 
-/* Hide dock on desktop */
-/* ==========================================================
-   📱 MOBILE RESPONSIVE TOP LIQUID GLASS DOCK
-   ========================================================== */
+body.light-mode .nav-theme-circle-btn {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: #1e293b !important;
+}
+
+body.light-mode .nav-theme-circle-btn:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ── Mobile Responsive (Clean, Compact, Never Cut Off) ── */
 @media (max-width: 768px) {
-  /* Disable old docks */
-  .mobile-top-dock,
-  .mobile-dynamic-nav,
-  .mobile-hamburger-btn,
-  .mobile-bottom-dock {
-    display: none !important;
-  }
-
-  /* Keep the sleek iOS 26 Liquid Glass pill anchored at the TOP */
   .desktop-navbar {
-    display: flex !important;
-    position: fixed !important;
     top: 10px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: max-content !important;
-    max-width: calc(100vw - 16px) !important;
-    z-index: 1000000 !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    max-width: calc(100vw - 12px) !important;
   }
 
   @supports (top: env(safe-area-inset-top)) {
@@ -8339,12 +8283,11 @@ body.light-mode .nav-divider {
   }
 
   .nav-glass-container {
-    padding: 4px 10px !important;
-    border-radius: 9999px !important;
-    max-width: 100% !important;
+    padding: 5px 10px !important;
     overflow-x: auto !important;
     scrollbar-width: none !important;
     -webkit-overflow-scrolling: touch !important;
+    border-radius: 9999px !important;
   }
 
   .nav-glass-container::-webkit-scrollbar {
@@ -8355,45 +8298,47 @@ body.light-mode .nav-divider {
     gap: 3px !important;
   }
 
-  .nav-links-pill .nav-icon {
-    width: 35px !important;
-    height: 35px !important;
-    font-size: 0.88rem !important;
+  .nav-icon-link {
+    width: 33px !important;
+    height: 33px !important;
+    font-size: 0.92rem !important;
   }
 
   .nav-divider {
-    height: 18px !important;
-    margin: 0 3px !important;
+    height: 16px !important;
+    margin: 0 2px !important;
   }
 
-  /* Disable hover tooltips on touch screens */
-  .nav-tooltip {
-    display: none !important;
+  .nav-theme-circle-btn {
+    width: 29px !important;
+    height: 29px !important;
+    font-size: 0.8rem !important;
   }
 
-  /* Ample breathing room at the top for hero section */
   #home {
     padding-top: 85px !important;
   }
-
-  body {
-    padding-bottom: 0 !important;
-  }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 360px) {
   .nav-glass-container {
-    padding: 3px 6px !important;
+    padding: 4px 8px !important;
   }
 
   .nav-links-pill {
-    gap: 1px !important;
+    gap: 2px !important;
   }
 
-  .nav-links-pill .nav-icon {
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 0.82rem !important;
+  .nav-icon-link {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .nav-theme-circle-btn {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.75rem !important;
   }
 }
 

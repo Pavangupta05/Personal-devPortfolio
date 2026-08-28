@@ -165,55 +165,42 @@
   </div>
   <canvas id="bg-canvas"></canvas>
 
-  <!-- iOS 26 Liquid Glass Navbar -->
+  <!-- iOS 26 Liquid Glass Navbar (Icon-Only Refraction Pill with Liquid Circle) -->
   <nav class="desktop-navbar" id="desktopNavbar">
     <div class="nav-glass-container" id="navGlassCapsule">
-      <!-- Liquid morph lens that follows cursor -->
-      <div class="nav-liquid-lens" id="navLiquidLens"></div>
-      
+      <!-- Dynamic Liquid Circle that glides and morphs to active item -->
+      <div class="nav-liquid-circle" id="navLiquidCircle"></div>
+
       <div class="nav-links-pill">
-        <a href="#home" class="nav-icon" data-page="index">
+        <a href="#home" class="nav-icon-link active" data-page="index" aria-label="Home">
           <i class="fa-solid fa-house"></i>
-          <span class="nav-tooltip">Home</span>
         </a>
-        <a href="#about" class="nav-icon" data-page="about">
+        <a href="#about" class="nav-icon-link" data-page="about" aria-label="About">
           <i class="fa-solid fa-user"></i>
-          <span class="nav-tooltip">About</span>
         </a>
-        <a href="#projects" class="nav-icon" data-page="projects">
+        <a href="#projects" class="nav-icon-link" data-page="projects" aria-label="Projects">
           <i class="fa-regular fa-folder-open"></i>
-          <span class="nav-tooltip">Projects</span>
         </a>
-        <a href="#skills" class="nav-icon" data-page="skills">
+        <a href="#skills" class="nav-icon-link" data-page="skills" aria-label="Skills">
           <i class="fa-solid fa-code"></i>
-          <span class="nav-tooltip">Skills</span>
         </a>
-        <a href="#experience" class="nav-icon" data-page="experience">
+        <a href="#experience" class="nav-icon-link" data-page="experience" aria-label="Experience">
           <i class="fa-solid fa-briefcase"></i>
-          <span class="nav-tooltip">Experience</span>
         </a>
-        <a href="#contact" class="nav-icon" data-page="contact">
+        <a href="#contact" class="nav-icon-link" data-page="contact" aria-label="Contact">
           <i class="fa-solid fa-envelope"></i>
-          <span class="nav-tooltip">Contact</span>
         </a>
-        <a href="javascript:void(0)" onclick="openTerminal()" class="nav-icon" id="terminalNavBtn">
+        <a href="javascript:void(0)" onclick="openTerminal()" class="nav-icon-link" id="terminalNavBtn" aria-label="Terminal">
           <i class="fa-solid fa-terminal"></i>
-          <span class="nav-tooltip">Terminal</span>
         </a>
-        <a href="javascript:void(0)" onclick="toggleCameraScroll()" class="nav-icon" id="cameraScrollBtn">
+        <a href="javascript:void(0)" onclick="toggleCameraScroll()" class="nav-icon-link" id="cameraScrollBtn" aria-label="Gesture Control">
           <i class="fa-solid fa-hand-pointer"></i>
-          <span class="nav-tooltip">Gesture</span>
         </a>
         
         <div class="nav-divider"></div>
 
-        <button id="themeToggleDesktop" class="theme-slider-toggle" aria-label="Toggle Theme" onclick="toggleTheme()">
-          <span class="theme-slider-track">
-            <span class="theme-slider-knob">
-              <i id="themeIconDesktop" class="fa-solid fa-moon"></i>
-            </span>
-          </span>
-          <span class="nav-tooltip">Theme</span>
+        <button id="themeToggleDesktop" class="nav-theme-circle-btn" aria-label="Toggle Theme" onclick="toggleTheme()">
+          <i id="themeIconDesktop" class="fa-solid fa-moon"></i>
         </button>
       </div>
     </div>

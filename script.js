@@ -2667,7 +2667,7 @@ document.addEventListener('mousemove', (e) => {
 
   // 8. macOS About Me Terminal Card (Copy Button & Interactive Command Engine)
   const macCopyBtn = document.getElementById('macCopyBtn');
-  const macCopyText = document.getElementById('macCopyText');
+          const macCopyText = document.getElementById('macCopyText');
   const macTermInput = document.getElementById('macTermInput');
   const macTermContent = document.getElementById('macTermContent');
 
@@ -2765,13 +2765,60 @@ document.addEventListener('mousemove', (e) => {
    1-PAGE SMOOTH SCROLL NAVIGATION & ACTIVE SECTION OBSERVER
    ========================================================== */
 (function() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  const capsule = document.getElementById('navGlassCapsule');
+  const liquidCircle = document.getElementById('navLiquidCircle');
+
+  function getTargetCoords(el) {
+    if (!el || !capsule) return null;
+    const cr = capsule.getBoundingClientRect();
+    const er = el.getBoundingClientRect();
+    return {
+      x: er.left - cr.left,
+      y: er.top - cr.top,
+      w: er.width,
+      h: er.height
+    };
+  }
+
+  function moveLiquidCircle(el, elastic = true) {
+    if (!liquidCircle || !el) return;
+    const t = getTargetCoords(el);
+    if (!t) return;
+
+    if (window.gsap) {
+      gsap.to(liquidCircle, {
+        x: t.x,
+        y: t.y,
+        width: t.w,
+        height: t.h,
+        opacity: 1,
+        borderRadius: '50%',
+        duration: elastic ? 0.55 : 0.2,
+        ease: elastic ? 'elastic.out(1, 0.75)' : 'power2.out',
+        overwrite: 'auto'
+      });
+    } else {
+      Object.assign(liquidCircle.style, {
+        transform: `translate(${t.x}px, ${t.y}px)`,
+        width: `${t.w}px`,
+        height: `${t.h}px`,
+        opacity: '1'
+      });
+    }
+  }
+
+  // Smooth scroll on click
+  document.querySelectorAll('.desktop-navbar .nav-links-pill a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       const targetId = this.getAttribute('href');
       if (targetId && targetId !== '#') {
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
           e.preventDefault();
+          document.querySelectorAll('.desktop-navbar .nav-links-pill .nav-icon-link').forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+          moveLiquidCircle(this, true);
+
           if (window.lenis) {
             window.lenis.scrollTo(targetElement, { offset: -70, duration: 1.2 });
           } else {
@@ -2782,8 +2829,9 @@ document.addEventListener('mousemove', (e) => {
     });
   });
 
+  // Active section scroll spy observer
   const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.desktop-navbar .nav-links-pill a[href^="#"]');
+  const navLinks = document.querySelectorAll('.desktop-navbar .nav-links-pill .nav-icon-link[href^="#"]');
 
   if (sections.length && navLinks.length) {
     const observerOptions = {
@@ -2799,169 +2847,76 @@ document.addEventListener('mousemove', (e) => {
           navLinks.forEach(link => {
             if (link.getAttribute('href') === `#${currentId}`) {
               link.classList.add('active');
+              moveLiquidCircle(link, true);
             } else {
               link.classList.remove('active');
             }
           });
-          if (window.updateLiquidLens) {
-            window.updateLiquidLens();
-          }
         }
       });
     }, observerOptions);
 
     sections.forEach(sec => sectionObserver.observe(sec));
-  }
-
-  /* ══════════════════════════════════════════════════════
-     💧 iOS 26 TRUE LIQUID GLASS NAVBAR ENGINE
-     Layers:
-       1. Dynamic mouse specular (--lg-mx CSS custom property)
-       2. GSAP spring morph lens following hover
-       3. SVG turbulence displacement (organic liquid refraction)
-       4. Per-icon tap/click ripple burst
-       5. Parallax tilt on scroll
-     ══════════════════════════════════════════════════════ */
-  const capsule  = document.getElementById('navGlassCapsule');
-  const lens     = document.getElementById('navLiquidLens');
+  // Interactive Hover & Mouseleave
   const navItems = document.querySelectorAll(
-    '.desktop-navbar .nav-links-pill .nav-icon, ' +
-    '.desktop-navbar .theme-slider-toggle'
+    '.desktop-navbar .nav-links-pill .nav-icon-link, ' +
+    '.desktop-navbar .nav-theme-circle-btn'
   );
 
-  if (!capsule || !lens || !navItems.length) return;
-
-  /* ── 1. Live mouse → specular gradient ─────────────────── */
-  capsule.addEventListener('mousemove', (e) => {
-    const r = capsule.getBoundingClientRect();
-    const xPct = ((e.clientX - r.left) / r.width * 100).toFixed(1);
-    capsule.style.setProperty('--lg-mx', `${xPct}%`);
-  });
-  capsule.addEventListener('mouseleave', () => {
-    capsule.style.setProperty('--lg-mx', '50%');
-  });
-
-  /* ── 2. GSAP Spring Morph Lens ──────────────────────────── */
-  let currentTarget =
-    document.querySelector('.desktop-navbar .nav-links-pill a.active') ||
-    navItems[0];
-
-  function getLensTarget(el) {
-    if (!el || !capsule) return null;
-    const cr = capsule.getBoundingClientRect();
-    const er = el.getBoundingClientRect();
-    return {
-      x: er.left - cr.left,
-      y: er.top  - cr.top,
-      w: er.width,
-      h: er.height
-    };
-  }
-
-  function moveLensTo(el, elastic = true) {
-    const t = getLensTarget(el);
-    if (!t) return;
-    if (window.gsap) {
-      gsap.to(lens, {
-        x: t.x, y: t.y,
-        width:  t.w,
-        height: t.h,
-        opacity: 1,
-        borderRadius: '50%',
-        duration: elastic ? 0.55 : 0.22,
-        ease: elastic ? 'elastic.out(1, 0.7)' : 'power2.out',
-        overwrite: 'auto'
-      });
-    } else {
-      Object.assign(lens.style, {
-        transform:  `translate(${t.x}px, ${t.y}px)`,
-        width:      `${t.w}px`,
-        height:     `${t.h}px`,
-        opacity:    '1'
-      });
-    }
-  }
-
-  /* Initial placement after layout settles */
-  setTimeout(() => {
-    currentTarget =
-      document.querySelector('.desktop-navbar .nav-links-pill a.active') ||
-      navItems[0];
-    moveLensTo(currentTarget, false);
-  }, 300);
-
   navItems.forEach(item => {
-    item.addEventListener('mouseenter', () => moveLensTo(item, true));
+    item.addEventListener('mouseenter', () => moveLiquidCircle(item, true));
   });
 
-  capsule.addEventListener('mouseleave', () => {
-    currentTarget =
-      document.querySelector('.desktop-navbar .nav-links-pill a.active') ||
-      navItems[0];
-    moveLensTo(currentTarget, true);
-  });
-
-  /* Update lens when active section changes */
-  window.updateLiquidLens = () => {
-    const a = document.querySelector('.desktop-navbar .nav-links-pill a.active');
-    if (a) { currentTarget = a; moveLensTo(a, true); }
-  };
-
-  /* ── 3. SVG turbulence seed animation (organic ripple) ──── */
-  const feTurb = document.querySelector('#liquid-glass-filter feTurbulence');
-  if (feTurb) {
-    let seed = 5;
-    let turbDir = 1;
-    let turbRaf;
-    const animateTurb = () => {
-      seed += 0.012 * turbDir;
-      if (seed > 18 || seed < 3) turbDir *= -1;
-      feTurb.setAttribute('seed', seed.toFixed(2));
-      turbRaf = requestAnimationFrame(animateTurb);
-    };
-    // Only animate while mouse is over navbar (perf-friendly)
-    capsule.addEventListener('mouseenter', () => {
-      if (!turbRaf) animateTurb();
-    });
+  if (capsule) {
     capsule.addEventListener('mouseleave', () => {
-      if (turbRaf) { cancelAnimationFrame(turbRaf); turbRaf = null; }
-      // reset to resting seed
-      feTurb.setAttribute('seed', '5');
+      const activeEl = document.querySelector('.desktop-navbar .nav-links-pill .nav-icon-link.active') || navItems[0];
+      if (activeEl) moveLiquidCircle(activeEl, true);
     });
   }
 
-  /* ── 4. Per-icon ripple burst on click ──────────────────── */
+  // Click ripple burst
   navItems.forEach(item => {
-    item.addEventListener('click', (e) => {
+    item.addEventListener('click', () => {
       const ripple = document.createElement('span');
       ripple.style.cssText = `
         position:absolute;
         left:50%; top:50%;
         transform:translate(-50%,-50%) scale(0);
-        width:40px; height:40px;
+        width:38px; height:38px;
         border-radius:50%;
-        background:rgba(255,255,255,0.35);
+        background:radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
         pointer-events:none;
-        animation: lgRipple 0.55s cubic-bezier(0.25,1,0.5,1) forwards;
+        animation: lgRipple 0.5s cubic-bezier(0.25,1,0.5,1) forwards;
         z-index:10;
       `;
       item.style.position = 'relative';
       item.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
+      setTimeout(() => ripple.remove(), 550);
     });
   });
 
-  /* Inject ripple keyframe once */
+  // Inject ripple keyframe once
   if (!document.getElementById('lgRippleStyle')) {
     const s = document.createElement('style');
     s.id = 'lgRippleStyle';
     s.textContent = `
       @keyframes lgRipple {
-        to { transform: translate(-50%,-50%) scale(2.8); opacity: 0; }
+        to { transform: translate(-50%,-50%) scale(2.6); opacity: 0; }
       }
     `;
     document.head.appendChild(s);
   }
+
+  // Initial placement after layout paints
+  setTimeout(() => {
+    const initialActive = document.querySelector('.desktop-navbar .nav-links-pill .nav-icon-link.active') || navItems[0];
+    if (initialActive) moveLiquidCircle(initialActive, false);
+  }, 150);
+
+  window.addEventListener('resize', () => {
+    const activeEl = document.querySelector('.desktop-navbar .nav-links-pill .nav-icon-link.active') || navItems[0];
+    if (activeEl) moveLiquidCircle(activeEl, false);
+  }, { passive: true });
 
 })();
 
