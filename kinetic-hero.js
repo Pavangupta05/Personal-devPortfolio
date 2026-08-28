@@ -1,6 +1,6 @@
 /**
  * kinetic-hero.js
- * S-Curve Wave Kinetic Hero Animation with Light & Dark Mode Support
+ * S-Curve Wave Kinetic Hero Animation with Light & Dark Mode + Mobile Perfection
  * 
  * Phrase: "FROM CONCEPT TO REALITY - I BUILD WHAT MATTERS."
  */
@@ -47,10 +47,17 @@
 
     function recalculateLetters() {
       const W = window.innerWidth;
-      const rightEnterX = W * 1.20;       // > 120% width = opacity 0 (far right)
-      const rightSettleX = W * 0.50;      // 50% width = settled center
-      const leftExitSettleX = W * 0.30;   // 30% width = start exit
-      const leftExitX = -W * 0.15;        // -15% width = opacity 0 (far left)
+      const isMobile = W <= 768;
+      
+      const rightEnterX = isMobile ? W * 1.12 : W * 1.20;       // Enter zone
+      const rightSettleX = isMobile ? W * 0.52 : W * 0.50;      // Settle center
+      const leftExitSettleX = isMobile ? W * 0.28 : W * 0.30;   // Exit start
+      const leftExitX = isMobile ? -W * 0.10 : -W * 0.15;        // Exit complete
+
+      // Dynamic amplitude scaling for mobile viewports
+      const amp = isMobile ? 0.42 : 1.0;
+      const shadowX = isMobile ? 4 : 8;
+      const shadowY = isMobile ? 6 : 12;
 
       const isLight = document.body.classList.contains('light-mode') || document.documentElement.classList.contains('light-mode');
       const baseGray = isLight ? 15 : 255;
@@ -83,9 +90,9 @@
           const easeProgress = Math.pow(progress, 1.8);
           letterOpacity = 1 - easeProgress;
 
-          xOffset = Math.sin(progress * Math.PI) * 18 * dir;
-          yOffset = dir * 85 * easeProgress + Math.sin(progress * Math.PI * 1.5) * 18;
-          rotation = rotDir * (20 * easeProgress + Math.sin(progress * Math.PI) * 8 * dir);
+          xOffset = Math.sin(progress * Math.PI) * 18 * dir * amp;
+          yOffset = dir * 85 * easeProgress * amp + Math.sin(progress * Math.PI * 1.5) * (18 * amp);
+          rotation = rotDir * (20 * easeProgress * amp + Math.sin(progress * Math.PI) * 8 * dir * amp);
 
           scale = 1 - easeProgress * 0.08;
           grayVal = Math.round(baseGray - easeProgress * (baseGray - enterGray));
@@ -99,9 +106,9 @@
           const easeExit = Math.pow(exitProgress, 1.5);
           letterOpacity = 1 - easeExit;
 
-          xOffset = -Math.sin(exitProgress * Math.PI) * 14 * dir;
-          yOffset = -dir * 45 * easeExit;
-          rotation = -rotDir * 14 * easeExit;
+          xOffset = -Math.sin(exitProgress * Math.PI) * 14 * dir * amp;
+          yOffset = -dir * 45 * easeExit * amp;
+          rotation = -rotDir * 14 * easeExit * amp;
           scale = 1 - easeExit * 0.08;
           grayVal = Math.round(baseGray - easeExit * (baseGray - exitGray));
           shadowOpacity = (1 - easeExit) * 0.8;
@@ -132,8 +139,8 @@
 
         if (shadowEl) {
           gsap.set(shadowEl, {
-            x: xOffset,
-            y: yOffset,
+            x: xOffset + shadowX,
+            y: yOffset + shadowY,
             rotation: rotation,
             scale: scale,
             opacity: shadowOpacity,
@@ -144,21 +151,24 @@
       });
     }
 
-    // GSAP ScrollTrigger setup
+    const isMobile = window.innerWidth <= 768;
+
+    // GSAP ScrollTrigger setup with mobile optimization
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: section,
         pin: true,
-        scrub: 1.5,
+        anticipatePin: 1,
+        scrub: isMobile ? 0.8 : 1.5,
         start: "top top",
-        end: "+=400%",
+        end: isMobile ? "+=200%" : "+=350%",
         onUpdate: recalculateLetters,
         onRefresh: recalculateLetters
       }
     });
 
     timeline.to(textRow, {
-      xPercent: -88,
+      xPercent: isMobile ? -85 : -88,
       ease: "none"
     });
 

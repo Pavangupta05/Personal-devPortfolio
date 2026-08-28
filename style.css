@@ -11974,9 +11974,49 @@ body.light-mode .ticker-group span {
 
   /* ── 6. KINETIC HERO ROW MOBILE ── */
   .kinetic-hero-section {
-    min-height: 180px !important;
-    height: 30vh !important;
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
+
+  .kinetic-hero-viewport {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .kinetic-text-row {
+    font-size: clamp(3rem, 15vw, 5rem) !important;
+    padding-left: 25vw !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.1 !important;
+  }
+
+  .kinetic-space-wrapper {
+    width: 0.28em !important;
+  }
+
+  .kinetic-letter-shadow {
+    transform: translate(3px, 5px) !important;
+  }
+
+  .kinetic-scroll-hint {
+    bottom: 84px !important;
+    right: 1.2rem !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0.1em !important;
+    gap: 0.4rem !important;
+    opacity: 0.75 !important;
+  }
+
 
   /* ── 7. FEATURED PROJECTS MOBILE STACK & FILTERS ── */
   .project-filter-container {
