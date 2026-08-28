@@ -161,14 +161,14 @@
         anticipatePin: 1,
         scrub: isMobile ? 0.8 : 1.5,
         start: "top top",
-        end: isMobile ? "+=200%" : "+=350%",
+        end: isMobile ? "+=220%" : "+=350%",
         onUpdate: recalculateLetters,
         onRefresh: recalculateLetters
       }
     });
 
     timeline.to(textRow, {
-      xPercent: isMobile ? -85 : -88,
+      xPercent: isMobile ? -92 : -88,
       ease: "none"
     });
 
