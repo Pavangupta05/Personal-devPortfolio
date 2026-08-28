@@ -2538,22 +2538,6 @@ document.addEventListener('mousemove', (e) => {
   });
 }, { passive: true });
 
-// 2. Floating Navbar Auto-Hide / Show on Scroll
-document.addEventListener('DOMContentLoaded', () => {
-  let lastScrollY = window.scrollY;
-  const desktopNav = document.querySelector('.desktop-navbar');
-  if (desktopNav) {
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > 120 && currentScrollY > lastScrollY) {
-        desktopNav.classList.add('nav-hidden');
-      } else {
-        desktopNav.classList.remove('nav-hidden');
-      }
-      lastScrollY = currentScrollY;
-    }, { passive: true });
-  }
-
   // 3. Smooth Page Fade Transition
   const transitionOverlay = document.createElement('div');
   transitionOverlay.className = 'page-transition-overlay';
@@ -2977,25 +2961,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     `;
     document.head.appendChild(s);
-  }
-
-  /* ── 5. Subtle parallax tilt on scroll ──────────────────── */
-  const navbar = document.getElementById('desktopNavbar');
-  if (navbar) {
-    let lastScrollY = window.scrollY;
-    window.addEventListener('scroll', () => {
-      const delta = window.scrollY - lastScrollY;
-      lastScrollY = window.scrollY;
-      if (window.gsap) {
-        gsap.to(navbar, {
-          y: Math.max(-6, Math.min(6, delta * 0.3)),
-          duration: 0.6,
-          ease: 'power3.out',
-          overwrite: 'auto',
-          onComplete: () => gsap.to(navbar, { y: 0, duration: 0.5, ease: 'power2.out' })
-        });
-      }
-    }, { passive: true });
   }
 
 })();

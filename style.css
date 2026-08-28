@@ -4919,8 +4919,7 @@ section#home {
   .skill-card,
   .certificate-card,
   .blog-card,
-  .glass-panel,
-  .desktop-navbar {
+  .glass-panel {
     backdrop-filter: blur(12px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
   }
@@ -8079,72 +8078,26 @@ body.light-mode .profile-photo-wrap {
 
 
 /* ==========================================================
-   NAVBAR Z-INDEX FIX (Guarantees Navbar is ALWAYS on top)
+   💧 iOS 26 TRUE LIQUID GLASS NAVBAR (Master Positioning)
    ========================================================== */
-.desktop-navbar { transform: translateX(-50%) !important; }
-.desktop-navbar, .mobile-dynamic-nav, .mobile-hamburger-btn {
-  z-index: 999999 !important;
-  
-}
-
-/* ==========================================================
-   ABOUT SECTION SPACING FIX
-   ========================================================== */
-.section.about-section {
-  padding-top: 150px !important; /* Pushes content down slightly below navbar */
-}
-
-
-/* ==========================================================
-   MINIMAL FLOATING NAVBAR (Pill + Icons + Tooltips)
-   ========================================================== */
-
-/* Main container overrides */
 .desktop-navbar {
   position: fixed !important;
-  top: 20px !important;
-  left: 50% !important;
-  transform: translateX(-50%) translateZ(999px) !important;
-  z-index: 999999 !important;
-  display: flex !important; /* Force display on mobile too */
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease !important;
-}
-
-.desktop-navbar.nav-hidden {
-  transform: translate(-50%, -150%) translateZ(999px) !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* ==========================================================
-   💧 iOS 26 TRUE LIQUID GLASS NAVBAR
-   Reference: Apple visionOS / iOS 26 design language
-   Technique: CSS backdrop-filter + SVG displacement filter + JS canvas
-   ========================================================== */
-
-/* Navbar position wrapper */
-.desktop-navbar {
-  position: fixed !important;
-  top: 22px !important;
+  top: 18px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  z-index: 100000 !important;
+  z-index: 1000000 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  pointer-events: none;
-}
-
-/* Live backdrop canvas – renders blurred page content behind pill */
-.nav-backdrop-canvas {
-  position: absolute;
-  inset: -2px;
-  border-radius: 9999px;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0; /* hidden – JS paints then fades in */
-  border-radius: 9999px;
-  overflow: hidden;
+  pointer-events: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: max-content !important;
 }
 
 /* The main pill capsule */
@@ -8968,18 +8921,6 @@ body.light-mode .page-transition-overlay {
     display: none !important;
   }
 
-  /* Desktop navbar on mobile — keep pill compact */
-  .desktop-navbar {
-    width: 95% !important;
-    max-width: 380px !important;
-  }
-
-  .nav-links-pill .nav-icon {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 0.9rem !important;
-  }
-
   /* Experience page timeline cards */
   .experience-card {
     padding: 20px 16px !important;
@@ -9080,21 +9021,6 @@ body.light-mode .page-transition-overlay {
     font-size: 0.75rem !important;
   }
 
-  /* Nav pill tiny on very small phones */
-  .desktop-navbar {
-    max-width: 340px !important;
-  }
-
-  .nav-links-pill .nav-icon {
-    width: 30px !important;
-    height: 30px !important;
-    font-size: 0.8rem !important;
-  }
-
-  .nav-glass-container {
-    padding: 5px 6px !important;
-  }
-
   /* About section photo sizing */
   .about-img > img {
     width: 160px !important;
@@ -9129,16 +9055,6 @@ body.light-mode .page-transition-overlay {
 
   .sticky-card h3 {
     font-size: 1.15rem !important;
-  }
-
-  .desktop-navbar {
-    max-width: 310px !important;
-  }
-
-  .nav-links-pill .nav-icon {
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 0.75rem !important;
   }
 
   .btn,
