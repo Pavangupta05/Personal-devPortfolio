@@ -244,49 +244,88 @@
     </div>
   </nav>
 
-  <!-- Modern Mobile Dynamic Nav -->
-  <nav class="mobile-dynamic-nav" id="mobileDynamicNav">
-    <div class="mdn-background" id="mdnBackground"></div>
-    
-    <div class="mdn-left">
-      <button class="mdn-toggle" onclick="toggleMdn()">
-        <i class="fa-solid fa-bars" id="mdnIcon"></i>
-      </button>
-      <span class="mdn-brand" id="mdnBrand">Pavan.</span>
-      
-      <div class="mdn-links" id="mdnLinks">
-        <a href="#projects" onclick="toggleMdn()">Projects.</a>
-        <a href="#skills" onclick="toggleMdn()">Skills.</a>
-        <a href="#experience" onclick="toggleMdn()">Experience.</a>
-        <a href="#contact" onclick="toggleMdn()">Contact.</a>
+  <!-- Mobile Bottom Glass Dock -->
+  <nav class="mobile-bottom-dock" id="mobileBottomDock" aria-label="Mobile Navigation">
+    <!-- Glass specular dome -->
+    <div class="mbd-specular"></div>
+
+    <a href="#home" class="mbd-item active" data-section="home" aria-label="Home">
+      <div class="mbd-icon-wrap">
+        <i class="fa-solid fa-house"></i>
       </div>
-    </div>
+      <span class="mbd-label">Home</span>
+      <div class="mbd-dot"></div>
+    </a>
 
-    <div class="mdn-right">
-      
-      
-      <button class="mdn-btn theme-toggle-btn mobile-theme-btn" aria-label="Toggle theme" onclick="toggleTheme()">
+    <a href="#about" class="mbd-item" data-section="about" aria-label="About">
+      <div class="mbd-icon-wrap">
+        <i class="fa-solid fa-user"></i>
+      </div>
+      <span class="mbd-label">About</span>
+      <div class="mbd-dot"></div>
+    </a>
+
+    <a href="#projects" class="mbd-item" data-section="projects" aria-label="Projects">
+      <div class="mbd-icon-wrap">
+        <i class="fa-regular fa-folder-open"></i>
+      </div>
+      <span class="mbd-label">Projects</span>
+      <div class="mbd-dot"></div>
+    </a>
+
+    <a href="#skills" class="mbd-item" data-section="skills" aria-label="Skills">
+      <div class="mbd-icon-wrap">
+        <i class="fa-solid fa-code"></i>
+      </div>
+      <span class="mbd-label">Skills</span>
+      <div class="mbd-dot"></div>
+    </a>
+
+    <a href="#contact" class="mbd-item" data-section="contact" aria-label="Contact">
+      <div class="mbd-icon-wrap">
+        <i class="fa-solid fa-envelope"></i>
+      </div>
+      <span class="mbd-label">Contact</span>
+      <div class="mbd-dot"></div>
+    </a>
+
+    <button class="mbd-item mbd-theme-btn" onclick="toggleTheme()" aria-label="Toggle Theme" id="mobileThemeToggle">
+      <div class="mbd-icon-wrap">
         <i class="fa-solid fa-moon" id="themeIconMobile"></i>
-      </button>
+      </div>
+      <span class="mbd-label">Theme</span>
+      <div class="mbd-dot"></div>
+    </button>
+  </nav>
 
-      <button class="mdn-btn" onclick="openTerminal()"><i class="fa-solid fa-terminal"></i></button>
-      <button class="mdn-btn" onclick="toggleCameraScroll()"><i class="fa-solid fa-camera"></i></button>
-    </div>
+  <!-- Keep old mobile nav hidden (used by some JS) -->
+  <nav class="mobile-dynamic-nav" id="mobileDynamicNav" style="display:none!important">
+    <span class="mdn-brand" id="mdnBrand">Pavan.</span>
+    <i class="fa-solid fa-moon" id="themeIconMobileLegacy" style="display:none"></i>
   </nav>
 
   <script>
-    function toggleMdn() {
-      const nav = document.getElementById('mobileDynamicNav');
-      const icon = document.getElementById('mdnIcon');
-      if (nav.classList.contains('expanded')) {
-        nav.classList.remove('expanded');
-        icon.className = 'fa-solid fa-bars';
-      } else {
-        nav.classList.add('expanded');
-        icon.className = 'fa-solid fa-xmark';
-      }
-    }
+    // Mobile bottom dock active section tracking
+    (function() {
+      const dockItems = document.querySelectorAll('.mbd-item[data-section]');
+      const sections  = document.querySelectorAll('section[id]');
+      if (!dockItems.length || !sections.length) return;
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const id = e.target.id;
+            dockItems.forEach(item => {
+              item.classList.toggle('active', item.dataset.section === id);
+            });
+          }
+        });
+      }, { threshold: 0.4 });
+
+      sections.forEach(s => io.observe(s));
+    })();
   </script>
+
 
   <!-- Home Section -->
   

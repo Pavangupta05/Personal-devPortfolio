@@ -8547,52 +8547,206 @@ body.light-mode .nav-divider {
   background: transparent !important;
 }
 
-
-
 /* ==========================================================
-   MOBILE UNIFICATION (DISABLE OLD DOCKS)
+   📱 MOBILE BOTTOM GLASS DOCK — iOS 26 Liquid Tab Bar
    ========================================================== */
-@media (max-width: 767px) {
-  /* Disable the bottom dock and hamburger completely */
+
+/* Hide dock on desktop */
+.mobile-bottom-dock {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* ── Hide desktop navbar and old docks on mobile ── */
+  .desktop-navbar,
   .mobile-top-dock,
   .mobile-dynamic-nav,
   .mobile-hamburger-btn {
     display: none !important;
   }
 
-  /* Make the pill scrollable horizontally if it gets too wide */
-  .desktop-navbar {
-    width: 90%;
-    max-width: 400px;
+  /* ── Floating Liquid Glass Bottom Dock ── */
+  .mobile-bottom-dock {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 999999 !important;
+    padding: 6px 12px !important;
+    gap: 4px !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    width: min(92vw, 390px) !important;
+    border-radius: 9999px !important;
+    overflow: visible !important;
+
+    /* iOS 26 Liquid Frosted Glass */
+    background: linear-gradient(
+      175deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(200, 205, 220, 0.16) 50%,
+      rgba(150, 155, 180, 0.20) 100%
+    ) !important;
+    backdrop-filter: blur(24px) saturate(170%) brightness(1.35) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(170%) brightness(1.35) !important;
+    border: 1.2px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow:
+      0 20px 50px rgba(0, 0, 0, 0.5),
+      0 6px 18px rgba(0, 0, 0, 0.35),
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
   }
-  
-  .nav-glass-container {
-    width: 100%;
-    padding: 6px 8px !important;
-    overflow-x: auto; /* Swiping if needed */
-    /* Hide scrollbar */
-    -ms-overflow-style: none;  
-    scrollbar-width: none;  
+
+  /* Top specular crescent highlight */
+  .mbd-specular {
+    position: absolute;
+    top: 2px;
+    left: 10%;
+    right: 10%;
+    height: 40%;
+    border-radius: 9999px 9999px 60% 60%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.12) 65%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 0;
   }
-  
-  .nav-glass-container::-webkit-scrollbar {
-    display: none;
+
+  /* ── Tab Item ── */
+  .mbd-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 44px;
+    padding: 4px 2px 2px 2px;
+    gap: 2px;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    z-index: 1;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  
-  /* Slightly smaller icons for mobile to fit without scrolling ideally */
-  .nav-links-pill .nav-icon {
+
+  .mbd-item:active {
+    transform: scale(0.88);
+  }
+
+  /* ── Circular Icon Wrap ── */
+  .mbd-icon-wrap {
     width: 38px;
     height: 38px;
-    font-size: 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.65);
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  
-  .nav-divider {
-    height: 20px;
+
+  /* Active item styling: pops up with luminous glass sheen */
+  .mbd-item.active .mbd-icon-wrap {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.8),
+      0 4px 14px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px) scale(1.1);
   }
-  
-  /* Disable hover tooltips on mobile since there is no hover */
-  .nav-tooltip {
-    display: none !important;
+
+  /* ── Label below icon ── */
+  .mbd-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
+    text-align: center;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .mbd-item.active .mbd-label {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  /* ── Glowing Active Dot ── */
+  .mbd-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.25s ease;
+    margin-top: 1px;
+  }
+
+  .mbd-item.active .mbd-dot {
+    background: #00E6FF;
+    box-shadow: 0 0 8px #00E6FF;
+  }
+
+  /* ── Light Mode Mobile Dock ── */
+  body.light-mode .mobile-bottom-dock {
+    background: linear-gradient(
+      175deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(240, 245, 255, 0.72) 100%
+    ) !important;
+    border: 1.2px solid rgba(255, 255, 255, 0.95) !important;
+    box-shadow:
+      0 12px 35px rgba(0, 0, 0, 0.1),
+      0 4px 12px rgba(0, 0, 0, 0.06),
+      inset 0 1.5px 0 rgba(255, 255, 255, 1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.04) !important;
+  }
+
+  body.light-mode .mbd-icon-wrap {
+    color: #4b5563;
+  }
+
+  body.light-mode .mbd-item.active .mbd-icon-wrap {
+    color: #0066ff;
+    background: rgba(0, 102, 255, 0.1);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.9),
+      0 4px 12px rgba(0, 102, 255, 0.2);
+  }
+
+  body.light-mode .mbd-label {
+    color: #6b7280;
+  }
+
+  body.light-mode .mbd-item.active .mbd-label {
+    color: #0066ff;
+  }
+
+  body.light-mode .mbd-item.active .mbd-dot {
+    background: #0066ff;
+    box-shadow: 0 0 8px rgba(0, 102, 255, 0.6);
+  }
+
+  /* Safe area padding for iPhones with home bar */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .mobile-bottom-dock {
+      bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    }
+  }
+
+  /* Add bottom padding to body so dock never obscures last section content */
+  body {
+    padding-bottom: 90px !important;
   }
 }
 
